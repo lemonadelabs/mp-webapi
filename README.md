@@ -19,7 +19,7 @@ From the shell, type: `postgres`
 From the shell, type: `createdb mpdata`
 
 #### Create the DB User
-From the shell, type: `psql`  
+From the shell, type: `psql mpdata`
 This will launch the postgres client.  
 Run these commands by copying and pasting into the client:  
 `CREATE ROLE mpdbuser WITH LOGIN ENCRYPTED PASSWORD 'crooked-serf-radio' CREATEDB;`  
