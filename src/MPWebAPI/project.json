@@ -9,6 +9,7 @@
       "version": "1.0.0",
       "type": "platform"
     },
+    "Swashbuckle": "6.0.0-beta902",
     "Microsoft.AspNetCore.Mvc": "1.0.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
     "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.0.0",
