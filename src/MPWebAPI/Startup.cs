@@ -71,6 +71,7 @@ namespace MPWebAPI
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            app.UseIdentity();
             app.UseOAuthValidation();
             app.UseOpenIddict();
             app.UseJwtBearerAuthentication(
