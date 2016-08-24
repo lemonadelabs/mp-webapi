@@ -1,4 +1,9 @@
 {
+  "title": "Merlin: Plan Web API",
+  "version": "0.1.0",
+  "description": "The Web API for Merlin: Plan",
+  "copyright": "Lemonade Labs Limited 2016",
+
   "dependencies": {
     "Microsoft.NETCore.App": {
       "version": "1.0.0",
