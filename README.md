@@ -43,4 +43,13 @@ Run `dotnet run` from inside the `/src/MPWebAPI` directory. If the project needs
 ### View the api docs
 With the application running direct your browser to `http://localhost:5000/swagger/ui`
 
+## Update procedure
+1. Pull from the repo
+2. From inside the /src/MPWebAPI folder, run `dotnet ef database update` (This is only necessary if the update has a new migration)
+3. From inside the /src/MPWebAPI folder, run `dotnet run`
+
+
+
+
+
 
