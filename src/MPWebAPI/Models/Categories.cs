@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace MPWebAPI.Models
 {
     /// <summary>
@@ -34,6 +36,9 @@ namespace MPWebAPI.Models
 
         public int GroupId { get; set; }
         public Group Group { get; set; }
+
+        public List<ProjectFinancialResourceCategory> Projects { get; set; }
+        public List<PartitionResourceCategory> FinancialPartitions { get; set; }
     }
 
     /// <summary>

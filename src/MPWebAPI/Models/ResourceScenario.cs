@@ -12,6 +12,15 @@ namespace MPWebAPI.Models
         public DateTime Modified { get; set; }
         public bool ShareAll { get; set; }
         public bool ShareGroup { get; set; }
-        public List<MerlinPlanUser> ShareUser { get; set; }
+        public List<ResourceScenarioUser> ShareUser { get; set; }
+    }
+
+    public class ResourceScenarioUser
+    {
+        public int ResourceScenarioId { get; set; }
+        public ResourceScenario ResourceScenario { get; set; }
+
+        public int UserId { get; set; }
+        public MerlinPlanUser User { get; set; }
     }
 }

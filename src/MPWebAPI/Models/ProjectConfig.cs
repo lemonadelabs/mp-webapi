@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace MPWebAPI.Models
 {
+    /// <summary>
+    /// A specific configuration of a project option in a specific plan.
+    /// </summary>
     public class ProjectConfig
     {
         public int Id { get; set; }

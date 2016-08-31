@@ -10,7 +10,7 @@ namespace MPWebAPI.Models
         public bool Achieved { get; set; }
         public DateTime Date { get; set; }
 
-        public int ProjectPhaseId { get; set; }
-        public ProjectPhase ProjectPhase { get; set; }
+        public int ProjectOptionId { get; set; }
+        public ProjectOption ProjectOption { get; set; }
     }
 }

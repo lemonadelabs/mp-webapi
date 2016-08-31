@@ -20,7 +20,6 @@ namespace MPWebAPI.Models
         public string WebDomain { get; set; }
         public int FinancialYearStart { get; set; }
         public List<Group> Groups { get; set; }
-        public List<MerlinPlanUser> Users {get; set;}
         public List<BusinessUnit> BusinessUnits { get; set; }
     }
 }

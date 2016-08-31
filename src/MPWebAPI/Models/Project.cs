@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace MPWebAPI.Models
@@ -8,11 +9,36 @@ namespace MPWebAPI.Models
         public string Name { get; set; }
         public string Summary { get; set; }
         public string Reference { get; set; }
-        public List<FinancialResourceCategory> FinancialResourceCategories { get; set; }
+        public List<ProjectFinancialResourceCategory> FinancialResourceCategories { get; set; }
+        
+        public MerlinPlanUser Creator { get; set; }
+        public DateTime Created { get; set; }
+        public DateTime Modified { get; set; }
+        public bool ShareAll { get; set; }
+        public bool ShareGroup { get; set; }
+        public List<ProjectUser> ShareUser { get; set; }
         
         public StaffResource Owner { get; set; }
         public List<StaffResource> Managers { get; set; }
         public BusinessUnit BusinessUnit { get; set; }
         public List<ProjectOption> Options { get; set; }
+    }
+
+    public class ProjectFinancialResourceCategory
+    {
+        public int ProjectId { get; set; }
+        public Project Project { get; set; }
+
+        public int FinancialResourceCategoryId { get; set; }
+        public FinancialResourceCategory FinancialResourceCategory { get; set; }
+    }
+
+    public class ProjectUser
+    {
+        public int ProjectId { get; set; }
+        public Project Project { get; set; }
+
+        public int UserId { get; set; }
+        public MerlinPlanUser User { get; set; }
     }
 }

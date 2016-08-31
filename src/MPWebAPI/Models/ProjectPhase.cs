@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace MPWebAPI.Models
 {
+    /// <summary>
+    /// A project phase is a stage of a project with its own
+    /// finantial and staffing constraints.
+    /// </summary>
     public class ProjectPhase
     {
         public int Id { get; set; }
@@ -12,7 +16,8 @@ namespace MPWebAPI.Models
         public DateTime EndDate { get; set; }
         public List<FinancialTransaction> FinancialResources { get; set; }
         public List<StaffTransaction> StaffResources { get; set; }
-        public List<FinancialTransaction> Revenue { get; set; }
-        public List<ProjectBenefit> Benefits { get; set; }
+
+        public int ProjectOptionId { get; set; }
+        private ProjectOption ProjectOption { get; set; }
     }
 }
