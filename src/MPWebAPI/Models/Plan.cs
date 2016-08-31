@@ -15,6 +15,8 @@ namespace MPWebAPI.Models
         public int TimeScale { get; set; }
         public bool ShareAll { get; set; }
         public bool ShareGroup { get; set; }
+        public bool Approved { get; set; }
+        public MerlinPlanUser ApprovedBy { get; set; }
         public List<MerlinPlanUser> ShareUser { get; set; }
         public List<ProjectConfig> Projects { get; set; }
     }

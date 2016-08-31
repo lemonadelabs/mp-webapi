@@ -31,6 +31,9 @@ namespace MPWebAPI.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+
+        public int GroupId { get; set; }
+        public Group Group { get; set; }
     }
 
     /// <summary>
@@ -42,13 +45,24 @@ namespace MPWebAPI.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+
+        public int GroupId { get; set; }
+        public Group Group { get; set; }
     }
 
+    /// <summary>
+    /// Represents a business goal or strategic direction. Project
+    /// benefits are linked with Alignments. 
+    /// <see cref="ProjectBenefit"/>
+    /// </summary>
     public class AlignmentCategory
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Area { get; set; }
+
+        public int GroupId { get; set; }
+        public Group Group { get; set; }
     }
 }
