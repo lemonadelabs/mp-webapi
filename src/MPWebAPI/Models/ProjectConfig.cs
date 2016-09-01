@@ -14,6 +14,7 @@ namespace MPWebAPI.Models
         
         public int PlanId { get; set; }
         public Plan Plan { get; set; }
+        
         public int ProjectOptionId { get; set; }
         public ProjectOption ProjectOption { get; set; }    
     }

@@ -11,7 +11,6 @@ namespace MPWebAPI.Models
         public int Id { get; set; }
         public List<PartitionResourceCategory> Categories { get; set; }
         public List<FinancialAdjustment> Adjustments { get; set; }
-        public decimal Size { get; set; }
 
         public int FinancialResourceId { get; set; }
         public FinancialResource FinancialResource { get; set; }

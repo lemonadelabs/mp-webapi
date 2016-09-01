@@ -12,7 +12,7 @@ namespace MPWebAPI.Models
         public bool Additive { get; set; }
         public DateTime Date { get; set; }
         public bool Actual { get; set; }
-
+        
         public int FinancialResourcePartitionId { get; set; }
         public FinancialResourcePartition FinancialResourcePartition { get; set; }
     }

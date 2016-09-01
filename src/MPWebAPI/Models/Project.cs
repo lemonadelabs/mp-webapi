@@ -11,17 +11,33 @@ namespace MPWebAPI.Models
         public string Reference { get; set; }
         public List<ProjectFinancialResourceCategory> FinancialResourceCategories { get; set; }
         
+        public int CreatorId { get; set; }
         public MerlinPlanUser Creator { get; set; }
+        
         public DateTime Created { get; set; }
         public DateTime Modified { get; set; }
         public bool ShareAll { get; set; }
         public bool ShareGroup { get; set; }
         public List<ProjectUser> ShareUser { get; set; }
         
+        public int OwnerId { get; set; }
         public StaffResource Owner { get; set; }
-        public List<StaffResource> Managers { get; set; }
+
+        public List<StaffResourceProject> Managers { get; set; }
+        
+        public int BusinessUnitId { get; set; }
         public BusinessUnit BusinessUnit { get; set; }
+
         public List<ProjectOption> Options { get; set; }
+    }
+
+    public class StaffResourceProject
+    {
+        public int StaffResourceId { get; set; }
+        public StaffResource StaffResource { get; set; }
+
+        public int ProjectId { get; set; }
+        public Project Project { get; set; }
     }
 
     public class ProjectFinancialResourceCategory

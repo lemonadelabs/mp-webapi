@@ -24,5 +24,8 @@ namespace MPWebAPI.Models
         public List<PlanUser> SharedPlans { get; set; }
         public List<ProjectUser> SharedProjects { get; set; }
 
+        // Related resource data
+        public int StaffResourceId { get; set; }
+        public StaffResource StaffResource { get; set; }
     }
 }

@@ -11,7 +11,13 @@ namespace MPWebAPI.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+
+        public int OrganisationId { get; set; }
+        public Organisation Organisation { get; set; }
+
+        public List<Project> Projects { get; set; }
     }
+    
 
     /// <summary>
     /// Represents a type of staff member. I.e 'line staff', 'project manager'
@@ -22,6 +28,8 @@ namespace MPWebAPI.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+
+        public List<StaffResourceStaffResourceCategory> StaffResources { get; set; }
     }
 
     /// <summary>
@@ -53,6 +61,8 @@ namespace MPWebAPI.Models
 
         public int GroupId { get; set; }
         public Group Group { get; set; }
+
+        public List<RiskProfile> RiskProfiles { get; set; }
     }
 
     /// <summary>
@@ -69,5 +79,7 @@ namespace MPWebAPI.Models
 
         public int GroupId { get; set; }
         public Group Group { get; set; }
+
+        public List<Alignment> Alignments { get; set; }
     }
 }

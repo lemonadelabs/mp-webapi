@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MPWebAPI.Models;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace MPWebAPI.Controllers
 {
     [Route("api/[controller]")]
@@ -51,7 +49,6 @@ namespace MPWebAPI.Controllers
                 var result = await _userManager.CreateAsync(user, r.Password);
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
                     return new JsonResult(user);
                 }
                 else

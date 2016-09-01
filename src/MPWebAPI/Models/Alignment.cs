@@ -2,7 +2,11 @@ using System;
 
 namespace MPWebAPI.Models
 {
-    public class ProjectAlignment
+    /// <summary>
+    /// Represnets an alignment value for a particular project benefit
+    /// tracked over time.
+    /// </summary>
+    public class Alignment
     {
         public int Id { get; set; }
         public float Weight { get; set; }

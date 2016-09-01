@@ -17,7 +17,6 @@ namespace MPWebAPI.Models
         public Project Project { get; set; }
 
         public List<ProjectPhase> Phases { get; set; }
-        public List<ProjectAlignment> Alignments { get; set; }
         public List<RiskProfile> RiskProfile { get; set; }
         public List<ProjectBenefit> Benefits { get; set; }
     }

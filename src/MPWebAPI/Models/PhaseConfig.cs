@@ -9,8 +9,8 @@ namespace MPWebAPI.Models
     public class PhaseConfig
     {
         public int Id { get; set; }
-        public DateTime StartOffset { get; set; }
-        public DateTime EndOffset { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         public int ProjectPhaseId { get; set; }
         public ProjectPhase ProjectPhase { get; set; }

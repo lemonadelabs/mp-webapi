@@ -16,8 +16,6 @@ namespace MPWebAPI.Models
         
         public List<Group> Children { get; set; }
         public List<MerlinPlanUser> Members { get; set; }
-        
-        public ResourceScenario DefaultScenario { get; set; }
 
         public List<AlignmentCategory> AlignmentCategories { get; set; }
         public List<StaffResourceCategory> StaffResourceCategories { get; set; }
