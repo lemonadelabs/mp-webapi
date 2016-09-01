@@ -15,9 +15,18 @@ namespace MPWebAPI.Models
         public int OrganisationId { get; set; }
         public Organisation Organisation { get; set; }
 
-        public List<Project> Projects { get; set; }
+        public List<Project> ProjectsOwned { get; set; }
+        public List<Project> ProjectsImpacting { get; set; }
     }
-    
+
+    public class BenefitCategory
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        public List<ProjectBenefitBenefitCategory> ProjectBenefits { get; set; }
+    }
 
     /// <summary>
     /// Represents a type of staff member. I.e 'line staff', 'project manager'

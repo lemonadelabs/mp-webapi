@@ -13,6 +13,9 @@ namespace MPWebAPI.Models
         
         public int CreatorId { get; set; }
         public MerlinPlanUser Creator { get; set; }
+
+        public int GroupId { get; set; }
+        public Group Group { get; set; }
         
         public DateTime Created { get; set; }
         public DateTime Modified { get; set; }
@@ -25,8 +28,11 @@ namespace MPWebAPI.Models
 
         public List<StaffResourceProject> Managers { get; set; }
         
-        public int BusinessUnitId { get; set; }
-        public BusinessUnit BusinessUnit { get; set; }
+        public int OwningBusinessUnitId { get; set; }
+        public BusinessUnit OwningBusinessUnit { get; set; }
+
+        public int ImpactedBusinessUnitId { get; set; }
+        public BusinessUnit ImpactedBusinessUnit { get; set; }
 
         public List<ProjectOption> Options { get; set; }
     }

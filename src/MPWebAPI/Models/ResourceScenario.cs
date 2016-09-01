@@ -11,6 +11,9 @@ namespace MPWebAPI.Models
         public int CreatorId { get; set; }        
         public MerlinPlanUser Creator { get; set; }
 
+        public int GroupId { get; set; }
+        public Group Group { get; set; }
+
         public DateTime Created { get; set; }
         public DateTime Modified { get; set; }
         public bool ShareAll { get; set; }

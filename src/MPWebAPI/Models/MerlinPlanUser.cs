@@ -11,8 +11,8 @@ namespace MPWebAPI.Models
         public int OrganisationId { get; set; }
         public Organisation Organisation { get; set; }
         
-        public int GroupId { get; set; } 
-        public Group Group { get; set; }
+        public string EmployeeId { get; set; }
+        public List<UserGroup> Groups { get; set; }
 
         // Ownership
         public List<ResourceScenario> ResourceScenarios { get; set; }
@@ -27,5 +27,14 @@ namespace MPWebAPI.Models
         // Related resource data
         public int StaffResourceId { get; set; }
         public StaffResource StaffResource { get; set; }
+    }
+
+    public class UserGroup
+    {
+        public int UserId { get; set; }
+        public MerlinPlanUser User { get; set; }
+
+        public int GroupId { get; set; }
+        public Group Group { get; set; }
     }
 }

@@ -15,7 +15,11 @@ namespace MPWebAPI.Models
         public Group Parent { get; set; }
         
         public List<Group> Children { get; set; }
-        public List<MerlinPlanUser> Members { get; set; }
+        public List<UserGroup> Members { get; set; }
+
+        public List<ResourceScenario> ResourceScenarios { get; set; }
+        public List<Project> Projects { get; set; }
+        public List<Plan> Plans { get; set; }
 
         public List<AlignmentCategory> AlignmentCategories { get; set; }
         public List<StaffResourceCategory> StaffResourceCategories { get; set; }
@@ -25,4 +29,6 @@ namespace MPWebAPI.Models
         public int OrganisationId { get; set; }
         public Organisation Organisation { get; set; }
     }
+
+    
 }

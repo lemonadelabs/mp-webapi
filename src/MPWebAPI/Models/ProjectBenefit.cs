@@ -12,7 +12,18 @@ namespace MPWebAPI.Models
         public DateTime Date { get; set; }
 
         public List<Alignment> Alignments { get; set; }
+        public List<ProjectBenefitBenefitCategory> Categories { get; set; }
+
         public int ProjectOptionId { get; set; }
         public ProjectOption ProjectOption { get; set; }
+    }
+
+    public class ProjectBenefitBenefitCategory
+    {
+        public int ProjectBenefitId { get; set; }
+        public ProjectBenefit ProjectBenefit { get; set; }
+
+        public int BenefitCategoryId { get; set; }
+        public BenefitCategory BenefitCategory { get; set; }
     }
 }
