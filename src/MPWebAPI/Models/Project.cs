@@ -11,10 +11,10 @@ namespace MPWebAPI.Models
         public string Reference { get; set; }
         public List<ProjectFinancialResourceCategory> FinancialResourceCategories { get; set; }
         
-        public int CreatorId { get; set; }
+        public int? CreatorId { get; set; }
         public MerlinPlanUser Creator { get; set; }
 
-        public int GroupId { get; set; }
+        public int? GroupId { get; set; }
         public Group Group { get; set; }
         
         public DateTime Created { get; set; }
@@ -23,15 +23,15 @@ namespace MPWebAPI.Models
         public bool ShareGroup { get; set; }
         public List<ProjectUser> ShareUser { get; set; }
         
-        public int OwnerId { get; set; }
+        public int? OwnerId { get; set; }
         public StaffResource Owner { get; set; }
 
         public List<StaffResourceProject> Managers { get; set; }
         
-        public int OwningBusinessUnitId { get; set; }
+        public int? OwningBusinessUnitId { get; set; }
         public BusinessUnit OwningBusinessUnit { get; set; }
 
-        public int ImpactedBusinessUnitId { get; set; }
+        public int? ImpactedBusinessUnitId { get; set; }
         public BusinessUnit ImpactedBusinessUnit { get; set; }
 
         public List<ProjectOption> Options { get; set; }
@@ -48,6 +48,7 @@ namespace MPWebAPI.Models
 
     public class ProjectFinancialResourceCategory
     {
+        // TODO: Need to make sure any rinfenced financial resources matching this category are also removed
         public int ProjectId { get; set; }
         public Project Project { get; set; }
 

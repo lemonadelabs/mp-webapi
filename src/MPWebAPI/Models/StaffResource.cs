@@ -9,7 +9,7 @@ namespace MPWebAPI.Models
         public string Name { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public float FteOutput { get; set; }
+        public float? FteOutput { get; set; }
         public List<StaffResourceStaffResourceCategory> Categories { get; set; }
         public List<FinancialAdjustment> Adjustments { get; set; }
 

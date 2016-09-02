@@ -1,7 +1,9 @@
+using System;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using OpenIddict;
+
 
 namespace MPWebAPI.Models
 {
@@ -12,84 +14,57 @@ namespace MPWebAPI.Models
         }
 
         public DbSet<Alignment> Alignments;
-        
         public DbSet<BusinessUnit> BusinessUnits;
-        
         public DbSet<BenefitCategory> BenefitCategories;
-        
         public DbSet<StaffResourceCategory> StaffResourceCategories;
-        
         public DbSet<FinancialResourceCategory> FinancialResourceCategories;
-        
         public DbSet<RiskCategory> RiskCategories;
-        
         public DbSet<AlignmentCategory> AlignmentCategories;
-        
         public DbSet<FinancialAdjustment> FinancialAdjustments;
-        
         public DbSet<FinancialResource> FinancialResources;
-        
         public DbSet<FinancialResourcePartition> FinancialResourcePartitions;
-        public DbSet<PartitionResourceCategory> PartitionResourceCategories;
-        
-        public DbSet<FinancialTransactionResourceCategory> FinancialTransactionResourceCategories;
         public DbSet<FinancialTransaction> FinancialTransactions;
-        
         public DbSet<Group> Groups;
         public DbSet<UserGroup> UserGroups;
-        
         public DbSet<Organisation> Organisations;
-
         public DbSet<PhaseConfig> PhaseConfigs;
-        
         public DbSet<Plan> Plans;
         public DbSet<PlanUser> PlanUsers;
-
         public DbSet<Project> Projects;
-        public DbSet<StaffResourceProject> StaffResourceProjects;
-        public DbSet<ProjectFinancialResourceCategory> ProjectFinancialResourceCategories;
-        public DbSet<ProjectUser> ProjectUsers;
-
         public DbSet<ProjectBenefit> ProjectBenefits;
-        public DbSet<ProjectBenefitBenefitCategory> ProjectBenefitBenefitCategories;
-
         public DbSet<ProjectConfig> ProjectConfigs;
-
         public DbSet<ProjectOption> ProjectOptions;
-        public DbSet<ProjectDependency> ProjectDependencies;
-
         public DbSet<ProjectPhase> ProjectPhases;
-
         public DbSet<ResourceScenario> ResourceScenarios;
-        public DbSet<ResourceScenarioUser> ResourceScenarioUsers;
-
         public DbSet<RiskProfile> RiskProfiles;
-
         public DbSet<StaffResource> StaffResources;
-        public DbSet<StaffResourceStaffResourceCategory> StaffResourceStaffResourceCategories;
-
         public DbSet<StaffTransaction> StaffTransactions;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            // relations
-
             // Alignment
             builder.Entity<Alignment>()
                 .HasOne(a => a.AlignmentCategory)
                 .WithMany(ac => ac.Alignments)
-                .HasForeignKey(a => a.AlignmentCategoryId);
+                .HasForeignKey(a => a.AlignmentCategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
             
             builder.Entity<Alignment>()
                 .HasOne(a => a.ProjectBenefit)
                 .WithMany(pb => pb.Alignments)
-                .HasForeignKey(a => a.ProjectBenefitId);
-
+                .HasForeignKey(a => a.ProjectBenefitId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            
             // BusinessUnit
             builder.Entity<BusinessUnit>()
                 .HasOne(bu => bu.Organisation)
                 .WithMany(o => o.BusinessUnits)
                 .HasForeignKey(bu => bu.OrganisationId);
+            
+            builder.Entity<BusinessUnit>()
+                .Property(c => c.Name)
+                .IsRequired();
             
             // BenefitCategory
             builder.Entity<BenefitCategory>()
@@ -97,11 +72,19 @@ namespace MPWebAPI.Models
                 .WithMany(g => BenefitCategories)
                 .HasForeignKey(bc => bc.GroupId);
 
+             builder.Entity<BenefitCategory>()
+                .Property(c => c.Name)
+                .IsRequired();
+
             // StaffResourceCategory
             builder.Entity<StaffResourceCategory>()
                 .HasOne(src => src.Group)
                 .WithMany(g => g.StaffResourceCategories)
                 .HasForeignKey(src => src.GroupId);
+            
+            builder.Entity<StaffResourceCategory>()
+                .Property(c => c.Name)
+                .IsRequired();
             
             // FinancialResourceCategory
             builder.Entity<FinancialResourceCategory>()
@@ -109,11 +92,19 @@ namespace MPWebAPI.Models
                 .WithMany(g => g.FinancialResourceCategories)
                 .HasForeignKey(frc => frc.GroupId);
             
+            builder.Entity<FinancialResourceCategory>()
+                .Property(c => c.Name)
+                .IsRequired();
+            
             // RiskCategory
             builder.Entity<RiskCategory>()
                 .HasOne(rc => rc.Group)
                 .WithMany(g => g.RiskCategories)
                 .HasForeignKey(rc => rc.GroupId);
+            
+            builder.Entity<RiskCategory>()
+                .Property(c => c.Name)
+                .IsRequired();
             
             // AlignmentCategory
             builder.Entity<AlignmentCategory>()
@@ -121,17 +112,37 @@ namespace MPWebAPI.Models
                 .WithMany(g => g.AlignmentCategories)
                 .HasForeignKey(ac => ac.GroupId);
             
+            builder.Entity<AlignmentCategory>()
+                .Property(c => c.Name)
+                .IsRequired();
+
             // FinancialAdjustment
             builder.Entity<FinancialAdjustment>()
                 .HasOne(fa => fa.FinancialResourcePartition)
                 .WithMany(fp => fp.Adjustments)
                 .HasForeignKey(fa => fa.FinancialResourcePartitionId);
             
+            builder.Entity<FinancialAdjustment>()
+                .Property(fa => fa.Date)
+                .IsRequired();
+            
             // FinancialResource
             builder.Entity<FinancialResource>()
                 .HasOne(fr => fr.ResourceScenario)
                 .WithMany(rs => rs.FinancialResources)
                 .HasForeignKey(fr => fr.ResourceScenarioId);
+            
+            builder.Entity<FinancialResource>()
+                .Property(fr => fr.Name)
+                .IsRequired();
+            
+            builder.Entity<FinancialResource>()
+                .Property(fr => fr.StartDate)
+                .IsRequired();
+            
+            builder.Entity<FinancialResource>()
+                .Property(fr => fr.EndDate)
+                .IsRequired();
             
             // FinancialResourcePartition
             builder.Entity<FinancialResourcePartition>()
@@ -147,7 +158,8 @@ namespace MPWebAPI.Models
             builder.Entity<PartitionResourceCategory>()
                 .HasOne(prc => prc.FinancialResourceCategory)
                 .WithMany(frc => frc.FinancialPartitions)
-                .HasForeignKey(prc => prc.FinancialResourceCategoryId);
+                .HasForeignKey(prc => prc.FinancialResourceCategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
             
             // FinancialTransaction
             builder.Entity<FinancialTransaction>()
@@ -155,10 +167,15 @@ namespace MPWebAPI.Models
                 .WithMany(pp => pp.FinancialResources)
                 .HasForeignKey(ft => ft.ProjectPhaseId);
             
+            builder.Entity<FinancialTransaction>()
+                .Property(ft => ft.Date)
+                .IsRequired();
+            
             builder.Entity<FinancialTransactionResourceCategory>()
                 .HasOne(ftrc => ftrc.FinancialResourceCategory)
                 .WithMany(frc => frc.Transactions)
-                .HasForeignKey(ftrc => ftrc.FinancialResourceCategoryId);
+                .HasForeignKey(ftrc => ftrc.FinancialResourceCategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
             
             builder.Entity<FinancialTransactionResourceCategory>()
                 .HasOne(ftrc => ftrc.FinancialTransaction)
@@ -169,7 +186,8 @@ namespace MPWebAPI.Models
             builder.Entity<Group>()
                 .HasOne(g => g.Parent)
                 .WithMany(g => g.Children)
-                .HasForeignKey(g => g.ParentId);
+                .HasForeignKey(g => g.ParentId)
+                .OnDelete(DeleteBehavior.SetNull);
             
             builder.Entity<Group>()
                 .HasOne(g => g.Organisation)
@@ -197,12 +215,21 @@ namespace MPWebAPI.Models
                 .WithMany(g => g.Members)
                 .HasForeignKey(ug => ug.GroupId);
             
+            builder.Entity<Organisation>()
+                .Property(o => o.Name)
+                .IsRequired();
+            
             // PhaseConfig
+            builder.Entity<PhaseConfig>()
+                .HasOne(pc => pc.ProjectPhase)
+                .WithMany()
+                .HasForeignKey(pc => pc.ProjectPhaseId);
+
             builder.Entity<PhaseConfig>()
                 .HasOne(pc => pc.ProjectConfig)
                 .WithMany(pjc => pjc.Phases)
                 .HasForeignKey(pc => pc.ProjectConfigId);
-
+            
             // Plan
             builder.Entity<Plan>()
                 .HasOne(p => p.Creator)
@@ -213,6 +240,32 @@ namespace MPWebAPI.Models
                 .HasOne(p => p.Group)
                 .WithMany(g => g.Plans)
                 .HasForeignKey(p => p.GroupId);
+            
+            builder.Entity<Plan>()
+                .Property(p => p.Created)
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("now()");
+            
+            builder.Entity<Plan>()
+                .Property(p => p.Modified)
+                .ValueGeneratedOnAddOrUpdate()
+                .HasDefaultValueSql("now()");
+            
+            builder.Entity<Plan>()
+                .Property(p => p.Name)
+                .IsRequired();
+            
+            builder.Entity<Plan>()
+                .Property(p => p.StartYear)
+                .IsRequired();
+
+            builder.Entity<Plan>()
+                .Property(p => p.EndYear)
+                .IsRequired();
+            
+            builder.Entity<Plan>()
+                .Property(p => p.Approved)
+                .ValueGeneratedOnAdd();
             
             builder.Entity<PlanUser>()
                 .HasOne(pu => pu.Plan)
@@ -249,6 +302,20 @@ namespace MPWebAPI.Models
                 .HasOne(p => p.ImpactedBusinessUnit)
                 .WithMany(ibu => ibu.ProjectsImpacting)
                 .HasForeignKey(p => p.ImpactedBusinessUnitId);
+            
+            builder.Entity<Project>()
+                .Property(p => p.Name)
+                .IsRequired();
+            
+            builder.Entity<Project>()
+                .Property(p => p.Created)
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("now()");
+            
+            builder.Entity<Project>()
+                .Property(p => p.Modified)
+                .ValueGeneratedOnAddOrUpdate()
+                .HasDefaultValue("now()");
             
             builder.Entity<StaffResourceProject>()
                 .HasOne(srp => srp.StaffResource)
@@ -296,11 +363,19 @@ namespace MPWebAPI.Models
                 .WithMany(bc => bc.ProjectBenefits)
                 .HasForeignKey(pbbc => pbbc.BenefitCategoryId);
             
+            builder.Entity<ProjectBenefit>()
+                .Property(pb => pb.Name)
+                .IsRequired();
+            
             // ProjectConfig
             builder.Entity<ProjectConfig>()
                 .HasOne(pc => pc.Plan)
                 .WithMany(p => p.Projects)
                 .HasForeignKey(pc => pc.PlanId);
+            
+            builder.Entity<ProjectConfig>()
+                .Property(pc => pc.StartDate)
+                .IsRequired();
             
             // ProjectOption
             builder.Entity<ProjectOption>()
@@ -318,11 +393,27 @@ namespace MPWebAPI.Models
                 .WithMany(po => po.RequiredBy)
                 .HasForeignKey(pd => pd.RequiredById);
             
+            builder.Entity<ProjectOption>()
+                .Property(po => po.Description)
+                .IsRequired();
+            
             // ProjectPhase
             builder.Entity<ProjectPhase>()
                 .HasOne(pp => pp.ProjectOption)
                 .WithMany(po => po.Phases)
                 .HasForeignKey(pp => pp.ProjectOptionId);
+            
+            builder.Entity<ProjectPhase>()
+                .Property(pp => pp.Name)
+                .IsRequired();
+            
+            builder.Entity<ProjectPhase>()
+                .Property(pp => pp.StartDate)
+                .IsRequired();
+            
+            builder.Entity<ProjectPhase>()
+                .Property(pp => pp.EndDate)
+                .IsRequired();
 
             // ResourceScenario
              builder.Entity<ResourceScenario>()
@@ -345,6 +436,20 @@ namespace MPWebAPI.Models
                 .WithMany(u => u.SharedResourceScenarios)
                 .HasForeignKey(pu => pu.UserId);
             
+            builder.Entity<ResourceScenario>()
+                .Property(rs => rs.Name)
+                .IsRequired();
+            
+            builder.Entity<ResourceScenario>()
+                .Property(rs => rs.Created)
+                .ValueGeneratedOnAdd()
+                .HasDefaultValueSql("now()");
+            
+            builder.Entity<ResourceScenario>()
+                .Property(rs => rs.Modified)
+                .ValueGeneratedOnAddOrUpdate()
+                .HasDefaultValue("now()");
+            
             // RiskProfile
             builder.Entity<RiskProfile>()
                 .HasOne(rp => rp.ProjectOption)
@@ -354,7 +459,8 @@ namespace MPWebAPI.Models
             builder.Entity<RiskProfile>()
                 .HasOne(rp => rp.RiskCategory)
                 .WithMany(rc => rc.RiskProfiles)
-                .HasForeignKey(rp => rp.RiskCategoryId);
+                .HasForeignKey(rp => rp.RiskCategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
             
             // StaffResource
             builder.Entity<StaffResource>()
@@ -372,11 +478,27 @@ namespace MPWebAPI.Models
                 .WithMany(src => src.StaffResources)
                 .HasForeignKey(srsrc => srsrc.StaffResourceCategoryId);
             
+            builder.Entity<StaffResource>()
+                .Property(sr => sr.Name)
+                .IsRequired();
+            
+            builder.Entity<StaffResource>()
+                .Property(sr => sr.StartDate)
+                .IsRequired();
+            
+            builder.Entity<StaffResource>()
+                .Property(sr => sr.EndDate)
+                .IsRequired();
+            
             // StaffTransaction
             builder.Entity<StaffTransaction>()
                 .HasOne(st => st.ProjectPhase)
                 .WithMany(pp => pp.StaffResources)
-                .HasForeignKey(st => st.ProjectPhaseId);                                                                                             
+                .HasForeignKey(st => st.ProjectPhaseId);
+
+            builder.Entity<StaffTransaction>()
+                .Property(st => st.Date)
+                .IsRequired();                                                                                             
             base.OnModelCreating(builder);
         }
     }
