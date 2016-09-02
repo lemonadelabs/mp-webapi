@@ -21,5 +21,6 @@ namespace MPWebAPI.Models
         public int FinancialYearStart { get; set; }
         public List<Group> Groups { get; set; }
         public List<BusinessUnit> BusinessUnits { get; set; }
+        public List<MerlinPlanUser> Users { get; set; }
     }
 }

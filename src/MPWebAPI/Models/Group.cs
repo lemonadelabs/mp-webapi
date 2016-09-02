@@ -25,6 +25,7 @@ namespace MPWebAPI.Models
         public List<StaffResourceCategory> StaffResourceCategories { get; set; }
         public List<FinancialResourceCategory> FinancialResourceCategories { get; set; }
         public List<RiskCategory> RiskCategories { get; set; }
+        public List<BenefitCategory> BenefitCategories { get; set; }
         
         public int OrganisationId { get; set; }
         public Organisation Organisation { get; set; }

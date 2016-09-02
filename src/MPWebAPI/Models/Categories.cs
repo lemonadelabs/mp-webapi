@@ -25,6 +25,9 @@ namespace MPWebAPI.Models
         public string Name { get; set; }
         public string Description { get; set; }
 
+        public int GroupId { get; set; }
+        public Group Group { get; set; }
+
         public List<ProjectBenefitBenefitCategory> ProjectBenefits { get; set; }
     }
 
@@ -37,6 +40,9 @@ namespace MPWebAPI.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+
+        public int GroupId { get; set; }
+        public Group Group { get; set; }
 
         public List<StaffResourceStaffResourceCategory> StaffResources { get; set; }
     }
@@ -56,6 +62,7 @@ namespace MPWebAPI.Models
 
         public List<ProjectFinancialResourceCategory> Projects { get; set; }
         public List<PartitionResourceCategory> FinancialPartitions { get; set; }
+        public List<FinancialTransactionResourceCategory> Transactions { get; set;}
     }
 
     /// <summary>

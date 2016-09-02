@@ -18,6 +18,6 @@ namespace MPWebAPI.Models
         public List<StaffTransaction> StaffResources { get; set; }
 
         public int ProjectOptionId { get; set; }
-        private ProjectOption ProjectOption { get; set; }
+        public ProjectOption ProjectOption { get; set; }
     }
 }

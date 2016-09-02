@@ -15,7 +15,7 @@ namespace MPWebAPI.Models
         public DateTime Date { get; set; }
         public bool Actual { get; set; }
         public string Reference { get; set; }
-        public List<FinancialResourceCategory> Categories { get; set; }
+        public List<FinancialTransactionResourceCategory> Categories { get; set; }
         
         public int ProjectPhaseId { get; set; }
         public ProjectPhase ProjectPhase { get; set; }
