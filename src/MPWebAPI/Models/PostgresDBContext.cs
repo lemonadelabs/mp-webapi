@@ -54,7 +54,6 @@ namespace MPWebAPI.Models
                 .WithMany(pb => pb.Alignments)
                 .HasForeignKey(a => a.ProjectBenefitId)
                 .OnDelete(DeleteBehavior.Cascade);
-                
             
             // BusinessUnit
             builder.Entity<BusinessUnit>()
@@ -69,7 +68,7 @@ namespace MPWebAPI.Models
             // BenefitCategory
             builder.Entity<BenefitCategory>()
                 .HasOne(bc => bc.Group)
-                .WithMany(g => BenefitCategories)
+                .WithMany(g => g.BenefitCategories)
                 .HasForeignKey(bc => bc.GroupId);
 
              builder.Entity<BenefitCategory>()
@@ -202,9 +201,11 @@ namespace MPWebAPI.Models
             
             builder.Entity<MerlinPlanUser>()
                 .HasOne(u => u.StaffResource)
-                .WithOne(sr => sr.UserData)
-                .HasForeignKey<MerlinPlanUser>(u => u.StaffResourceId);
+                .WithOne(sr => sr.UserData);
             
+            builder.Entity<UserGroup>()
+                .HasKey(ug => new { ug.UserId, ug.GroupId });
+
             builder.Entity<UserGroup>()
                 .HasOne(ug => ug.User)
                 .WithMany(u => u.Groups)
@@ -233,13 +234,11 @@ namespace MPWebAPI.Models
             // Plan
             builder.Entity<Plan>()
                 .HasOne(p => p.Creator)
-                .WithMany(u => u.Plans)
-                .HasForeignKey(p => p.CreatorId);
+                .WithMany(u => u.Plans);
             
             builder.Entity<Plan>()
                 .HasOne(p => p.Group)
-                .WithMany(g => g.Plans)
-                .HasForeignKey(p => p.GroupId);
+                .WithMany(g => g.Plans);
             
             builder.Entity<Plan>()
                 .Property(p => p.Created)
@@ -280,13 +279,11 @@ namespace MPWebAPI.Models
             // Project
             builder.Entity<Project>()
                 .HasOne(p => p.Creator)
-                .WithMany(u => u.Projects)
-                .HasForeignKey(p => p.CreatorId);
+                .WithMany(u => u.Projects);
             
             builder.Entity<Project>()
                 .HasOne(p => p.Group)
-                .WithMany(g => g.Projects)
-                .HasForeignKey(p => p.GroupId);
+                .WithMany(g => g.Projects);
             
             builder.Entity<Project>()
                 .HasOne(p => p.Owner)
@@ -315,7 +312,7 @@ namespace MPWebAPI.Models
             builder.Entity<Project>()
                 .Property(p => p.Modified)
                 .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValue("now()");
+                .HasDefaultValueSql("now()");
             
             builder.Entity<StaffResourceProject>()
                 .HasOne(srp => srp.StaffResource)
@@ -418,13 +415,11 @@ namespace MPWebAPI.Models
             // ResourceScenario
              builder.Entity<ResourceScenario>()
                 .HasOne(p => p.Creator)
-                .WithMany(u => u.ResourceScenarios)
-                .HasForeignKey(p => p.CreatorId);
+                .WithMany(u => u.ResourceScenarios);
             
             builder.Entity<ResourceScenario>()
                 .HasOne(p => p.Group)
-                .WithMany(g => g.ResourceScenarios)
-                .HasForeignKey(p => p.GroupId);
+                .WithMany(g => g.ResourceScenarios);
             
             builder.Entity<ResourceScenarioUser>()
                 .HasOne(pu => pu.ResourceScenario)
@@ -448,7 +443,7 @@ namespace MPWebAPI.Models
             builder.Entity<ResourceScenario>()
                 .Property(rs => rs.Modified)
                 .ValueGeneratedOnAddOrUpdate()
-                .HasDefaultValue("now()");
+                .HasDefaultValueSql("now()");
             
             // RiskProfile
             builder.Entity<RiskProfile>()

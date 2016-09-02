@@ -11,10 +11,7 @@ namespace MPWebAPI.Models
         public string Reference { get; set; }
         public List<ProjectFinancialResourceCategory> FinancialResourceCategories { get; set; }
         
-        public int? CreatorId { get; set; }
         public MerlinPlanUser Creator { get; set; }
-
-        public int? GroupId { get; set; }
         public Group Group { get; set; }
         
         public DateTime Created { get; set; }
