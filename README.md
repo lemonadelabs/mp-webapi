@@ -23,7 +23,8 @@ From the shell, type: `psql mpdata`
 This will launch the postgres client.  
 Run these commands by copying and pasting into the client:  
 `CREATE ROLE mpdbuser WITH LOGIN ENCRYPTED PASSWORD 'crooked-serf-radio' CREATEDB;`  
-`GRANT ALL PRIVILEGES ON DATABASE mpdata TO mpdbuser;`  
+`GRANT ALL PRIVILEGES ON DATABASE mpdata TO mpdbuser;`
+`ALTER DATABASE mpdata OWNER TO mpdbuser;`
 type `\q` to quit the client
 
 ### .Net Core Setup
