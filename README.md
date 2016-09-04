@@ -23,9 +23,12 @@ From the shell, type: `psql mpdata`
 This will launch the postgres client.  
 Run these commands by copying and pasting into the client:  
 `CREATE ROLE mpdbuser WITH LOGIN ENCRYPTED PASSWORD 'crooked-serf-radio' CREATEDB;`  
-`GRANT ALL PRIVILEGES ON DATABASE mpdata TO mpdbuser;`
-`ALTER DATABASE mpdata OWNER TO mpdbuser;`
+`GRANT ALL PRIVILEGES ON DATABASE mpdata TO mpdbuser;`  
+`ALTER DATABASE mpdata OWNER TO mpdbuser;`  
 type `\q` to quit the client
+
+#### Database Fixtures
+How fixtures will work is currently being worked out. In the future there will likely be a directory of fixture files that can be added when the application is first run. What fixture file will be used will be specified in `appsettings.json`.
 
 ### .Net Core Setup
 Go [here](https://www.microsoft.com/net/core) to download and install .Net core
@@ -36,6 +39,7 @@ Clone the repo at git@github.com:lemonadelabs/mp-webapi.git
 ### Install dependencies and perform migrations
 Navigate to the `/src/MPWebAPI` directory inside the project.  
 Run `dotnet restore` to download the project dependencies.  
+If this is an update rather than a first time install, drop the database first before applying migrations with `dotnet ef database drop`  
 Run `dotnet ef database update` to apply the current migrations.
 
 ### Run the application
