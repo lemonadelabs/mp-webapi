@@ -18,6 +18,7 @@ namespace MPWebAPI.Models
         public List<ResourceScenario> ResourceScenarios { get; set; }
         public List<Plan> Plans { get; set; }
         public List<Project> Projects { get; set; }
+        public List<Plan> PlansApproved { get; set; }
 
         // Sharing
         public List<ResourceScenarioUser> SharedResourceScenarios { get; set; }
@@ -26,11 +27,12 @@ namespace MPWebAPI.Models
 
         // Related resource data
         public StaffResource StaffResource { get; set; }
+        public int StaffResourceId {get; set;}
     }
 
     public class UserGroup
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public MerlinPlanUser User { get; set; }
 
         public int GroupId { get; set; }

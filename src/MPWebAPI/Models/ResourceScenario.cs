@@ -26,7 +26,7 @@ namespace MPWebAPI.Models
         public int ResourceScenarioId { get; set; }
         public ResourceScenario ResourceScenario { get; set; }
 
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public MerlinPlanUser User { get; set; }
     }
 }

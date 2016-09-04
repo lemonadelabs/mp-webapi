@@ -32,7 +32,7 @@ namespace MPWebAPI.Models
         public int PlanId { get; set; }
         public Plan Plan { get; set; }
 
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public MerlinPlanUser User { get; set; }
     }
     

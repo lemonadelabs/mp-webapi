@@ -148,6 +148,9 @@ namespace MPWebAPI.Models
                 .HasOne(frp => frp.FinancialResource)
                 .WithMany(fr => fr.Partitions)
                 .HasForeignKey(frp => frp.FinancialResourceId);
+
+            builder.Entity<PartitionResourceCategory>()
+                .HasKey(prc => new {prc.FinancialResourcePartitionId, prc.FinancialResourceCategoryId});
             
             builder.Entity<PartitionResourceCategory>()
                 .HasOne(prc => prc.FinancialResourcePartition)
@@ -169,6 +172,9 @@ namespace MPWebAPI.Models
             builder.Entity<FinancialTransaction>()
                 .Property(ft => ft.Date)
                 .IsRequired();
+            
+            builder.Entity<FinancialTransactionResourceCategory>()
+                .HasKey(ftrc => new {ftrc.FinancialResourceCategoryId, ftrc.FinancialTransactionId});
             
             builder.Entity<FinancialTransactionResourceCategory>()
                 .HasOne(ftrc => ftrc.FinancialResourceCategory)
@@ -241,6 +247,10 @@ namespace MPWebAPI.Models
                 .WithMany(g => g.Plans);
             
             builder.Entity<Plan>()
+                .HasOne(p => p.ApprovedBy)
+                .WithMany(u => u.PlansApproved);
+            
+            builder.Entity<Plan>()
                 .Property(p => p.Created)
                 .ValueGeneratedOnAdd()
                 .HasDefaultValueSql("now()");
@@ -262,9 +272,8 @@ namespace MPWebAPI.Models
                 .Property(p => p.EndYear)
                 .IsRequired();
             
-            builder.Entity<Plan>()
-                .Property(p => p.Approved)
-                .ValueGeneratedOnAdd();
+            builder.Entity<PlanUser>()
+                .HasKey(pu => new {pu.PlanId, pu.UserId});
             
             builder.Entity<PlanUser>()
                 .HasOne(pu => pu.Plan)
@@ -315,6 +324,9 @@ namespace MPWebAPI.Models
                 .HasDefaultValueSql("now()");
             
             builder.Entity<StaffResourceProject>()
+                .HasKey(srp => new {srp.StaffResourceId, srp.ProjectId});
+            
+            builder.Entity<StaffResourceProject>()
                 .HasOne(srp => srp.StaffResource)
                 .WithMany(sr => sr.ProjectsManaged)
                 .HasForeignKey(srp => srp.StaffResourceId);
@@ -325,6 +337,9 @@ namespace MPWebAPI.Models
                 .HasForeignKey(srp => srp.ProjectId);
             
             builder.Entity<ProjectFinancialResourceCategory>()
+                .HasKey(pfrc => new {pfrc.ProjectId, pfrc.FinancialResourceCategoryId});
+
+            builder.Entity<ProjectFinancialResourceCategory>()
                 .HasOne(pfrc => pfrc.Project)
                 .WithMany(p => p.FinancialResourceCategories)
                 .HasForeignKey(pfrc => pfrc.ProjectId);
@@ -333,6 +348,9 @@ namespace MPWebAPI.Models
                 .HasOne(pfrc => pfrc.FinancialResourceCategory)
                 .WithMany(frc => frc.Projects)
                 .HasForeignKey(pfrc => pfrc.FinancialResourceCategoryId);
+            
+            builder.Entity<ProjectUser>()
+                .HasKey(pu => new {pu.ProjectId, pu.UserId});
 
             builder.Entity<ProjectUser>()
                 .HasOne(pu => pu.Project)
@@ -349,6 +367,9 @@ namespace MPWebAPI.Models
                 .HasOne(pb => pb.ProjectOption)
                 .WithMany(po => po.Benefits)
                 .HasForeignKey(pb => pb.ProjectOptionId);
+            
+            builder.Entity<ProjectBenefitBenefitCategory>()
+                .HasKey(pbc => new {pbc.ProjectBenefitId, pbc.BenefitCategoryId});
             
             builder.Entity<ProjectBenefitBenefitCategory>()
                 .HasOne(pbbc => pbbc.ProjectBenefit)
@@ -379,6 +400,9 @@ namespace MPWebAPI.Models
                 .HasOne(po => po.Project)
                 .WithMany(p => p.Options)
                 .HasForeignKey(po => po.ProjectId);
+            
+            builder.Entity<ProjectDependency>()
+                .HasKey(pd => new {pd.DependsOnId, pd.RequiredById});
             
             builder.Entity<ProjectDependency>()
                 .HasOne(pd => pd.DependsOn)
@@ -420,6 +444,9 @@ namespace MPWebAPI.Models
             builder.Entity<ResourceScenario>()
                 .HasOne(p => p.Group)
                 .WithMany(g => g.ResourceScenarios);
+            
+            builder.Entity<ResourceScenarioUser>()
+                .HasKey(rsu => new {rsu.ResourceScenarioId, rsu.UserId});
             
             builder.Entity<ResourceScenarioUser>()
                 .HasOne(pu => pu.ResourceScenario)
@@ -464,6 +491,9 @@ namespace MPWebAPI.Models
                 .HasForeignKey(sr => sr.ResourceScenarioId);
             
             builder.Entity<StaffResourceStaffResourceCategory>()
+                .HasKey(srsrc => new {srsrc.StaffResourceId, srsrc.StaffResourceCategoryId});
+            
+            builder.Entity<StaffResourceStaffResourceCategory>()
                 .HasOne(srsrc => srsrc.StaffResource)
                 .WithMany(sr => sr.Categories)
                 .HasForeignKey(srsrc => srsrc.StaffResourceId);
@@ -484,6 +514,11 @@ namespace MPWebAPI.Models
             builder.Entity<StaffResource>()
                 .Property(sr => sr.EndDate)
                 .IsRequired();
+            
+            builder.Entity<StaffResource>()
+                .HasOne(sr => sr.UserData)
+                .WithOne(u => u.StaffResource)
+                .HasForeignKey<MerlinPlanUser>(u => u.StaffResourceId);
             
             // StaffTransaction
             builder.Entity<StaffTransaction>()
