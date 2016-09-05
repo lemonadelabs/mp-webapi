@@ -59,7 +59,8 @@
 
   "publishOptions": {
     "include": [
-      "appsettings.json"
+      "appsettings.json",
+      "Fixtures"
     ]
   },
 
