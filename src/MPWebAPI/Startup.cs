@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using MPWebAPI.Models;
 using Swashbuckle.Swagger.Model;
+using MPWebAPI.Fixtures;
 
 namespace MPWebAPI
 {
@@ -90,6 +91,10 @@ namespace MPWebAPI
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUi();
+            if(Configuration.GetSection("Fixtures").GetValue<bool>("Enabled"))
+            {
+                app.AddFixture(Configuration.GetSection("Fixtures").GetValue<string>("Fixture"));
+            }
         }
     }
 }
