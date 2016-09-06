@@ -16,13 +16,13 @@ namespace MPWebAPI.Models
 
         // Ownership
         public List<ResourceScenario> ResourceScenarios { get; set; }
-        public List<Plan> Plans { get; set; }
+        public List<Portfolio>Portfolios{ get; set; }
         public List<Project> Projects { get; set; }
-        public List<Plan> PlansApproved { get; set; }
+        public List<Portfolio> PortfoliosApproved { get; set; }
 
         // Sharing
         public List<ResourceScenarioUser> SharedResourceScenarios { get; set; }
-        public List<PlanUser> SharedPlans { get; set; }
+        public List<PortfolioUser> SharedPortfolios { get; set; }
         public List<ProjectUser> SharedProjects { get; set; }
 
         // Related resource data

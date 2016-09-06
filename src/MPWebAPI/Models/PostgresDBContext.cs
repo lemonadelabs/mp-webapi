@@ -26,8 +26,8 @@ namespace MPWebAPI.Models
         public DbSet<UserGroup> UserGroups;
         public DbSet<Organisation> Organisations;
         public DbSet<PhaseConfig> PhaseConfigs;
-        public DbSet<Plan> Plans;
-        public DbSet<PlanUser> PlanUsers;
+        public DbSet<Portfolio> Portfolios;
+        public DbSet<PortfolioUser> PlanUsers;
         public DbSet<Project> Projects;
         public DbSet<ProjectBenefit> ProjectBenefits;
         public DbSet<ProjectConfig> ProjectConfigs;
@@ -236,51 +236,51 @@ namespace MPWebAPI.Models
                 .HasForeignKey(pc => pc.ProjectConfigId);
             
             // Plan
-            builder.Entity<Plan>()
+            builder.Entity<Portfolio>()
                 .HasOne(p => p.Creator)
-                .WithMany(u => u.Plans);
+                .WithMany(u => u.Portfolios);
             
-            builder.Entity<Plan>()
+            builder.Entity<Portfolio>()
                 .HasOne(p => p.Group)
-                .WithMany(g => g.Plans);
+                .WithMany(g => g.Portfolios);
             
-            builder.Entity<Plan>()
+            builder.Entity<Portfolio>()
                 .HasOne(p => p.ApprovedBy)
-                .WithMany(u => u.PlansApproved);
+                .WithMany(u => u.PortfoliosApproved);
             
-            builder.Entity<Plan>()
+            builder.Entity<Portfolio>()
                 .Property(p => p.Created)
                 .ValueGeneratedOnAdd()
                 .HasDefaultValueSql("now()");
             
-            builder.Entity<Plan>()
+            builder.Entity<Portfolio>()
                 .Property(p => p.Modified)
                 .ValueGeneratedOnAddOrUpdate()
                 .HasDefaultValueSql("now()");
             
-            builder.Entity<Plan>()
+            builder.Entity<Portfolio>()
                 .Property(p => p.Name)
                 .IsRequired();
             
-            builder.Entity<Plan>()
+            builder.Entity<Portfolio>()
                 .Property(p => p.StartYear)
                 .IsRequired();
 
-            builder.Entity<Plan>()
+            builder.Entity<Portfolio>()
                 .Property(p => p.EndYear)
                 .IsRequired();
             
-            builder.Entity<PlanUser>()
+            builder.Entity<PortfolioUser>()
                 .HasKey(pu => new {pu.PlanId, pu.UserId});
             
-            builder.Entity<PlanUser>()
+            builder.Entity<PortfolioUser>()
                 .HasOne(pu => pu.Plan)
                 .WithMany(p => p.ShareUser)
                 .HasForeignKey(pu => pu.PlanId);
             
-            builder.Entity<PlanUser>()
+            builder.Entity<PortfolioUser>()
                 .HasOne(pu => pu.User)
-                .WithMany(u => u.SharedPlans)
+                .WithMany(u => u.SharedPortfolios)
                 .HasForeignKey(pu => pu.UserId);
             
             // Project

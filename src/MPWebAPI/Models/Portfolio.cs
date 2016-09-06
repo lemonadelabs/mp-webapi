@@ -6,7 +6,7 @@ namespace MPWebAPI.Models
     /// <summary>
     /// A plan is a configuration of projects and project phases in time. 
     /// </summary>
-    public class Plan
+    public class Portfolio
     {
         public int Id { get; set; }
         
@@ -23,14 +23,14 @@ namespace MPWebAPI.Models
         public bool ShareGroup { get; set; }
         public bool Approved { get; set; }
         public MerlinPlanUser ApprovedBy { get; set; }
-        public List<PlanUser> ShareUser { get; set; }
+        public List<PortfolioUser> ShareUser { get; set; }
         public List<ProjectConfig> Projects { get; set; }
     }
     
-    public class PlanUser
+    public class PortfolioUser
     {
         public int PlanId { get; set; }
-        public Plan Plan { get; set; }
+        public Portfolio Plan { get; set; }
 
         public string UserId { get; set; }
         public MerlinPlanUser User { get; set; }

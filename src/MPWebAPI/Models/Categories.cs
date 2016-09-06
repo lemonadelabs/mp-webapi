@@ -74,6 +74,7 @@ namespace MPWebAPI.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public float Bias { get; set; }
 
         public int GroupId { get; set; }
         public Group Group { get; set; }

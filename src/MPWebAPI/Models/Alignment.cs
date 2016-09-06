@@ -13,6 +13,8 @@ namespace MPWebAPI.Models
         public float Value { get; set; }
         public DateTime Date { get; set; }
         public bool Actual { get; set; }
+        public float RiskBias { get; set; }
+        
 
         public int AlignmentCategoryId { get; set; }
         public AlignmentCategory AlignmentCategory { get; set; }

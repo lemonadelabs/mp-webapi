@@ -19,7 +19,7 @@ namespace MPWebAPI.Models
 
         public List<ResourceScenario> ResourceScenarios { get; set; }
         public List<Project> Projects { get; set; }
-        public List<Plan> Plans { get; set; }
+        public List<Portfolio> Portfolios { get; set; }
 
         public List<AlignmentCategory> AlignmentCategories { get; set; }
         public List<StaffResourceCategory> StaffResourceCategories { get; set; }

@@ -91,9 +91,12 @@ namespace MPWebAPI
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUi();
+
+            var fixtureConfig = Configuration.GetSection("Fixtures");
+
             if(Configuration.GetSection("Fixtures").GetValue<bool>("Enabled"))
             {
-                app.AddFixture(Configuration.GetSection("Fixtures").GetValue<string>("Fixture"));
+                
             }
         }
     }

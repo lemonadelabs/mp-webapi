@@ -13,7 +13,7 @@ namespace MPWebAPI.Models
         public List<PhaseConfig> Phases { get; set; }
         
         public int PlanId { get; set; }
-        public Plan Plan { get; set; }
+        public Portfolio Plan { get; set; }
         
         public int ProjectOptionId { get; set; }
         public ProjectOption ProjectOption { get; set; }    

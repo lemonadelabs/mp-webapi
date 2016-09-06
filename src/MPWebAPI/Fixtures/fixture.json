@@ -1,32 +1,46 @@
 {
     "SchemaSupport": "20160904224949_merlinplanschema",
-    "Data": {
-        "Organisations": [
 
-        ],
+    "Organisations": [
+        {
+            "Name": "Department of Nilism",
+            "Address1": "1 Nowhere Way",
+            "Address2": "Nowhereville",
+            "Address3": "The Styx",
+            "Postcode": "0000",
+            "Country": "Netherworld",
+            "Contact": "jssmith@don.govt.nz",
+            "WebDomain": "don.govt.nz",
+            "FinancialYearStart" : 4
+        }
+    ],
+    
+    "Groups": [
+
+    ],
+
+    "BusinessUnits": [
+
+    ],
+
+    "RiskCategories": [
+
+    ],
+
+    "AlignmentCategories": [
         
-        "Groups": [
+    ],
 
-        ],
+    "Alignments": [
 
-        "RiskCategories": [
+    ],
 
-        ],
+    "Users": [
 
-        "AlignmentCategories": [
-            
-        ],
+    ],
 
-        "Alignments": [
+    "Plans": [
 
-        ],
-
-        "Users": [
-
-        ],
-
-        "Plans": [
-
-        ]
-    }
+    ]
+    
 }
