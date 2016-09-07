@@ -52,13 +52,50 @@
 
     "RiskCategories": [
         {
-
+            "Name": "Enterprise - Reputation and Trust",
+            "Bias": 1.0
+        },
+        {
+            "Name": "Enterprise - Investment / Fiscal",
+            "Bias": 1.0
+        },
+        {
+            "Name": "Enterprise - Strategies",
+            "Bias": 1.0
+        },
+        {
+            "Name": "Enterprise - Delivery",
+            "Bias": 1.0
+        },
+        {
+            "Name": "Enterprise - Stakeholders",
+            "Bias": 1.0
+        },
+        {
+            "Name": "AoG - Reputation and Trust",
+            "Bias": 1.0
+        },
+        {
+            "Name": "AoG - Investment / Fiscal",
+            "Bias": 1.0
+        },
+        {
+            "Name": "AoG - Strategies",
+            "Bias": 1.0
+        },
+        {
+            "Name": "AoG - Delivery",
+            "Bias": 1.0
+        },
+        {
+            "Name": "AoG - Stakeholders",
+            "Bias": 1.0
         }
     ],
 
     "AlignmentCategories": [
         {
-            
+
         }
     ],
 
@@ -66,8 +103,72 @@
 
     ],
 
-    "Users": [
 
+
+    "Users": [
+        {
+            "UserName": "fnietzsche",
+            "FirstName": "Friedrich",
+            "LastName": "Nietzsche",
+            "EmployeeId": "0001",
+            "Password": "abyss",
+            "Email": "friedrich@don.govt.nz",
+            "Roles": ["Staff"]
+        },
+        {
+            "UserName": "buddha",
+            "FirstName": "Buddha",
+            "LastName": "Siddhartha",
+            "EmployeeId": "0002",
+            "Password": "nirvana",
+            "Email": "buddha@don.govt.nz",
+            "Roles": ["Project Admin"]
+        },
+        {
+            "UserName": "mduchamp",
+            "FirstName": "Marcel",
+            "LastName": "Duchamp",
+            "EmployeeId": "0003",
+            "Password": "latrine",
+            "Email": "duchamp@don.govt.nz",
+            "Roles": ["Planner"]
+        },
+        {
+            "UserName": "bhicks",
+            "FirstName": "Bill",
+            "LastName": "Hicks",
+            "EmployeeId": "0004",
+            "Password": "nonsmokersdieeveryday",
+            "Email": "hicks@don.govt.nz",
+            "Roles": ["Approver", "Tracker"]
+        },
+        {
+            "UserName": "csawtell",
+            "FirstName": "Caleb",
+            "LastName": "Sawtell",
+            "EmployeeId": "0005",
+            "Password": "caleb",
+            "Email": "caleb.sawtell@lemonadelabs.io",
+            "Roles": ["Lemonade Admin"]
+        },
+        {
+            "UserName": "swinmason",
+            "FirstName": "Sam",
+            "LastName": "Win-Mason",
+            "EmployeeId": "0006",
+            "Password": "sam",
+            "Email": "sam@lemonadelabs.io",
+            "Roles": ["Lemonade Admin"]
+        },
+        {
+            "UserName": "asandhu",
+            "FirstName": "Amardeep",
+            "LastName": "Sandhu",
+            "EmployeeId": "0007",
+            "Password": "amardeep",
+            "Email": "amardeep.sandhu@lemonadelabs.io",
+            "Roles": ["Manager"]
+        }
     ],
 
     "Plans": [

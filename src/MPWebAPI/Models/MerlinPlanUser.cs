@@ -12,6 +12,10 @@ namespace MPWebAPI.Models
         public Organisation Organisation { get; set; }
         
         public string EmployeeId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string NickName { get; set; }
+        
         public List<UserGroup> Groups { get; set; }
 
         // Ownership

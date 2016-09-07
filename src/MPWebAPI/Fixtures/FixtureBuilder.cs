@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace MPWebAPI.Fixtures
 {
@@ -17,7 +19,7 @@ namespace MPWebAPI.Fixtures
     /// </summary>
     public class FixtureBuilder : IFixtureBuilder
     {
-        public class FixtureData
+        protected class FixtureData
         {
             public class ProjectFixture
             {
@@ -27,6 +29,15 @@ namespace MPWebAPI.Fixtures
             public class PortfolioFixture
             {
 
+            }
+
+            public class NewUser
+            {
+                public string UserName { get; set; }
+                public string EmployeeId { get; set; }
+                public string Password { get; set; }
+                public string Email { get; set; }
+                public List<string> Roles { get; set; }
             }
             
             public List<Organisation> Organisations { get; set; }
@@ -41,18 +52,27 @@ namespace MPWebAPI.Fixtures
             public List<FinancialResourceCategory> FinancialResourceCategories { get; set; }
 
             public List<Alignment> Alignments { get; set; }
-            public List<MerlinPlanUser> Users { get; set; }
+            public List<NewUser> Users { get; set; }
             public List<PortfolioFixture> Portfolios { get; set; }
         }
 
         private readonly PostgresDBContext _dbcontext;
         private readonly ILogger<FixtureBuilder> _logger;
+        private readonly UserManager<MerlinPlanUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private FixtureData _fixtureData;
 
-        public FixtureBuilder(PostgresDBContext dbcontext, ILoggerFactory loggerFactory)
+        public FixtureBuilder(
+            PostgresDBContext dbcontext, 
+            ILoggerFactory loggerFactory,
+            UserManager<MerlinPlanUser> userManager,
+            RoleManager<IdentityRole> roleManager
+            )
         {
             _dbcontext = dbcontext;
             _logger = loggerFactory.CreateLogger<FixtureBuilder>();
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
         
         public void AddFixture(string fixtureFile, bool flushDb = false)
@@ -76,11 +96,8 @@ namespace MPWebAPI.Fixtures
                 return;
             }
 
-            // Parse migration json
             _fixtureData = JsonConvert.DeserializeObject<FixtureData>(fixtureJSON);
 
-            // Create db objects
-            // Create Organisations
             if(flushDb)
             {
                 _dbcontext.Database.EnsureDeleted();
@@ -89,9 +106,9 @@ namespace MPWebAPI.Fixtures
 
             AddOrganisations();
             AddGroups();
-            //AddUsers();
+            AddUsers();
             AddBusinessUnits();
-            //AddRiskCategories();
+            AddRiskCategories();
             //AddAlignmentCategories();
             //AddResourceScenarios();
             //AddPortfolios();
@@ -99,18 +116,46 @@ namespace MPWebAPI.Fixtures
 
         private void AddPortfolios()
         {
+
         }
 
         private void AddResourceScenarios()
         {
+
         }
 
         private void AddUsers()
         {
+            if (!_dbcontext.Users.Any())
+            {
+                foreach (var u in _fixtureData.Users)
+                {
+                    // Add Users
+                    var newUser = new MerlinPlanUser() {
+                        UserName = u.UserName,
+                        EmployeeId = u.EmployeeId,
+                        Email = u.Email
+                    };
+                    _userManager.CreateAsync(newUser, u.Password);
+                    
+                    // Add Roles
+                    foreach (var r in u.Roles)
+                    {
+                        if (!_roleManager.RoleExistsAsync(r).Result)
+                        {
+                            var newRole = new IdentityRole();
+                            newRole.Name = r;
+                            _roleManager.CreateAsync(newRole);
+                        }
+                        _userManager.AddToRoleAsync(newUser, r);
+                    }
+                }
+            }
         }
 
         private void AddAlignmentCategories()
         {
+
         }
 
         private void AddBusinessUnits()
@@ -120,7 +165,6 @@ namespace MPWebAPI.Fixtures
                 foreach (var bu in _fixtureData.BusinessUnits)
                 {
                     bu.Organisation = _dbcontext.Organisation.First();
-                    
                 }
                 _dbcontext.BusinessUnit.AddRange(_fixtureData.BusinessUnits);
                 _dbcontext.SaveChanges();
@@ -129,6 +173,15 @@ namespace MPWebAPI.Fixtures
 
         private void AddRiskCategories()
         {
+            if (!_dbcontext.RiskCategory.Any())
+            {
+                foreach (var rc in _fixtureData.RiskCategories)
+                {
+                    rc.Group = _dbcontext.Group.First();
+                }
+                _dbcontext.RiskCategory.AddRange(_fixtureData.RiskCategories);
+                _dbcontext.SaveChanges();
+            }
         }
 
         private void AddGroups()

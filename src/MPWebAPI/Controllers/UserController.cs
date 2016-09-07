@@ -11,14 +11,10 @@ namespace MPWebAPI.Controllers
     public class UserController : Controller
     {
         private UserManager<MerlinPlanUser> _userManager;
-        private SignInManager<MerlinPlanUser> _signInManager;
 
-        public UserController(
-            UserManager<MerlinPlanUser> userManager, 
-            SignInManager<MerlinPlanUser> signInManager)
+        public UserController(UserManager<MerlinPlanUser> userManager)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
         }
 
         public class Register 

@@ -32,9 +32,18 @@ namespace MPWebAPI
             
             services.AddDbContext<PostgresDBContext>(options => options.UseNpgsql(sqlConnectionString));
             
-            services.AddIdentity<MerlinPlanUser, IdentityRole>()
+            services.AddIdentity<MerlinPlanUser, IdentityRole>(options => 
+                {
+                    options.Password.RequireDigit = false;
+                    options.Password.RequiredLength = 3;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                }
+            )
                 .AddEntityFrameworkStores<PostgresDBContext>()
                 .AddDefaultTokenProviders();
+
             
             services.AddMvc();
 
@@ -92,11 +101,11 @@ namespace MPWebAPI
             app.UseMvc();
             app.UseSwagger();
             app.UseSwaggerUi();
-
-            var fixtureBuilder =  app.ApplicationServices.GetService<IFixtureBuilder>();
+           
             var fixtureConfig = Configuration.GetSection("Fixtures");
             if(fixtureConfig.GetValue<bool>("Enabled"))
             {
+                var fixtureBuilder =  app.ApplicationServices.GetService<IFixtureBuilder>();
                 fixtureBuilder.AddFixture(
                     fixtureConfig.GetValue<string>("Fixture"),
                     fixtureConfig.GetValue<bool>("FlushDB")
