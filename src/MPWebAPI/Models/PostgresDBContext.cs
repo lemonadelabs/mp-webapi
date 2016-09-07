@@ -11,32 +11,32 @@ namespace MPWebAPI.Models
         {
         }
 
-        public DbSet<Alignment> Alignments;
-        public DbSet<BusinessUnit> BusinessUnits;
-        public DbSet<BenefitCategory> BenefitCategories;
-        public DbSet<StaffResourceCategory> StaffResourceCategories;
-        public DbSet<FinancialResourceCategory> FinancialResourceCategories;
-        public DbSet<RiskCategory> RiskCategories;
-        public DbSet<AlignmentCategory> AlignmentCategories;
-        public DbSet<FinancialAdjustment> FinancialAdjustments;
-        public DbSet<FinancialResource> FinancialResources;
-        public DbSet<FinancialResourcePartition> FinancialResourcePartitions;
-        public DbSet<FinancialTransaction> FinancialTransactions;
-        public DbSet<Group> Groups;
-        public DbSet<UserGroup> UserGroups;
-        public DbSet<Organisation> Organisations;
-        public DbSet<PhaseConfig> PhaseConfigs;
-        public DbSet<Portfolio> Portfolios;
-        public DbSet<PortfolioUser> PlanUsers;
-        public DbSet<Project> Projects;
-        public DbSet<ProjectBenefit> ProjectBenefits;
-        public DbSet<ProjectConfig> ProjectConfigs;
-        public DbSet<ProjectOption> ProjectOptions;
-        public DbSet<ProjectPhase> ProjectPhases;
-        public DbSet<ResourceScenario> ResourceScenarios;
-        public DbSet<RiskProfile> RiskProfiles;
-        public DbSet<StaffResource> StaffResources;
-        public DbSet<StaffTransaction> StaffTransactions;
+        public DbSet<Alignment> Alignment { get; set; }
+        public DbSet<BusinessUnit> BusinessUnit { get; set; }
+        public DbSet<BenefitCategory> BenefitCategory { get; set; }
+        public DbSet<StaffResourceCategory> StaffResourceCategory { get; set; }
+        public DbSet<FinancialResourceCategory> FinancialResourceCategory { get; set; }
+        public DbSet<RiskCategory> RiskCategory { get; set; }
+        public DbSet<AlignmentCategory> AlignmentCategory { get; set; }
+        public DbSet<FinancialAdjustment> FinancialAdjustment { get; set; }
+        public DbSet<FinancialResource> FinancialResource { get; set; }
+        public DbSet<FinancialResourcePartition> FinancialResourcePartition { get; set; }
+        public DbSet<FinancialTransaction> FinancialTransaction { get; set; }
+        public DbSet<Group> Group { get; set; }
+        public DbSet<UserGroup> UserGroup { get; set; }
+        public DbSet<Organisation> Organisation { get; set; }
+        public DbSet<PhaseConfig> PhaseConfig { get; set; }
+        public DbSet<Portfolio> Portfolio { get; set; }
+        public DbSet<PortfolioUser> PortfolioUser { get; set; }
+        public DbSet<Project> Project { get; set; }
+        public DbSet<ProjectBenefit> ProjectBenefit { get; set; }
+        public DbSet<ProjectConfig> ProjectConfig { get; set; }
+        public DbSet<ProjectOption> ProjectOption { get; set; }
+        public DbSet<ProjectPhase> ProjectPhase { get; set; }
+        public DbSet<ResourceScenario> ResourceScenario { get; set; }
+        public DbSet<RiskProfile> RiskProfile { get; set; }
+        public DbSet<StaffResource> StaffResource { get; set; }
+        public DbSet<StaffTransaction> StaffTransaction { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

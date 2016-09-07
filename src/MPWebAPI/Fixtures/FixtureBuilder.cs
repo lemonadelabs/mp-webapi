@@ -1,16 +1,21 @@
+using System.Linq;
 using System.IO;
 using MPWebAPI.Models;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
-using System;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 
 namespace MPWebAPI.Fixtures
 {
-    public class FixtureBuilder
+    /// <summary>
+    /// Seeds the MP database with some example data. This is
+    /// used for testing and demonstration purposes. It could alos 
+    /// be used to populate the db for a client to save them using the 
+    /// UI. This class should be requested via DI and added to your DI
+    /// container as a service.
+    /// </summary>
+    public class FixtureBuilder : IFixtureBuilder
     {
         public class FixtureData
         {
@@ -24,11 +29,11 @@ namespace MPWebAPI.Fixtures
 
             }
             
-            public string SchemaSupport { get; set; }
             public List<Organisation> Organisations { get; set; }
             public List<Group> Groups { get; set; }
             
             // Categories
+            public List<BusinessUnit> BusinessUnits { get; set; }
             public List<RiskCategory> RiskCategories { get; set; }
             public List<AlignmentCategory> AlignmentCategories { get; set; }
             public List<BenefitCategory> BenefitCategories { get; set; }
@@ -41,32 +46,23 @@ namespace MPWebAPI.Fixtures
         }
 
         private readonly PostgresDBContext _dbcontext;
+        private readonly ILogger<FixtureBuilder> _logger;
+        private FixtureData _fixtureData;
 
-        public FixtureBuilder(PostgresDBContext dbcontext)
+        public FixtureBuilder(PostgresDBContext dbcontext, ILoggerFactory loggerFactory)
         {
             _dbcontext = dbcontext;
+            _logger = loggerFactory.CreateLogger<FixtureBuilder>();
         }
         
         public void AddFixture(string fixtureFile, bool flushDb = false)
         {
-            var loggerFactory = new LoggerFactory();
-            loggerFactory.AddConsole();
-            loggerFactory.AddDebug();
-            
-            var logger = loggerFactory.CreateLogger("FixtureBuilder");
-            // var db = app.ApplicationServices.GetService<PostgresDBContext>();
-            
-            if (flushDb)
-            {
-                         
-            }
-            
             var fixturePath = Path.Combine(
                 Directory.GetCurrentDirectory(), 
                 Path.Combine("Fixtures", fixtureFile));
             
             string fixtureJSON = null;
-
+            
             try
             {
                 using(StreamReader sr = new StreamReader(File.OpenRead(fixturePath)))
@@ -76,34 +72,85 @@ namespace MPWebAPI.Fixtures
             }
             catch (System.Exception)
             {
-                logger.LogError(string.Format("The fixture file {0} could not be loaded, skipping fixture add.", fixturePath));
+                _logger.LogError(string.Format("The fixture file {0} could not be loaded, skipping fixture add.", fixturePath));
                 return;
             }
 
             // Parse migration json
-            var fixtureData = JsonConvert.DeserializeObject<FixtureData>(fixtureJSON);
-            var org = fixtureData.Organisations[0];
-          
+            _fixtureData = JsonConvert.DeserializeObject<FixtureData>(fixtureJSON);
+
             // Create db objects
             // Create Organisations
-            // db.Organisations.Add(new Organisation());
-            // db.SaveChanges();
-            // logger.LogInformation(fixtureData.Organisations[0].Name);
-            
+            if(flushDb)
+            {
+                _dbcontext.Database.EnsureDeleted();
+                _dbcontext.Database.Migrate();
+            }
 
-            // Create Groups
+            AddOrganisations();
+            AddGroups();
+            //AddUsers();
+            AddBusinessUnits();
+            //AddRiskCategories();
+            //AddAlignmentCategories();
+            //AddResourceScenarios();
+            //AddPortfolios();
+        }
 
-            // Create RiskCategories
+        private void AddPortfolios()
+        {
+        }
 
-            // Create AlignmentCategories
+        private void AddResourceScenarios()
+        {
+        }
 
-            // Create Alignments
+        private void AddUsers()
+        {
+        }
 
-            // Create Users
+        private void AddAlignmentCategories()
+        {
+        }
 
-            // CreatePortfolios
+        private void AddBusinessUnits()
+        {
+            if (!_dbcontext.BusinessUnit.Any())
+            {
+                foreach (var bu in _fixtureData.BusinessUnits)
+                {
+                    bu.Organisation = _dbcontext.Organisation.First();
+                    
+                }
+                _dbcontext.BusinessUnit.AddRange(_fixtureData.BusinessUnits);
+                _dbcontext.SaveChanges();
+            }
+        }
 
-            // Save the objects
+        private void AddRiskCategories()
+        {
+        }
+
+        private void AddGroups()
+        {
+            if (!_dbcontext.Group.Any())
+            {
+                foreach (var g in _fixtureData.Groups)
+                {
+                     g.Organisation = _dbcontext.Organisation.First();
+                }
+                _dbcontext.Group.AddRange(_fixtureData.Groups);
+                _dbcontext.SaveChanges();
+            }
+        }
+
+        private void AddOrganisations()
+        {
+            if (!_dbcontext.Organisation.Any())
+            {
+                _dbcontext.Organisation.AddRange(_fixtureData.Organisations);
+                _dbcontext.SaveChanges();
+            }
         }
     }
 }

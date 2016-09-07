@@ -1,6 +1,4 @@
 {
-    "SchemaSupport": "20160904224949_merlinplanschema",
-
     "Organisations": [
         {
             "Name": "Department of Nilism",
@@ -16,19 +14,52 @@
     ],
     
     "Groups": [
-
+        {
+            "Name": "EPMO",
+            "Description" : "The Investment Project Management Office."
+        }
     ],
 
     "BusinessUnits": [
-
+        {
+            "Name": "Department of Disestablishment"
+        },
+        {
+            "Name": "Drowned Puppies"
+        },
+        {
+            "Name": "Office of Left Hand Hammers"
+        },
+        {
+            "Name": "Office of Skeptisim"
+        },
+        {
+            "Name": "CPI",
+            "Description": "Continuous Pointless Improvement"
+        },
+        {
+            "Name": "OCC",
+            "Description": "Office of Countinual Cycling"
+        },
+        {
+            "Name": "DCC",
+            "Description": "Department of Cyclic Cynicism"
+        },
+        {
+            "Name": "Entropy Innovation Services"
+        }
     ],
 
     "RiskCategories": [
+        {
 
+        }
     ],
 
     "AlignmentCategories": [
-        
+        {
+            
+        }
     ],
 
     "Alignments": [

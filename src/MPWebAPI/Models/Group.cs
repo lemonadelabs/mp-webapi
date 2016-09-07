@@ -9,9 +9,10 @@ namespace MPWebAPI.Models
     public class Group
     {
         public int Id { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
         
-        public int ParentId { get; set; }
+        public int? ParentId { get; set; }
         public Group Parent { get; set; }
         
         public List<Group> Children { get; set; }

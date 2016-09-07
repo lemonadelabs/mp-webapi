@@ -67,10 +67,11 @@ namespace MPWebAPI
                 .AddEphemeralSigningKey();
 
             services.AddScoped<IMerlinPlanRepository, MerlinPlanRepository>();
+            services.AddTransient<IFixtureBuilder, FixtureBuilder>();
             services.AddSingleton<IMerlinPlanBL, MerlinPlanBL>();
+
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
@@ -92,11 +93,14 @@ namespace MPWebAPI
             app.UseSwagger();
             app.UseSwaggerUi();
 
+            var fixtureBuilder =  app.ApplicationServices.GetService<IFixtureBuilder>();
             var fixtureConfig = Configuration.GetSection("Fixtures");
-
-            if(Configuration.GetSection("Fixtures").GetValue<bool>("Enabled"))
+            if(fixtureConfig.GetValue<bool>("Enabled"))
             {
-                
+                fixtureBuilder.AddFixture(
+                    fixtureConfig.GetValue<string>("Fixture"),
+                    fixtureConfig.GetValue<bool>("FlushDB")
+                );
             }
         }
     }
