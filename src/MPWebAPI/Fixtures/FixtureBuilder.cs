@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System.Threading.Tasks;
+using System;
 
 namespace MPWebAPI.Fixtures
 {
@@ -31,13 +33,21 @@ namespace MPWebAPI.Fixtures
 
             }
 
-            public class NewUser
+            public class ResourceScenarioFixture
+            {
+
+            }
+
+            public class UserFixture
             {
                 public string UserName { get; set; }
+                public string FirstName { get; set; }
+                public string LastName { get; set; }
                 public string EmployeeId { get; set; }
                 public string Password { get; set; }
                 public string Email { get; set; }
                 public List<string> Roles { get; set; }
+                public List<string> Groups { get; set; }
             }
             
             public List<Organisation> Organisations { get; set; }
@@ -51,9 +61,9 @@ namespace MPWebAPI.Fixtures
             public List<StaffResourceCategory> StaffResourceCategories { get; set; }
             public List<FinancialResourceCategory> FinancialResourceCategories { get; set; }
 
-            public List<Alignment> Alignments { get; set; }
-            public List<NewUser> Users { get; set; }
+            public List<UserFixture> Users { get; set; }
             public List<PortfolioFixture> Portfolios { get; set; }
+            public List<ResourceScenarioFixture> ResourceScenarios { get; set; }
         }
 
         private readonly PostgresDBContext _dbcontext;
@@ -75,7 +85,7 @@ namespace MPWebAPI.Fixtures
             _roleManager = roleManager;
         }
         
-        public void AddFixture(string fixtureFile, bool flushDb = false)
+        public async void AddFixture(string fixtureFile, bool flushDb = false)
         {
             var fixturePath = Path.Combine(
                 Directory.GetCurrentDirectory(), 
@@ -106,25 +116,45 @@ namespace MPWebAPI.Fixtures
 
             AddOrganisations();
             AddGroups();
-            AddUsers();
+            await AddUsersAsync();
             AddBusinessUnits();
             AddRiskCategories();
-            //AddAlignmentCategories();
-            //AddResourceScenarios();
-            //AddPortfolios();
+            AddAlignmentCategories();
+            AddStaffResourceCategories();
+            AddResourceScenarios();
+            AddPortfolios();
+        }
+
+        private void AddStaffResourceCategories()
+        {
+            if (!_dbcontext.StaffResourceCategory.Any())
+            {
+                foreach (var src in _fixtureData.StaffResourceCategories)
+                {
+                    src.Group = _dbcontext.Group.First();
+                }
+                _dbcontext.StaffResourceCategory.AddRange(_fixtureData.StaffResourceCategories);
+                _dbcontext.SaveChanges();
+            }
         }
 
         private void AddPortfolios()
         {
-
+            if (!_dbcontext.Portfolio.Any())
+            {
+                
+            }
         }
 
         private void AddResourceScenarios()
         {
-
+            if (!_dbcontext.ResourceScenario.Any())
+            {
+                  
+            }
         }
 
-        private void AddUsers()
+        private async Task AddUsersAsync()
         {
             if (!_dbcontext.Users.Any())
             {
@@ -133,21 +163,39 @@ namespace MPWebAPI.Fixtures
                     // Add Users
                     var newUser = new MerlinPlanUser() {
                         UserName = u.UserName,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
                         EmployeeId = u.EmployeeId,
-                        Email = u.Email
+                        Email = u.Email,
+                        Organisation = _dbcontext.Organisation.First(),
                     };
-                    _userManager.CreateAsync(newUser, u.Password);
+
+                    await _userManager.CreateAsync(newUser, u.Password);
+
+                      // Add user to groups
+                    var userGroups = new List<UserGroup>();
+                    foreach (var g in u.Groups)
+                    {
+                        var newUserGroup = new UserGroup() {
+                            User = newUser,
+                            Group = _dbcontext.Group.First(gr => gr.Name == g)
+                        };
+                        userGroups.Add(newUserGroup);
+                    }
+                    _dbcontext.UserGroup.AddRange(userGroups);
+                    _dbcontext.SaveChanges();
                     
                     // Add Roles
                     foreach (var r in u.Roles)
                     {
-                        if (!_roleManager.RoleExistsAsync(r).Result)
+                        var roleExistsResult = await _roleManager.RoleExistsAsync(r);
+                        if (!roleExistsResult)
                         {
                             var newRole = new IdentityRole();
                             newRole.Name = r;
-                            _roleManager.CreateAsync(newRole);
+                            await _roleManager.CreateAsync(newRole);
                         }
-                        _userManager.AddToRoleAsync(newUser, r);
+                        await _userManager.AddToRoleAsync(newUser, r);
                     }
                 }
             }
@@ -155,7 +203,15 @@ namespace MPWebAPI.Fixtures
 
         private void AddAlignmentCategories()
         {
-
+            if (!_dbcontext.AlignmentCategory.Any())
+            {
+                foreach (var ac in _fixtureData.AlignmentCategories)
+                {
+                    ac.Group = _dbcontext.Group.First();
+                }
+                _dbcontext.AlignmentCategory.AddRange(_fixtureData.AlignmentCategories);
+                _dbcontext.SaveChanges();
+            }
         }
 
         private void AddBusinessUnits()

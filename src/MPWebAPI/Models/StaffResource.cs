@@ -11,7 +11,7 @@ namespace MPWebAPI.Models
         public DateTime EndDate { get; set; }
         public float? FteOutput { get; set; }
         public List<StaffResourceStaffResourceCategory> Categories { get; set; }
-        public List<FinancialAdjustment> Adjustments { get; set; }
+        public List<StaffAdjustment> Adjustments { get; set; }
 
         public int ResourceScenarioId { get; set; }
         public ResourceScenario ResourceScenario { get; set; }

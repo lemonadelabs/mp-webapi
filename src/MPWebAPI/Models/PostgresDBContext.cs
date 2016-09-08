@@ -36,6 +36,7 @@ namespace MPWebAPI.Models
         public DbSet<ResourceScenario> ResourceScenario { get; set; }
         public DbSet<RiskProfile> RiskProfile { get; set; }
         public DbSet<StaffResource> StaffResource { get; set; }
+        public DbSet<StaffAdjustment> StaffAdjustment { get; set; }
         public DbSet<StaffTransaction> StaffTransaction { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -235,7 +236,7 @@ namespace MPWebAPI.Models
                 .WithMany(pjc => pjc.Phases)
                 .HasForeignKey(pc => pc.ProjectConfigId);
             
-            // Plan
+            // Portfolio
             builder.Entity<Portfolio>()
                 .HasOne(p => p.Creator)
                 .WithMany(u => u.Portfolios);
@@ -443,6 +444,10 @@ namespace MPWebAPI.Models
                 .HasOne(p => p.Group)
                 .WithMany(g => g.ResourceScenarios);
             
+            builder.Entity<ResourceScenario>()
+                .HasOne(rs => rs.ApprovedBy)
+                .WithMany(u => u.ResourceScenariosApproved);
+            
             builder.Entity<ResourceScenarioUser>()
                 .HasKey(rsu => new {rsu.ResourceScenarioId, rsu.UserId});
             
@@ -518,6 +523,16 @@ namespace MPWebAPI.Models
                 .WithOne(u => u.StaffResource)
                 .HasForeignKey<MerlinPlanUser>(u => u.StaffResourceId);
             
+            // StaffAdjustment
+            builder.Entity<StaffAdjustment>()
+                .HasOne(st => st.StaffResource)
+                .WithMany(sr => sr.Adjustments)
+                .HasForeignKey(st => st.StaffResourceId);
+            
+            builder.Entity<StaffAdjustment>()
+                .Property(st => st.Date)
+                .IsRequired();
+
             // StaffTransaction
             builder.Entity<StaffTransaction>()
                 .HasOne(st => st.ProjectPhase)

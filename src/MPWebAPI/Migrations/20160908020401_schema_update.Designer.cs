@@ -8,9 +8,10 @@ using MPWebAPI.Models;
 namespace MPWebAPI.Migrations
 {
     [DbContext(typeof(PostgresDBContext))]
-    partial class PostgresDBContextModelSnapshot : ModelSnapshot
+    [Migration("20160908020401_schema_update")]
+    partial class schema_update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431");
@@ -222,11 +223,15 @@ namespace MPWebAPI.Migrations
 
                     b.Property<int>("FinancialResourcePartitionId");
 
+                    b.Property<int?>("StaffResourceId");
+
                     b.Property<decimal>("Value");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FinancialResourcePartitionId");
+
+                    b.HasIndex("StaffResourceId");
 
                     b.ToTable("FinancialAdjustment");
                 });
@@ -841,28 +846,6 @@ namespace MPWebAPI.Migrations
                     b.ToTable("RiskProfile");
                 });
 
-            modelBuilder.Entity("MPWebAPI.Models.StaffAdjustment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<bool>("Actual");
-
-                    b.Property<bool>("Additive");
-
-                    b.Property<DateTime>("Date");
-
-                    b.Property<int>("StaffResourceId");
-
-                    b.Property<float>("Value");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StaffResourceId");
-
-                    b.ToTable("StaffAdjustment");
-                });
-
             modelBuilder.Entity("MPWebAPI.Models.StaffResource", b =>
                 {
                     b.Property<int>("Id")
@@ -1124,6 +1107,10 @@ namespace MPWebAPI.Migrations
                         .WithMany("Adjustments")
                         .HasForeignKey("FinancialResourcePartitionId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MPWebAPI.Models.StaffResource")
+                        .WithMany("Adjustments")
+                        .HasForeignKey("StaffResourceId");
                 });
 
             modelBuilder.Entity("MPWebAPI.Models.FinancialResource", b =>
@@ -1406,14 +1393,6 @@ namespace MPWebAPI.Migrations
                     b.HasOne("MPWebAPI.Models.RiskCategory", "RiskCategory")
                         .WithMany("RiskProfiles")
                         .HasForeignKey("RiskCategoryId");
-                });
-
-            modelBuilder.Entity("MPWebAPI.Models.StaffAdjustment", b =>
-                {
-                    b.HasOne("MPWebAPI.Models.StaffResource", "StaffResource")
-                        .WithMany("Adjustments")
-                        .HasForeignKey("StaffResourceId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("MPWebAPI.Models.StaffResource", b =>

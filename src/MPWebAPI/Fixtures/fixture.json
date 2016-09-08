@@ -95,15 +95,26 @@
 
     "AlignmentCategories": [
         {
-
+            "Name": "A1",
+            "Description": "Promote apathy amongst population",
+            "Area": "Outreach"
+        },
+        {
+            "Name": "A2",
+            "Description": "Deconstructing public service",
+            "Area": "Internal"
+        },
+        {
+            "Name": "A3",
+            "Description": "Promotion of nilhism",
+            "Area": "Outreach"
+        },
+        {
+            "Name": "A4",
+            "Description": "Saving children at risk of optimism",
+            "Area": "Interventions"
         }
     ],
-
-    "Alignments": [
-
-    ],
-
-
 
     "Users": [
         {
@@ -113,7 +124,8 @@
             "EmployeeId": "0001",
             "Password": "abyss",
             "Email": "friedrich@don.govt.nz",
-            "Roles": ["Staff"]
+            "Roles": ["Staff"],
+            "Groups": ["EPMO"]
         },
         {
             "UserName": "buddha",
@@ -122,7 +134,8 @@
             "EmployeeId": "0002",
             "Password": "nirvana",
             "Email": "buddha@don.govt.nz",
-            "Roles": ["Project Admin"]
+            "Roles": ["Project Admin"],
+            "Groups": ["EPMO"]
         },
         {
             "UserName": "mduchamp",
@@ -131,7 +144,8 @@
             "EmployeeId": "0003",
             "Password": "latrine",
             "Email": "duchamp@don.govt.nz",
-            "Roles": ["Planner"]
+            "Roles": ["Planner"],
+            "Groups": ["EPMO"]
         },
         {
             "UserName": "bhicks",
@@ -140,7 +154,8 @@
             "EmployeeId": "0004",
             "Password": "nonsmokersdieeveryday",
             "Email": "hicks@don.govt.nz",
-            "Roles": ["Approver", "Tracker"]
+            "Roles": ["Approver", "Tracker"],
+            "Groups": ["EPMO"]
         },
         {
             "UserName": "csawtell",
@@ -149,7 +164,8 @@
             "EmployeeId": "0005",
             "Password": "caleb",
             "Email": "caleb.sawtell@lemonadelabs.io",
-            "Roles": ["Lemonade Admin"]
+            "Roles": ["Lemonade Admin"],
+            "Groups": ["EPMO"]
         },
         {
             "UserName": "swinmason",
@@ -158,7 +174,8 @@
             "EmployeeId": "0006",
             "Password": "sam",
             "Email": "sam@lemonadelabs.io",
-            "Roles": ["Lemonade Admin"]
+            "Roles": ["Lemonade Admin"],
+            "Groups": ["EPMO"]
         },
         {
             "UserName": "asandhu",
@@ -167,11 +184,186 @@
             "EmployeeId": "0007",
             "Password": "amardeep",
             "Email": "amardeep.sandhu@lemonadelabs.io",
-            "Roles": ["Manager"]
+            "Roles": ["Manager"],
+            "Groups": ["EPMO"]
         }
     ],
 
-    "Plans": [
+    "StaffResourceCategories": [
+        {
+            "Name": "Project Managers"
+        },
+        {
+            "Name": "Managers"
+        },
+        {
+            "Name": "Software Engineers"
+        },
+        {
+            "Name": "Test Analysts"
+        },
+        {
+            "Name": "Business Analysts"
+        },
+        {
+            "Name": "Consultants"
+        },
+        {
+            "Name": "Line Staff"
+        }
+    ],
+
+    "ResourceScenarios": [
+        {
+            "Name": "Baseline Scenario",
+            "Creator": "swinmason",
+            "Group": "EPMO",
+            "StaffResources": [
+                {
+                    "Name": "Mr Bob Dobalina",
+                    "StartDate": "2016-01-01",
+                    "EndDate": "2017-01-01",
+                    "Categories": [
+                        "Project Managers"
+                    ],
+                    "Adjustments": [
+                        {
+                            "Value": 1,
+                            "Additive": false,
+                            "Date": "2016-01-01",
+                            "Actual": true
+                        }
+                    ]
+                },
+                {
+                    "Name": "Mr Foo Bar",
+                    "StartDate": "2016-01-01",
+                    "EndDate": "2017-01-01",
+                    "Categories": [
+                        "Project Managers"
+                    ],
+                    "Adjustments": [
+                        {
+                            "Value": 1,
+                            "Additive": false,
+                            "Date": "2016-01-01",
+                            "Actual": true
+                        }
+                    ]
+                },
+                {
+                    "Name": "Mrs Baz",
+                    "StartDate": "2016-01-01",
+                    "EndDate": "2017-01-01",
+                    "Categories": [
+                        "Project Managers"
+                    ],
+                    "Adjustments": [
+                        {
+                            "Value": 1,
+                            "Additive": false,
+                            "Date": "2016-01-01",
+                            "Actual": true
+                        }
+                    ]
+                }, 
+                {
+                    "Name": "DON In-house IT Dev",
+                    "StartDate": "2016-01-01",
+                    "EndDate": "2017-01-01",
+                    "Categories": [
+                        "Software Engineers"
+                    ],
+                    "Adjustments": [
+                        {
+                            "Value": 10,
+                            "Additive": false,
+                            "Date": "2016-01-01",
+                            "Actual": true
+                        }
+                    ]
+                },
+                 {
+                    "Name": "DON In-House IT Test",
+                    "StartDate": "2016-01-01",
+                    "EndDate": "2017-01-01",
+                    "Categories": [
+                        "Test Analysts"
+                    ],
+                    "Adjustments": [
+                        {
+                            "Value": 5,
+                            "Additive": false,
+                            "Date": "2016-01-01",
+                            "Actual": true
+                        }
+                    ]
+                },
+                {
+                    "Name": "CPI Line Staff",
+                    "StartDate": "2016-01-01",
+                    "EndDate": "2017-01-01",
+                    "Categories": [
+                        "Line Staff"
+                    ],
+                    "Adjustments": [
+                        {
+                            "Value": 30,
+                            "Additive": false,
+                            "Date": "2016-01-01",
+                            "Actual": true
+                        }
+                    ]
+                },
+                {
+                    "Name": "Mr Blobby",
+                    "StartDate": "2016-01-01",
+                    "EndDate": "2017-01-01",
+                    "Categories": [
+                        "Business Analysts"
+                    ],
+                    "Adjustments": [
+                        {
+                            "Value": 1,
+                            "Additive": false,
+                            "Date": "2016-01-01",
+                            "Actual": true
+                        }
+                    ]
+                },
+                {
+                    "Name": "Mr Blah",
+                    "StartDate": "2016-01-01",
+                    "EndDate": "2017-01-01",
+                    "Categories": [
+                        "Business Analysts"
+                    ],
+                    "Adjustments": [
+                        {
+                            "Value": 30,
+                            "Additive": false,
+                            "Date": "2016-01-01",
+                            "Actual": true
+                        }
+                    ]
+                }
+            ],
+            "FinancialResources": [
+                {
+                    "Name": "EPMO Department Funding",
+                    "Partitions": [
+                        {
+                            
+                        }
+                    ],
+                    "StartDate": "2016-01-01",
+                    "EndDate": "2017-01-01"
+                }
+            ]
+        }
+    ],
+
+    "Portfolios": [
 
     ]
     

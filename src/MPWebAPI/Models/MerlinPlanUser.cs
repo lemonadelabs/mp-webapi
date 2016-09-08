@@ -23,6 +23,7 @@ namespace MPWebAPI.Models
         public List<Portfolio>Portfolios{ get; set; }
         public List<Project> Projects { get; set; }
         public List<Portfolio> PortfoliosApproved { get; set; }
+        public List<ResourceScenario> ResourceScenariosApproved { get; set; }
 
         // Sharing
         public List<ResourceScenarioUser> SharedResourceScenarios { get; set; }
@@ -31,7 +32,7 @@ namespace MPWebAPI.Models
 
         // Related resource data
         public StaffResource StaffResource { get; set; }
-        public int StaffResourceId {get; set;}
+        public int? StaffResourceId {get; set;}
     }
 
     public class UserGroup
