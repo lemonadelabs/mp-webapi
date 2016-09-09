@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.IO;
 using MPWebAPI.Models;
@@ -24,20 +25,57 @@ namespace MPWebAPI.Fixtures
         {
             public List<Organisation> Organisations { get; set; }
             
-           
-            public class ProjectFixture
-            {
-
-            }
-
             public class PortfolioFixture
             {
-
+                
             }
 
             public class ResourceScenarioFixture
             {
+                public class StaffResourceFixture
+                {
+                    public class StaffAdjustmentFixture
+                    {
+                        public float Value { get; set; }
+                        public bool Additive { get; set; }
+                        public DateTime Date { get; set; }
+                        public bool Actual { get; set; }
+                    }
+                    
+                    public string Name { get; set; }
+                    public DateTime StartDate { get; set; }
+                    public DateTime EndDate { get; set; }
+                    public List<string> Categories { get; set; }
+                    public List<StaffAdjustmentFixture> Adjustments { get; set; }
+                }
 
+                public class FinancialResourceFixture
+                {
+                    public class FinancialResourcePartitionFixture
+                    {
+                        public class FinancialResourceAdjustmentFixture
+                        {
+                            public decimal Value { get; set; }
+                            public bool Additive { get; set; }
+                            public DateTime Date { get; set; }
+                            public bool Actual { get; set; }
+                        }
+                        
+                        public List<string> Categories { get; set; }
+                        public List<FinancialResourceAdjustmentFixture> Adjustments { get; set; }
+                    }
+                    
+                    public string Name { get; set; }
+                    public List<FinancialResourcePartitionFixture> Partitions { get; set; }
+                    public DateTime StartDate { get; set; }
+                    public DateTime EndDate { get; set; }
+                }
+                
+                public string Name { get; set; }
+                public string Creator { get; set; }
+                public string Group { get; set; }
+                public List<StaffResourceFixture> StaffResources { get; set; }
+                public List<FinancialResourceFixture> FinancialResources { get; set; }
             }
 
             public class GroupFixture
@@ -95,7 +133,7 @@ namespace MPWebAPI.Fixtures
 
             public class BenefitCategoryFixture
             {
-                
+
             }
             
             public List<GroupFixture> Groups { get; set; }
@@ -158,15 +196,52 @@ namespace MPWebAPI.Fixtures
                 _dbcontext.Database.Migrate();
             }
 
+            _logger.LogInformation("Adding Organisations...");
             AddOrganisations();
+
+            _logger.LogInformation("Adding Groups...");
             AddGroups();
+
+            _logger.LogInformation("Adding Users...");
             await AddUsersAsync();
+
+            _logger.LogInformation("Adding Business Units...");
             AddBusinessUnits();
+
+            _logger.LogInformation("Adding Risk Categories...");
             AddRiskCategories();
+
+            _logger.LogInformation("Adding Alignment Categories...");
             AddAlignmentCategories();
+
+            _logger.LogInformation("Adding Staff Resource Categories...");
             AddStaffResourceCategories();
+
+            _logger.LogInformation("Adding Financial Resource Categories");
+            AddFinancialResourceCategories();
+
+            _logger.LogInformation("Adding Resource Scenarios...");
             AddResourceScenarios();
-            AddPortfolios();
+
+            //_logger.LogInformation("Adding Groups...");
+            //AddPortfolios();
+
+            _logger.LogInformation("Fixture {0} added.", fixtureFile);
+        }
+
+        private void AddFinancialResourceCategories()
+        {
+            if (!_dbcontext.FinancialResourceCategory.Any())
+            {
+                foreach (var frc in _fixtureData.FinancialResourceCategories)
+                {
+                    _dbcontext.FinancialResourceCategory.Add(new FinancialResourceCategory() {
+                        Name = frc.Name,
+                        Group = _dbcontext.Group.First(g => g.Name == frc.Group)
+                    });
+                }
+                _dbcontext.SaveChanges();
+            }
         }
 
         private void AddStaffResourceCategories()
@@ -196,7 +271,98 @@ namespace MPWebAPI.Fixtures
         {
             if (!_dbcontext.ResourceScenario.Any())
             {
-                  
+                foreach (var rs in _fixtureData.ResourceScenarios)
+                {
+                    ResourceScenario resourceScenario = new ResourceScenario() {
+                        Name = rs.Name,
+                        Creator = _dbcontext.Users.First(u => u.UserName == rs.Creator),
+                        Group = _dbcontext.Group.First(g => g.Name == rs.Group),
+                    };
+
+                    _dbcontext.ResourceScenario.Add(resourceScenario);
+                    _dbcontext.SaveChanges();
+
+                    // Staff Resources
+                    foreach (var sr in rs.StaffResources)
+                    {
+                        var staffResource = new StaffResource() {
+                            Name = sr.Name,
+                            StartDate = sr.StartDate,
+                            EndDate = sr.EndDate,
+                            ResourceScenario = resourceScenario,
+                        };
+                        _dbcontext.Add(staffResource);
+                        _dbcontext.SaveChanges();
+
+                        foreach (var c in sr.Categories)
+                        {
+                            _dbcontext.Add(new StaffResourceStaffResourceCategory() {
+                                StaffResource = staffResource,
+                                StaffResourceCategory = _dbcontext.StaffResourceCategory.First(src => src.Name == c) 
+                            });
+                        }
+                        _dbcontext.SaveChanges();
+                        
+                        foreach (var a in sr.Adjustments)
+                        {
+                            _dbcontext.Add(new StaffAdjustment() {
+                                Value = a.Value,
+                                Additive = a.Additive,
+                                Date = a.Date,
+                                Actual = a.Actual,
+                                StaffResource = staffResource
+                            });
+                        }
+                        _dbcontext.SaveChanges();
+                    }
+
+                    // FinancialResources
+                    foreach (var fr in rs.FinancialResources)
+                    {
+                        var financialResource = new FinancialResource() {
+                            Name = fr.Name,
+                            StartDate = fr.StartDate,
+                            EndDate = fr.EndDate,
+                            ResourceScenario = resourceScenario
+                        };
+                        _dbcontext.FinancialResource.Add(financialResource);
+                        _dbcontext.SaveChanges();
+                        
+                        // Partitions
+                        foreach (var p in fr.Partitions)
+                        {
+                            var partition = new FinancialResourcePartition()
+                            {
+                                FinancialResource = financialResource
+                            };
+                            _dbcontext.FinancialResourcePartition.Add(partition);
+                            _dbcontext.SaveChanges();
+
+                            // Categories
+                            foreach (var c in p.Categories)
+                            {
+                                _dbcontext.Add(new PartitionResourceCategory() {
+                                    FinancialResourcePartition = partition,
+                                    FinancialResourceCategory = _dbcontext.FinancialResourceCategory.First(frc => frc.Name == c)
+                                });
+                            }
+                            _dbcontext.SaveChanges();
+
+                            // Adjustments
+                            foreach (var a in p.Adjustments)
+                            {
+                                _dbcontext.FinancialAdjustment.Add(new FinancialAdjustment() {
+                                    Value = a.Value,
+                                    Additive = a.Additive,
+                                    Date = a.Date,
+                                    Actual = a.Actual,
+                                    FinancialResourcePartition = partition
+                                });
+                            }
+                            _dbcontext.SaveChanges();
+                        }
+                    }
+                }
             }
         }
 
@@ -289,7 +455,7 @@ namespace MPWebAPI.Fixtures
                     _dbcontext.RiskCategory.Add(new RiskCategory() {
                         Name = rc.Name,
                         Bias = rc.Bias,
-                        Group = _dbcontext.Group.First(g => g.Name == rc.Name)
+                        Group = _dbcontext.Group.First(g => g.Name == rc.Group)
                     });                    
                 }
                 _dbcontext.SaveChanges();
