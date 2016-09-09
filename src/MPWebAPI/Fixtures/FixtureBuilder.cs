@@ -27,7 +27,7 @@ namespace MPWebAPI.Fixtures
             
             public class PortfolioFixture
             {
-                
+
             }
 
             public class ResourceScenarioFixture
@@ -223,8 +223,8 @@ namespace MPWebAPI.Fixtures
             _logger.LogInformation("Adding Resource Scenarios...");
             AddResourceScenarios();
 
-            //_logger.LogInformation("Adding Groups...");
-            //AddPortfolios();
+            _logger.LogInformation("Adding Portfolios...");
+            AddPortfolios();
 
             _logger.LogInformation("Fixture {0} added.", fixtureFile);
         }

@@ -45,7 +45,7 @@ namespace MPWebAPI.Models
 
     public class ProjectFinancialResourceCategory
     {
-        // TODO: Need to make sure any rinfenced financial resources matching this category are also removed
+        // TODO: Need to make sure any ringfenced financial resources matching this category are also removed
         public int ProjectId { get; set; }
         public Project Project { get; set; }
 

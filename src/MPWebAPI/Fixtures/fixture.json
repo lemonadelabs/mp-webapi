@@ -218,7 +218,7 @@
             "Group": "EPMO"
         },
         {
-            "Name": "Managers",
+            "Name": "Management",
             "Group": "EPMO"
         },
         {
@@ -264,6 +264,38 @@
             "Creator": "swinmason",
             "Group": "EPMO",
             "StaffResources": [
+                {
+                    "Name": "Mr Knowitall",
+                    "StartDate": "2016-01-01",
+                    "EndDate": "2017-01-01",
+                    "Categories": [
+                        "Management"
+                    ],
+                    "Adjustments": [
+                        {
+                            "Value": 1,
+                            "Additive": false,
+                            "Date": "2016-01-01",
+                            "Actual": true
+                        }
+                    ]
+                },
+                {
+                    "Name": "Misc Managers",
+                    "StartDate": "2016-01-01",
+                    "EndDate": "2020-01-01",
+                    "Categories": [
+                        "Management"
+                    ],
+                    "Adjustments": [
+                        {
+                            "Value": 10,
+                            "Additive": false,
+                            "Date": "2016-01-01",
+                            "Actual": true
+                        }
+                    ]
+                },
                 {
                     "Name": "Mr Bob Dobalina",
                     "StartDate": "2016-01-01",
@@ -487,8 +519,57 @@
         }
     ],
 
-    "Portfolios": [
+    "Projects": [
+        {
+            "Name": "Depressing Reality Web Portal",
+            "Summary": "A site hilighting just how goddam shit the world is",
+            "Creator": "swinmason",
+            "Group": "EPMO",
+            "Owner": "Mr Knowitall",
+            "Managers": [
+                "Misc Managers"
+            ],
+            "OwningBusinessUnit": "Entropy Innovation Services",
+            "ImpactedBusinessUnit": "Entropy Innovation Services",
+            "Options": [
+                {
+                    "Description": "",
+                    "Priority": 6.0,
+                    "Complexity": 9.0,
+                    "Phases": [
+                        {
+                            "Name": "Business Case",
+                            "StartDate":"2016-01-01"
+                        }
+                    ],
+                    "RiskProfile": [
 
+                    ],
+
+                    "Benefits": [
+
+                    ],
+
+                    "Dependencies": [
+
+                    ]
+                }
+            ]
+        }
+    ],
+
+    "Portfolios": [
+        {
+            "Creator": "swinmason",
+            "Group": "EPMO",
+            "Name": "My Awesome Portfolio",
+            "StartYear": "2016-01-01",
+            "EndYear": "2020-01-01",
+            "TimeScale": 4,
+            "Projects": [
+
+            ]
+        }
     ]
     
 }
