@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Threading.Tasks;
-using System;
 
 namespace MPWebAPI.Fixtures
 {
@@ -23,6 +22,9 @@ namespace MPWebAPI.Fixtures
     {
         protected class FixtureData
         {
+            public List<Organisation> Organisations { get; set; }
+            
+           
             public class ProjectFixture
             {
 
@@ -38,6 +40,13 @@ namespace MPWebAPI.Fixtures
 
             }
 
+            public class GroupFixture
+            {
+                public string Name { get; set; }
+                public string Description { get; set; }
+                public string Organisation { get; set; }
+            }
+
             public class UserFixture
             {
                 public string UserName { get; set; }
@@ -50,17 +59,52 @@ namespace MPWebAPI.Fixtures
                 public List<string> Groups { get; set; }
             }
             
-            public List<Organisation> Organisations { get; set; }
-            public List<Group> Groups { get; set; }
-            
-            // Categories
-            public List<BusinessUnit> BusinessUnits { get; set; }
-            public List<RiskCategory> RiskCategories { get; set; }
-            public List<AlignmentCategory> AlignmentCategories { get; set; }
-            public List<BenefitCategory> BenefitCategories { get; set; }
-            public List<StaffResourceCategory> StaffResourceCategories { get; set; }
-            public List<FinancialResourceCategory> FinancialResourceCategories { get; set; }
+            public class BusinessUnitFixture
+            {
+                public string Name { get; set; }
+                public string Description { get; set; }
+                public string Organisation { get; set; }
+            }
 
+            public class RiskCategoryFixture
+            {
+                public string Name { get; set; }
+                public float Bias { get; set; }
+                public string Group { get; set; }
+            }
+
+            public class AlignmentCategoryFixture
+            {
+                public string Name { get; set; }
+                public string Description { get; set; }
+                public string Area { get; set; }
+                public string Group { get; set; }
+            }
+
+            public class StaffResourceCategoryFixture
+            {
+                public string Name { get; set; }
+                public string Group { get; set; }
+            }
+
+            public class FinancialResourceCategoryFixture
+            {
+                public string Name { get; set; }
+                public string Group { get; set; }
+            }
+
+            public class BenefitCategoryFixture
+            {
+                
+            }
+            
+            public List<GroupFixture> Groups { get; set; }
+            public List<BusinessUnitFixture> BusinessUnits { get; set; }
+            public List<RiskCategoryFixture> RiskCategories { get; set; }
+            public List<AlignmentCategoryFixture> AlignmentCategories { get; set; }
+            public List<BenefitCategoryFixture> BenefitCategories { get; set; }
+            public List<StaffResourceCategoryFixture> StaffResourceCategories { get; set; }
+            public List<FinancialResourceCategoryFixture> FinancialResourceCategories { get; set; }
             public List<UserFixture> Users { get; set; }
             public List<PortfolioFixture> Portfolios { get; set; }
             public List<ResourceScenarioFixture> ResourceScenarios { get; set; }
@@ -131,9 +175,11 @@ namespace MPWebAPI.Fixtures
             {
                 foreach (var src in _fixtureData.StaffResourceCategories)
                 {
-                    src.Group = _dbcontext.Group.First();
+                    _dbcontext.Add(new StaffResourceCategory() {
+                        Name = src.Name,
+                        Group = _dbcontext.Group.First(g => g.Name == src.Group)
+                    });                    
                 }
-                _dbcontext.StaffResourceCategory.AddRange(_fixtureData.StaffResourceCategories);
                 _dbcontext.SaveChanges();
             }
         }
@@ -207,9 +253,13 @@ namespace MPWebAPI.Fixtures
             {
                 foreach (var ac in _fixtureData.AlignmentCategories)
                 {
-                    ac.Group = _dbcontext.Group.First();
+                    _dbcontext.AlignmentCategory.Add(new AlignmentCategory() {
+                        Name = ac.Name,
+                        Description = ac.Description,
+                        Area = ac.Area,
+                        Group = _dbcontext.Group.First(g => g.Name == ac.Group)
+                    });
                 }
-                _dbcontext.AlignmentCategory.AddRange(_fixtureData.AlignmentCategories);
                 _dbcontext.SaveChanges();
             }
         }
@@ -220,9 +270,12 @@ namespace MPWebAPI.Fixtures
             {
                 foreach (var bu in _fixtureData.BusinessUnits)
                 {
-                    bu.Organisation = _dbcontext.Organisation.First();
+                    _dbcontext.BusinessUnit.Add(new BusinessUnit() {
+                        Name = bu.Name,
+                        Description = bu.Description,
+                        Organisation = _dbcontext.Organisation.First(o => o.Name == bu.Organisation)
+                    });
                 }
-                _dbcontext.BusinessUnit.AddRange(_fixtureData.BusinessUnits);
                 _dbcontext.SaveChanges();
             }
         }
@@ -233,9 +286,12 @@ namespace MPWebAPI.Fixtures
             {
                 foreach (var rc in _fixtureData.RiskCategories)
                 {
-                    rc.Group = _dbcontext.Group.First();
+                    _dbcontext.RiskCategory.Add(new RiskCategory() {
+                        Name = rc.Name,
+                        Bias = rc.Bias,
+                        Group = _dbcontext.Group.First(g => g.Name == rc.Name)
+                    });                    
                 }
-                _dbcontext.RiskCategory.AddRange(_fixtureData.RiskCategories);
                 _dbcontext.SaveChanges();
             }
         }
@@ -246,9 +302,12 @@ namespace MPWebAPI.Fixtures
             {
                 foreach (var g in _fixtureData.Groups)
                 {
-                     g.Organisation = _dbcontext.Organisation.First();
+                     _dbcontext.Group.Add(new Group() {
+                         Name = g.Name,
+                         Description = g.Description,
+                         Organisation = _dbcontext.Organisation.First(o => o.Name == g.Organisation)
+                     });
                 }
-                _dbcontext.Group.AddRange(_fixtureData.Groups);
                 _dbcontext.SaveChanges();
             }
         }

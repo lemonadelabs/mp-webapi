@@ -16,80 +16,99 @@
     "Groups": [
         {
             "Name": "EPMO",
-            "Description" : "The Investment Project Management Office."
+            "Description" : "The Investment Project Management Office.",
+            "Organisation": "Department of Nilism"
         }
     ],
 
     "BusinessUnits": [
         {
-            "Name": "Department of Disestablishment"
+            "Name": "Department of Disestablishment",
+            "Organisation": "Department of Nilism"
         },
         {
-            "Name": "Drowned Puppies"
+            "Name": "Drowned Puppies",
+            "Organisation": "Department of Nilism"
         },
         {
-            "Name": "Office of Left Hand Hammers"
+            "Name": "Office of Left Hand Hammers",
+            "Organisation": "Department of Nilism"
         },
         {
-            "Name": "Office of Skeptisim"
+            "Name": "Office of Skeptisim",
+            "Organisation": "Department of Nilism"
         },
         {
             "Name": "CPI",
-            "Description": "Continuous Pointless Improvement"
+            "Description": "Continuous Pointless Improvement",
+            "Organisation": "Department of Nilism"
         },
         {
             "Name": "OCC",
-            "Description": "Office of Countinual Cycling"
+            "Description": "Office of Countinual Cycling",
+            "Organisation": "Department of Nilism"
         },
         {
             "Name": "DCC",
-            "Description": "Department of Cyclic Cynicism"
+            "Description": "Department of Cyclic Cynicism",
+            "Organisation": "Department of Nilism"
         },
         {
-            "Name": "Entropy Innovation Services"
+            "Name": "Entropy Innovation Services",
+            "Organisation": "Department of Nilism"
         }
     ],
 
     "RiskCategories": [
         {
             "Name": "Enterprise - Reputation and Trust",
-            "Bias": 1.0
+            "Bias": 1.0,
+            "Group": "EPMO"
         },
         {
             "Name": "Enterprise - Investment / Fiscal",
-            "Bias": 1.0
+            "Bias": 1.0,
+            "Group": "EPMO"
         },
         {
             "Name": "Enterprise - Strategies",
-            "Bias": 1.0
+            "Bias": 1.0,
+            "Group": "EPMO"
         },
         {
             "Name": "Enterprise - Delivery",
-            "Bias": 1.0
+            "Bias": 1.0,
+            "Group": "EPMO"
         },
         {
             "Name": "Enterprise - Stakeholders",
-            "Bias": 1.0
+            "Bias": 1.0,
+            "Group": "EPMO"
         },
         {
             "Name": "AoG - Reputation and Trust",
-            "Bias": 1.0
+            "Bias": 1.0,
+            "Group": "EPMO"
         },
         {
             "Name": "AoG - Investment / Fiscal",
-            "Bias": 1.0
+            "Bias": 1.0,
+            "Group": "EPMO"
         },
         {
             "Name": "AoG - Strategies",
-            "Bias": 1.0
+            "Bias": 1.0,
+            "Group": "EPMO"
         },
         {
             "Name": "AoG - Delivery",
-            "Bias": 1.0
+            "Bias": 1.0,
+            "Group": "EPMO"
         },
         {
             "Name": "AoG - Stakeholders",
-            "Bias": 1.0
+            "Bias": 1.0,
+            "Group": "EPMO"
         }
     ],
 
@@ -97,22 +116,26 @@
         {
             "Name": "A1",
             "Description": "Promote apathy amongst population",
-            "Area": "Outreach"
+            "Area": "Outreach",
+            "Group": "EPMO"
         },
         {
             "Name": "A2",
             "Description": "Deconstructing public service",
-            "Area": "Internal"
+            "Area": "Internal",
+            "Group": "EPMO"
         },
         {
             "Name": "A3",
             "Description": "Promotion of nilhism",
-            "Area": "Outreach"
+            "Area": "Outreach",
+            "Group": "EPMO"
         },
         {
             "Name": "A4",
             "Description": "Saving children at risk of optimism",
-            "Area": "Interventions"
+            "Area": "Interventions",
+            "Group": "EPMO"
         }
     ],
 
@@ -191,25 +214,47 @@
 
     "StaffResourceCategories": [
         {
-            "Name": "Project Managers"
+            "Name": "Project Managers",
+            "Group": "EPMO"
         },
         {
-            "Name": "Managers"
+            "Name": "Managers",
+            "Group": "EPMO"
         },
         {
-            "Name": "Software Engineers"
+            "Name": "Software Engineers",
+            "Group": "EPMO"
         },
         {
-            "Name": "Test Analysts"
+            "Name": "Test Analysts",
+            "Group": "EPMO"
         },
         {
-            "Name": "Business Analysts"
+            "Name": "Business Analysts",
+            "Group": "EPMO"
         },
         {
-            "Name": "Consultants"
+            "Name": "Consultants",
+            "Group": "EPMO"
         },
         {
-            "Name": "Line Staff"
+            "Name": "Line Staff",
+            "Group": "EPMO"
+        }
+    ],
+
+    "FinancialResourceCategories": [
+        {
+            "Name": "OPEX",
+            "Group": "EPMO"
+        },
+        {
+            "Name": "CAPEX",
+            "Group": "EPMO"
+        },
+        {
+            "Name": "Staff",
+            "Group": "EPMO"
         }
     ],
 
@@ -353,11 +398,90 @@
                     "Name": "EPMO Department Funding",
                     "Partitions": [
                         {
-                            
+                            "Categories": ["OPEX"],
+                            "Adjustments": [
+                                {
+                                    "Value": 40000000,
+                                    "Additive": false,
+                                    "Date": "2016-01-01",
+                                    "Actual": false
+                                },
+                                 {
+                                    "Value": 40000000,
+                                    "Additive": false,
+                                    "Date": "2017-01-01",
+                                    "Actual": false
+                                },
+                                 {
+                                    "Value": 40000000,
+                                    "Additive": false,
+                                    "Date": "2018-01-01",
+                                    "Actual": false
+                                },
+                                {
+                                    "Value": 40000000,
+                                    "Additive": false,
+                                    "Date": "2019-01-01",
+                                    "Actual": false
+                                }
+                            ]
+                        },
+                         {
+                            "Categories": ["CAPEX"],
+                            "Adjustments": [
+                                {
+                                    "Value": 10000000,
+                                    "Additive": false,
+                                    "Date": "2016-01-01",
+                                    "Actual": false
+                                },
+                                 {
+                                    "Value": 10000000,
+                                    "Additive": false,
+                                    "Date": "2017-01-01",
+                                    "Actual": false
+                                },
+                                 {
+                                    "Value": 10000000,
+                                    "Additive": false,
+                                    "Date": "2018-01-01",
+                                    "Actual": false
+                                },
+                                {
+                                    "Value": 10000000,
+                                    "Additive": false,
+                                    "Date": "2019-01-01",
+                                    "Actual": false
+                                }
+                            ]
                         }
                     ],
                     "StartDate": "2016-01-01",
-                    "EndDate": "2017-01-01"
+                    "EndDate": "2020-01-01"
+                },
+                {
+                    "Name": "EPMO Slush Fund",
+                    "Partitions": [
+                        {
+                            "Categories": [],
+                            "Adjustments": [
+                                {
+                                    "Value": 1000000,
+                                    "Additive": true,
+                                    "Date": "2016-06-30",
+                                    "Actual": false
+                                },
+                                 {
+                                    "Value": 1000000,
+                                    "Additive": true,
+                                    "Date": "2016-12-31",
+                                    "Actual": false
+                                }
+                            ]
+                        }
+                    ],
+                    "StartDate": "2016-01-01",
+                    "EndDate": "2020-01-01"
                 }
             ]
         }
