@@ -10,6 +10,12 @@ namespace MPWebAPI.Models
         public DateTime Date { get; set; }
         public bool Actual { get; set; }
 
+        public int StaffResourceCategoryId { get; set; }
+        public StaffResourceCategory Category { get; set; }
+
+        public int? StaffResourceId { get; set; }
+        public StaffResource StaffResource { get; set; }
+
         public int ProjectPhaseId { get; set; }
         public ProjectPhase ProjectPhase { get; set; }
     }

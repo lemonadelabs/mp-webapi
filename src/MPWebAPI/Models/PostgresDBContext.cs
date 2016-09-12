@@ -386,9 +386,9 @@ namespace MPWebAPI.Models
             
             // ProjectConfig
             builder.Entity<ProjectConfig>()
-                .HasOne(pc => pc.Plan)
+                .HasOne(pc => pc.Portfolio)
                 .WithMany(p => p.Projects)
-                .HasForeignKey(pc => pc.PlanId);
+                .HasForeignKey(pc => pc.PortfolioId);
             
             builder.Entity<ProjectConfig>()
                 .Property(pc => pc.StartDate)
@@ -538,10 +538,20 @@ namespace MPWebAPI.Models
                 .HasOne(st => st.ProjectPhase)
                 .WithMany(pp => pp.StaffResources)
                 .HasForeignKey(st => st.ProjectPhaseId);
+            
+            builder.Entity<StaffTransaction>()
+                .HasOne(st => st.StaffResource)
+                .WithMany()
+                .HasForeignKey(st => st.StaffResourceId);
+            
+            builder.Entity<StaffTransaction>()
+                .HasOne(st => st.Category)
+                .WithMany()
+                .HasForeignKey(st => st.StaffResourceCategoryId);
 
             builder.Entity<StaffTransaction>()
                 .Property(st => st.Date)
-                .IsRequired();                                                                                             
+                .IsRequired();                                                                                 
             base.OnModelCreating(builder);
         }
     }

@@ -1,575 +1,881 @@
 {
-    "Organisations": [
-        {
-            "Name": "Department of Nilism",
-            "Address1": "1 Nowhere Way",
-            "Address2": "Nowhereville",
-            "Address3": "The Styx",
-            "Postcode": "0000",
-            "Country": "Netherworld",
-            "Contact": "jssmith@don.govt.nz",
-            "WebDomain": "don.govt.nz",
-            "FinancialYearStart" : 4
-        }
-    ],
-    
-    "Groups": [
-        {
-            "Name": "EPMO",
-            "Description" : "The Investment Project Management Office.",
-            "Organisation": "Department of Nilism"
-        }
-    ],
+    "Organisations": [{
+        "Name": "Department of Nilism",
+        "Address1": "1 Nowhere Way",
+        "Address2": "Nowhereville",
+        "Address3": "The Styx",
+        "Postcode": "0000",
+        "Country": "Netherworld",
+        "Contact": "jssmith@don.govt.nz",
+        "WebDomain": "don.govt.nz",
+        "FinancialYearStart": 4
+    }],
 
-    "BusinessUnits": [
-        {
-            "Name": "Department of Disestablishment",
-            "Organisation": "Department of Nilism"
-        },
-        {
-            "Name": "Drowned Puppies",
-            "Organisation": "Department of Nilism"
-        },
-        {
-            "Name": "Office of Left Hand Hammers",
-            "Organisation": "Department of Nilism"
-        },
-        {
-            "Name": "Office of Skeptisim",
-            "Organisation": "Department of Nilism"
-        },
-        {
-            "Name": "CPI",
-            "Description": "Continuous Pointless Improvement",
-            "Organisation": "Department of Nilism"
-        },
-        {
-            "Name": "OCC",
-            "Description": "Office of Countinual Cycling",
-            "Organisation": "Department of Nilism"
-        },
-        {
-            "Name": "DCC",
-            "Description": "Department of Cyclic Cynicism",
-            "Organisation": "Department of Nilism"
-        },
-        {
-            "Name": "Entropy Innovation Services",
-            "Organisation": "Department of Nilism"
-        }
-    ],
+    "Groups": [{
+        "Name": "EPMO",
+        "Description": "The Investment Project Management Office.",
+        "Organisation": "Department of Nilism"
+    }],
 
-    "RiskCategories": [
-        {
-            "Name": "Enterprise - Reputation and Trust",
-            "Bias": 1.0,
-            "Group": "EPMO"
-        },
-        {
-            "Name": "Enterprise - Investment / Fiscal",
-            "Bias": 1.0,
-            "Group": "EPMO"
-        },
-        {
-            "Name": "Enterprise - Strategies",
-            "Bias": 1.0,
-            "Group": "EPMO"
-        },
-        {
-            "Name": "Enterprise - Delivery",
-            "Bias": 1.0,
-            "Group": "EPMO"
-        },
-        {
-            "Name": "Enterprise - Stakeholders",
-            "Bias": 1.0,
-            "Group": "EPMO"
-        },
-        {
-            "Name": "AoG - Reputation and Trust",
-            "Bias": 1.0,
-            "Group": "EPMO"
-        },
-        {
-            "Name": "AoG - Investment / Fiscal",
-            "Bias": 1.0,
-            "Group": "EPMO"
-        },
-        {
-            "Name": "AoG - Strategies",
-            "Bias": 1.0,
-            "Group": "EPMO"
-        },
-        {
-            "Name": "AoG - Delivery",
-            "Bias": 1.0,
-            "Group": "EPMO"
-        },
-        {
-            "Name": "AoG - Stakeholders",
-            "Bias": 1.0,
-            "Group": "EPMO"
-        }
-    ],
+    "BusinessUnits": [{
+        "Name": "Department of Disestablishment",
+        "Organisation": "Department of Nilism"
+    }, {
+        "Name": "Drowned Puppies",
+        "Organisation": "Department of Nilism"
+    }, {
+        "Name": "Office of Left Hand Hammers",
+        "Organisation": "Department of Nilism"
+    }, {
+        "Name": "Office of Skeptisim",
+        "Organisation": "Department of Nilism"
+    }, {
+        "Name": "CPI",
+        "Description": "Continuous Pointless Improvement",
+        "Organisation": "Department of Nilism"
+    }, {
+        "Name": "OCC",
+        "Description": "Office of Countinual Cycling",
+        "Organisation": "Department of Nilism"
+    }, {
+        "Name": "DCC",
+        "Description": "Department of Cyclic Cynicism",
+        "Organisation": "Department of Nilism"
+    }, {
+        "Name": "Entropy Innovation Services",
+        "Organisation": "Department of Nilism"
+    }],
 
-    "AlignmentCategories": [
-        {
-            "Name": "A1",
-            "Description": "Promote apathy amongst population",
-            "Area": "Outreach",
-            "Group": "EPMO"
-        },
-        {
-            "Name": "A2",
-            "Description": "Deconstructing public service",
-            "Area": "Internal",
-            "Group": "EPMO"
-        },
-        {
-            "Name": "A3",
-            "Description": "Promotion of nilhism",
-            "Area": "Outreach",
-            "Group": "EPMO"
-        },
-        {
-            "Name": "A4",
-            "Description": "Saving children at risk of optimism",
-            "Area": "Interventions",
-            "Group": "EPMO"
-        }
-    ],
+    "RiskCategories": [{
+        "Name": "Enterprise - Reputation and Trust",
+        "Bias": 1.0,
+        "Group": "EPMO"
+    }, {
+        "Name": "Enterprise - Investment / Fiscal",
+        "Bias": 1.0,
+        "Group": "EPMO"
+    }, {
+        "Name": "Enterprise - Strategies",
+        "Bias": 1.0,
+        "Group": "EPMO"
+    }, {
+        "Name": "Enterprise - Delivery",
+        "Bias": 1.0,
+        "Group": "EPMO"
+    }, {
+        "Name": "Enterprise - Stakeholders",
+        "Bias": 1.0,
+        "Group": "EPMO"
+    }, {
+        "Name": "AoG - Reputation and Trust",
+        "Bias": 1.0,
+        "Group": "EPMO"
+    }, {
+        "Name": "AoG - Investment / Fiscal",
+        "Bias": 1.0,
+        "Group": "EPMO"
+    }, {
+        "Name": "AoG - Strategies",
+        "Bias": 1.0,
+        "Group": "EPMO"
+    }, {
+        "Name": "AoG - Delivery",
+        "Bias": 1.0,
+        "Group": "EPMO"
+    }, {
+        "Name": "AoG - Stakeholders",
+        "Bias": 1.0,
+        "Group": "EPMO"
+    }],
 
-    "Users": [
-        {
-            "UserName": "fnietzsche",
-            "FirstName": "Friedrich",
-            "LastName": "Nietzsche",
-            "EmployeeId": "0001",
-            "Password": "abyss",
-            "Email": "friedrich@don.govt.nz",
-            "Roles": ["Staff"],
-            "Groups": ["EPMO"]
-        },
-        {
-            "UserName": "buddha",
-            "FirstName": "Buddha",
-            "LastName": "Siddhartha",
-            "EmployeeId": "0002",
-            "Password": "nirvana",
-            "Email": "buddha@don.govt.nz",
-            "Roles": ["Project Admin"],
-            "Groups": ["EPMO"]
-        },
-        {
-            "UserName": "mduchamp",
-            "FirstName": "Marcel",
-            "LastName": "Duchamp",
-            "EmployeeId": "0003",
-            "Password": "latrine",
-            "Email": "duchamp@don.govt.nz",
-            "Roles": ["Planner"],
-            "Groups": ["EPMO"]
-        },
-        {
-            "UserName": "bhicks",
-            "FirstName": "Bill",
-            "LastName": "Hicks",
-            "EmployeeId": "0004",
-            "Password": "nonsmokersdieeveryday",
-            "Email": "hicks@don.govt.nz",
-            "Roles": ["Approver", "Tracker"],
-            "Groups": ["EPMO"]
-        },
-        {
-            "UserName": "csawtell",
-            "FirstName": "Caleb",
-            "LastName": "Sawtell",
-            "EmployeeId": "0005",
-            "Password": "caleb",
-            "Email": "caleb.sawtell@lemonadelabs.io",
-            "Roles": ["Lemonade Admin"],
-            "Groups": ["EPMO"]
-        },
-        {
-            "UserName": "swinmason",
-            "FirstName": "Sam",
-            "LastName": "Win-Mason",
-            "EmployeeId": "0006",
-            "Password": "sam",
-            "Email": "sam@lemonadelabs.io",
-            "Roles": ["Lemonade Admin"],
-            "Groups": ["EPMO"]
-        },
-        {
-            "UserName": "asandhu",
-            "FirstName": "Amardeep",
-            "LastName": "Sandhu",
-            "EmployeeId": "0007",
-            "Password": "amardeep",
-            "Email": "amardeep.sandhu@lemonadelabs.io",
-            "Roles": ["Manager"],
-            "Groups": ["EPMO"]
-        }
-    ],
+    "AlignmentCategories": [{
+        "Name": "A1",
+        "Description": "Promote apathy amongst population",
+        "Area": "Outreach",
+        "Group": "EPMO"
+    }, {
+        "Name": "A2",
+        "Description": "Deconstructing public service",
+        "Area": "Internal",
+        "Group": "EPMO"
+    }, {
+        "Name": "A3",
+        "Description": "Promotion of nilhism",
+        "Area": "Outreach",
+        "Group": "EPMO"
+    }, {
+        "Name": "A4",
+        "Description": "Saving children at risk of optimism",
+        "Area": "Interventions",
+        "Group": "EPMO"
+    }],
 
-    "StaffResourceCategories": [
-        {
-            "Name": "Project Managers",
-            "Group": "EPMO"
-        },
-        {
-            "Name": "Management",
-            "Group": "EPMO"
-        },
-        {
-            "Name": "Software Engineers",
-            "Group": "EPMO"
-        },
-        {
-            "Name": "Test Analysts",
-            "Group": "EPMO"
-        },
-        {
-            "Name": "Business Analysts",
-            "Group": "EPMO"
-        },
-        {
-            "Name": "Consultants",
-            "Group": "EPMO"
-        },
-        {
-            "Name": "Line Staff",
-            "Group": "EPMO"
-        }
-    ],
+    "Users": [{
+        "UserName": "fnietzsche",
+        "FirstName": "Friedrich",
+        "LastName": "Nietzsche",
+        "EmployeeId": "0001",
+        "Password": "abyss",
+        "Email": "friedrich@don.govt.nz",
+        "Roles": ["Staff"],
+        "Groups": ["EPMO"]
+    }, {
+        "UserName": "buddha",
+        "FirstName": "Buddha",
+        "LastName": "Siddhartha",
+        "EmployeeId": "0002",
+        "Password": "nirvana",
+        "Email": "buddha@don.govt.nz",
+        "Roles": ["Project Admin"],
+        "Groups": ["EPMO"]
+    }, {
+        "UserName": "mduchamp",
+        "FirstName": "Marcel",
+        "LastName": "Duchamp",
+        "EmployeeId": "0003",
+        "Password": "latrine",
+        "Email": "duchamp@don.govt.nz",
+        "Roles": ["Planner"],
+        "Groups": ["EPMO"]
+    }, {
+        "UserName": "bhicks",
+        "FirstName": "Bill",
+        "LastName": "Hicks",
+        "EmployeeId": "0004",
+        "Password": "nonsmokersdieeveryday",
+        "Email": "hicks@don.govt.nz",
+        "Roles": ["Approver", "Tracker"],
+        "Groups": ["EPMO"]
+    }, {
+        "UserName": "csawtell",
+        "FirstName": "Caleb",
+        "LastName": "Sawtell",
+        "EmployeeId": "0005",
+        "Password": "caleb",
+        "Email": "caleb.sawtell@lemonadelabs.io",
+        "Roles": ["Lemonade Admin"],
+        "Groups": ["EPMO"]
+    }, {
+        "UserName": "swinmason",
+        "FirstName": "Sam",
+        "LastName": "Win-Mason",
+        "EmployeeId": "0006",
+        "Password": "sam",
+        "Email": "sam@lemonadelabs.io",
+        "Roles": ["Lemonade Admin"],
+        "Groups": ["EPMO"]
+    }, {
+        "UserName": "asandhu",
+        "FirstName": "Amardeep",
+        "LastName": "Sandhu",
+        "EmployeeId": "0007",
+        "Password": "amardeep",
+        "Email": "amardeep.sandhu@lemonadelabs.io",
+        "Roles": ["Manager"],
+        "Groups": ["EPMO"]
+    }],
 
-    "FinancialResourceCategories": [
-        {
-            "Name": "OPEX",
-            "Group": "EPMO"
-        },
-        {
-            "Name": "CAPEX",
-            "Group": "EPMO"
-        },
-        {
-            "Name": "Staff",
-            "Group": "EPMO"
-        }
-    ],
+    "StaffResourceCategories": [{
+        "Name": "Project Managers",
+        "Group": "EPMO"
+    }, {
+        "Name": "Management",
+        "Group": "EPMO"
+    }, {
+        "Name": "Software Engineers",
+        "Group": "EPMO"
+    }, {
+        "Name": "Test Analysts",
+        "Group": "EPMO"
+    }, {
+        "Name": "Business Analysts",
+        "Group": "EPMO"
+    }, {
+        "Name": "Consultants",
+        "Group": "EPMO"
+    }, {
+        "Name": "Line Staff",
+        "Group": "EPMO"
+    }],
 
-    "ResourceScenarios": [
-        {
-            "Name": "Baseline Scenario",
-            "Creator": "swinmason",
-            "Group": "EPMO",
-            "StaffResources": [
-                {
-                    "Name": "Mr Knowitall",
-                    "StartDate": "2016-01-01",
-                    "EndDate": "2017-01-01",
-                    "Categories": [
-                        "Management"
-                    ],
-                    "Adjustments": [
-                        {
-                            "Value": 1,
-                            "Additive": false,
-                            "Date": "2016-01-01",
-                            "Actual": true
-                        }
-                    ]
-                },
-                {
-                    "Name": "Misc Managers",
-                    "StartDate": "2016-01-01",
-                    "EndDate": "2020-01-01",
-                    "Categories": [
-                        "Management"
-                    ],
-                    "Adjustments": [
-                        {
-                            "Value": 10,
-                            "Additive": false,
-                            "Date": "2016-01-01",
-                            "Actual": true
-                        }
-                    ]
-                },
-                {
-                    "Name": "Mr Bob Dobalina",
-                    "StartDate": "2016-01-01",
-                    "EndDate": "2017-01-01",
-                    "Categories": [
-                        "Project Managers"
-                    ],
-                    "Adjustments": [
-                        {
-                            "Value": 1,
-                            "Additive": false,
-                            "Date": "2016-01-01",
-                            "Actual": true
-                        }
-                    ]
-                },
-                {
-                    "Name": "Mr Foo Bar",
-                    "StartDate": "2016-01-01",
-                    "EndDate": "2017-01-01",
-                    "Categories": [
-                        "Project Managers"
-                    ],
-                    "Adjustments": [
-                        {
-                            "Value": 1,
-                            "Additive": false,
-                            "Date": "2016-01-01",
-                            "Actual": true
-                        }
-                    ]
-                },
-                {
-                    "Name": "Mrs Baz",
-                    "StartDate": "2016-01-01",
-                    "EndDate": "2017-01-01",
-                    "Categories": [
-                        "Project Managers"
-                    ],
-                    "Adjustments": [
-                        {
-                            "Value": 1,
-                            "Additive": false,
-                            "Date": "2016-01-01",
-                            "Actual": true
-                        }
-                    ]
-                }, 
-                {
-                    "Name": "DON In-house IT Dev",
-                    "StartDate": "2016-01-01",
-                    "EndDate": "2017-01-01",
-                    "Categories": [
-                        "Software Engineers"
-                    ],
-                    "Adjustments": [
-                        {
-                            "Value": 10,
-                            "Additive": false,
-                            "Date": "2016-01-01",
-                            "Actual": true
-                        }
-                    ]
-                },
-                 {
-                    "Name": "DON In-House IT Test",
-                    "StartDate": "2016-01-01",
-                    "EndDate": "2017-01-01",
-                    "Categories": [
-                        "Test Analysts"
-                    ],
-                    "Adjustments": [
-                        {
-                            "Value": 5,
-                            "Additive": false,
-                            "Date": "2016-01-01",
-                            "Actual": true
-                        }
-                    ]
-                },
-                {
-                    "Name": "CPI Line Staff",
-                    "StartDate": "2016-01-01",
-                    "EndDate": "2017-01-01",
-                    "Categories": [
-                        "Line Staff"
-                    ],
-                    "Adjustments": [
-                        {
-                            "Value": 30,
-                            "Additive": false,
-                            "Date": "2016-01-01",
-                            "Actual": true
-                        }
-                    ]
-                },
-                {
-                    "Name": "Mr Blobby",
-                    "StartDate": "2016-01-01",
-                    "EndDate": "2017-01-01",
-                    "Categories": [
-                        "Business Analysts"
-                    ],
-                    "Adjustments": [
-                        {
-                            "Value": 1,
-                            "Additive": false,
-                            "Date": "2016-01-01",
-                            "Actual": true
-                        }
-                    ]
-                },
-                {
-                    "Name": "Mr Blah",
-                    "StartDate": "2016-01-01",
-                    "EndDate": "2017-01-01",
-                    "Categories": [
-                        "Business Analysts"
-                    ],
-                    "Adjustments": [
-                        {
-                            "Value": 30,
-                            "Additive": false,
-                            "Date": "2016-01-01",
-                            "Actual": true
-                        }
-                    ]
-                }
+    "FinancialResourceCategories": [{
+        "Name": "OPEX",
+        "Group": "EPMO"
+    }, {
+        "Name": "CAPEX",
+        "Group": "EPMO"
+    }, {
+        "Name": "Staff",
+        "Group": "EPMO"
+    }],
+
+    "ResourceScenarios": [{
+        "Name": "Baseline Scenario",
+        "Creator": "swinmason",
+        "Group": "EPMO",
+        "StaffResources": [{
+            "Name": "Mr Knowitall",
+            "StartDate": "2016-01-01",
+            "EndDate": "2017-01-01",
+            "Categories": [
+                "Management"
             ],
-            "FinancialResources": [
-                {
-                    "Name": "EPMO Department Funding",
-                    "Partitions": [
-                        {
-                            "Categories": ["OPEX"],
-                            "Adjustments": [
-                                {
-                                    "Value": 40000000,
-                                    "Additive": false,
-                                    "Date": "2016-01-01",
-                                    "Actual": false
-                                },
-                                 {
-                                    "Value": 40000000,
-                                    "Additive": false,
-                                    "Date": "2017-01-01",
-                                    "Actual": false
-                                },
-                                 {
-                                    "Value": 40000000,
-                                    "Additive": false,
-                                    "Date": "2018-01-01",
-                                    "Actual": false
-                                },
-                                {
-                                    "Value": 40000000,
-                                    "Additive": false,
-                                    "Date": "2019-01-01",
-                                    "Actual": false
-                                }
-                            ]
-                        },
-                         {
-                            "Categories": ["CAPEX"],
-                            "Adjustments": [
-                                {
-                                    "Value": 10000000,
-                                    "Additive": false,
-                                    "Date": "2016-01-01",
-                                    "Actual": false
-                                },
-                                 {
-                                    "Value": 10000000,
-                                    "Additive": false,
-                                    "Date": "2017-01-01",
-                                    "Actual": false
-                                },
-                                 {
-                                    "Value": 10000000,
-                                    "Additive": false,
-                                    "Date": "2018-01-01",
-                                    "Actual": false
-                                },
-                                {
-                                    "Value": 10000000,
-                                    "Additive": false,
-                                    "Date": "2019-01-01",
-                                    "Actual": false
-                                }
-                            ]
-                        }
-                    ],
-                    "StartDate": "2016-01-01",
-                    "EndDate": "2020-01-01"
-                },
-                {
-                    "Name": "EPMO Slush Fund",
-                    "Partitions": [
-                        {
-                            "Categories": [],
-                            "Adjustments": [
-                                {
-                                    "Value": 1000000,
-                                    "Additive": true,
-                                    "Date": "2016-06-30",
-                                    "Actual": false
-                                },
-                                 {
-                                    "Value": 1000000,
-                                    "Additive": true,
-                                    "Date": "2016-12-31",
-                                    "Actual": false
-                                }
-                            ]
-                        }
-                    ],
-                    "StartDate": "2016-01-01",
-                    "EndDate": "2020-01-01"
-                }
-            ]
-        }
-    ],
-
-    "Projects": [
-        {
-            "Name": "Depressing Reality Web Portal",
-            "Summary": "A site hilighting just how goddam shit the world is",
-            "Creator": "swinmason",
-            "Group": "EPMO",
-            "Owner": "Mr Knowitall",
-            "Managers": [
-                "Misc Managers"
+            "Adjustments": [{
+                "Value": 1,
+                "Additive": false,
+                "Date": "2016-01-01",
+                "Actual": true
+            }]
+        }, {
+            "Name": "Misc Managers",
+            "StartDate": "2016-01-01",
+            "EndDate": "2020-01-01",
+            "Categories": [
+                "Management"
             ],
-            "OwningBusinessUnit": "Entropy Innovation Services",
-            "ImpactedBusinessUnit": "Entropy Innovation Services",
-            "Options": [
-                {
-                    "Description": "",
-                    "Priority": 6.0,
-                    "Complexity": 9.0,
-                    "Phases": [
-                        {
-                            "Name": "Business Case",
-                            "StartDate":"2016-01-01"
-                        }
-                    ],
-                    "RiskProfile": [
+            "Adjustments": [{
+                "Value": 10,
+                "Additive": false,
+                "Date": "2016-01-01",
+                "Actual": true
+            }]
+        }, {
+            "Name": "Mr Bob Dobalina",
+            "StartDate": "2016-01-01",
+            "EndDate": "2017-01-01",
+            "Categories": [
+                "Project Managers"
+            ],
+            "Adjustments": [{
+                "Value": 1,
+                "Additive": false,
+                "Date": "2016-01-01",
+                "Actual": true
+            }]
+        }, {
+            "Name": "Mr Foo Bar",
+            "StartDate": "2016-01-01",
+            "EndDate": "2017-01-01",
+            "Categories": [
+                "Project Managers"
+            ],
+            "Adjustments": [{
+                "Value": 1,
+                "Additive": false,
+                "Date": "2016-01-01",
+                "Actual": true
+            }]
+        }, {
+            "Name": "Mrs Baz",
+            "StartDate": "2016-01-01",
+            "EndDate": "2017-01-01",
+            "Categories": [
+                "Project Managers"
+            ],
+            "Adjustments": [{
+                "Value": 1,
+                "Additive": false,
+                "Date": "2016-01-01",
+                "Actual": true
+            }]
+        }, {
+            "Name": "DON In-house IT Dev",
+            "StartDate": "2016-01-01",
+            "EndDate": "2017-01-01",
+            "Categories": [
+                "Software Engineers"
+            ],
+            "Adjustments": [{
+                "Value": 10,
+                "Additive": false,
+                "Date": "2016-01-01",
+                "Actual": true
+            }]
+        }, {
+            "Name": "DON In-House IT Test",
+            "StartDate": "2016-01-01",
+            "EndDate": "2017-01-01",
+            "Categories": [
+                "Test Analysts"
+            ],
+            "Adjustments": [{
+                "Value": 5,
+                "Additive": false,
+                "Date": "2016-01-01",
+                "Actual": true
+            }]
+        }, {
+            "Name": "CPI Line Staff",
+            "StartDate": "2016-01-01",
+            "EndDate": "2017-01-01",
+            "Categories": [
+                "Line Staff"
+            ],
+            "Adjustments": [{
+                "Value": 30,
+                "Additive": false,
+                "Date": "2016-01-01",
+                "Actual": true
+            }]
+        }, {
+            "Name": "Mr Blobby",
+            "StartDate": "2016-01-01",
+            "EndDate": "2017-01-01",
+            "Categories": [
+                "Business Analysts"
+            ],
+            "Adjustments": [{
+                "Value": 1,
+                "Additive": false,
+                "Date": "2016-01-01",
+                "Actual": true
+            }]
+        }, {
+            "Name": "Mr Blah",
+            "StartDate": "2016-01-01",
+            "EndDate": "2017-01-01",
+            "Categories": [
+                "Business Analysts"
+            ],
+            "Adjustments": [{
+                "Value": 30,
+                "Additive": false,
+                "Date": "2016-01-01",
+                "Actual": true
+            }]
+        }],
+        "FinancialResources": [{
+            "Name": "EPMO Department Funding",
+            "Partitions": [{
+                "Categories": ["OPEX"],
+                "Adjustments": [{
+                    "Value": 40000000,
+                    "Additive": false,
+                    "Date": "2016-01-01",
+                    "Actual": false
+                }, {
+                    "Value": 40000000,
+                    "Additive": false,
+                    "Date": "2017-01-01",
+                    "Actual": false
+                }, {
+                    "Value": 40000000,
+                    "Additive": false,
+                    "Date": "2018-01-01",
+                    "Actual": false
+                }, {
+                    "Value": 40000000,
+                    "Additive": false,
+                    "Date": "2019-01-01",
+                    "Actual": false
+                }]
+            }, {
+                "Categories": ["CAPEX"],
+                "Adjustments": [{
+                    "Value": 10000000,
+                    "Additive": false,
+                    "Date": "2016-01-01",
+                    "Actual": false
+                }, {
+                    "Value": 10000000,
+                    "Additive": false,
+                    "Date": "2017-01-01",
+                    "Actual": false
+                }, {
+                    "Value": 10000000,
+                    "Additive": false,
+                    "Date": "2018-01-01",
+                    "Actual": false
+                }, {
+                    "Value": 10000000,
+                    "Additive": false,
+                    "Date": "2019-01-01",
+                    "Actual": false
+                }]
+            }],
+            "StartDate": "2016-01-01",
+            "EndDate": "2020-01-01"
+        }, {
+            "Name": "EPMO Slush Fund",
+            "Partitions": [{
+                "Categories": [],
+                "Adjustments": [{
+                    "Value": 1000000,
+                    "Additive": true,
+                    "Date": "2016-06-30",
+                    "Actual": false
+                }, {
+                    "Value": 1000000,
+                    "Additive": true,
+                    "Date": "2016-12-31",
+                    "Actual": false
+                }]
+            }],
+            "StartDate": "2016-01-01",
+            "EndDate": "2020-01-01"
+        }]
+    }],
 
-                    ],
+    "Projects": [{
+        "Name": "Depressing Reality Web Portal",
+        "Summary": "A site hilighting just how goddam shit the world is",
+        "Creator": "swinmason",
+        "Group": "EPMO",
+        "Owner": "Mr Knowitall",
+        "Managers": [
+            "Misc Managers"
+        ],
+        "OwningBusinessUnit": "Entropy Innovation Services",
+        "ImpactedBusinessUnit": "Entropy Innovation Services",
+        "Options": [{
+            "Description": "",
+            "Priority": 6.0,
+            "Complexity": 9.0,
+            "Phases": [{
+                "Name": "Business Case",
+                "StartDate": "2016-01-01",
+                "EndDate": "2016-03-31",
+                "FinancialResources": [{
+                    "Value": 20000,
+                    "Additive": true,
+                    "Date": "2016-01-01",
+                    "Categories": ["OPEX"]
+                }],
+                "StaffResources": [{
+                    "Value": 1,
+                    "Additive": true,
+                    "Date": "2016-01-01",
+                    "Category": "Business Analysts",
+                    "StaffResource": "Mr Blobby"
+                }, {
+                    "Value": -1,
+                    "Additive": true,
+                    "Date": "2016-03-31",
+                    "Category": "Business Analysts",
+                    "StaffResource": "Mr Blobby"
+                }]
+            }, {
+                "Name": "Research and development",
+                "StartDate": "2016-04-01",
+                "EndDate": "2016-06-30",
+                "FinancialResources": [{
+                    "Value": 100000,
+                    "Additive": true,
+                    "Date": "2016-04-01",
+                    "Categories": ["OPEX"]
+                }],
+                "StaffResources": [{
+                    "Value": 1,
+                    "Additive": true,
+                    "Date": "2016-04-01",
+                    "Category": "Project Managers"
+                }, {
+                    "Value": 5,
+                    "Additive": true,
+                    "Date": "2016-04-01",
+                    "Category": "Software Engineers"
+                }, {
+                    "Value": -1,
+                    "Additive": true,
+                    "Date": "2016-06-30",
+                    "Category": "Project Managers"
+                }, {
+                    "Value": -5,
+                    "Additive": true,
+                    "Date": "2016-06-30",
+                    "Category": "Software Engineers"
+                }]
+            }, {
+                "Name": "Production",
+                "StartDate": "2016-07-01",
+                "EndDate": "2016-11-30",
+                "FinancialResources": [{
+                    "Value": 300000,
+                    "Additive": true,
+                    "Date": "2016-07-01",
+                    "Categories": ["OPEX"]
+                }, {
+                    "Value": 700000,
+                    "Additive": true,
+                    "Date": "2016-11-30",
+                    "Categories": ["CAPEX"]
+                }, {
+                    "Value": 140000,
+                    "Additive": true,
+                    "Date": "2017-01-01",
+                    "Categories": ["OPEX"]
+                }, {
+                    "Value": 140000,
+                    "Additive": true,
+                    "Date": "2018-01-01",
+                    "Categories": ["OPEX"]
+                }, {
+                    "Value": 140000,
+                    "Additive": true,
+                    "Date": "2019-01-01",
+                    "Categories": ["OPEX"]
+                }, {
+                    "Value": 140000,
+                    "Additive": true,
+                    "Date": "2020-01-01",
+                    "Categories": ["OPEX"]
+                }],
+                "StaffResources": [{
+                    "Value": 1,
+                    "Additive": true,
+                    "Date": "2016-07-01",
+                    "Category": "Management"
+                }, {
+                    "Value": 1,
+                    "Additive": true,
+                    "Date": "2016-07-01",
+                    "Category": "Project Managers"
+                }, {
+                    "Value": 1,
+                    "Additive": true,
+                    "Date": "2016-07-01",
+                    "Category": "Business Analysts"
+                }, {
+                    "Value": 3,
+                    "Additive": true,
+                    "Date": "2016-07-01",
+                    "Category": "Test Analysts"
+                }, {
+                    "Value": 10,
+                    "Additive": true,
+                    "Date": "2016-07-01",
+                    "Category": "Software Engineers"
+                }, {
+                    "Value": -1,
+                    "Additive": true,
+                    "Date": "2016-11-30",
+                    "Category": "Management"
+                }, {
+                    "Value": -1,
+                    "Additive": true,
+                    "Date": "2016-11-30",
+                    "Category": "Project Managers"
+                }, {
+                    "Value": -1,
+                    "Additive": true,
+                    "Date": "2016-11-30",
+                    "Category": "Business Analysts"
+                }, {
+                    "Value": -3,
+                    "Additive": true,
+                    "Date": "2016-11-30",
+                    "Category": "Test Analysts"
+                }, {
+                    "Value": -10,
+                    "Additive": true,
+                    "Date": "2016-11-30",
+                    "Category": "Software Engineers"
+                }, {
+                    "Value": 10,
+                    "Additive": true,
+                    "Date": "2016-11-30",
+                    "Category": "Line Staff"
+                }]
+            }],
+            "RiskProfile": [{
+                "Category": "Enterprise - Reputation and Trust",
+                "Probability": 0.4,
+                "Impact": 0.7,
+                "Mitigation": true,
+                "Residual": 0.4
+            }, {
+                "Category": "Enterprise - Investment / Fiscal",
+                "Probability": 0.7,
+                "Impact": 0.3,
+                "Mitigation": true,
+                "Residual": 0.1
+            }, {
+                "Category": "Enterprise - Strategies",
+                "Probability": 0.5,
+                "Impact": 0.9,
+                "Mitigation": true,
+                "Residual": 0.5
+            }, {
+                "Category": "Enterprise - Delivery",
+                "Probability": 0.9,
+                "Impact": 0.3,
+                "Mitigation": true,
+                "Residual": 0.1
+            }, {
+                "Category": "Enterprise - Stakeholders",
+                "Probability": 0.4,
+                "Impact": 0.5,
+                "Mitigation": true,
+                "Residual": 0.3
+            }, {
+                "Category": "AoG - Reputation and Trust",
+                "Probability": 0.3,
+                "Impact": 0.3,
+                "Mitigation": true,
+                "Residual": 0.1
+            }, {
+                "Category": "AoG - Investment / Fiscal",
+                "Probability": 0.8,
+                "Impact": 0.1,
+                "Mitigation": true,
+                "Residual": 0.1
+            }, {
+                "Category": "AoG - Strategies",
+                "Probability": 0.5,
+                "Impact": 0.6,
+                "Mitigation": true,
+                "Residual": 0.2
+            }, {
+                "Category": "AoG - Delivery",
+                "Probability": 0.4,
+                "Impact": 0.2,
+                "Mitigation": true,
+                "Residual": 0.1
+            }, {
+                "Category": "AoG - Stakeholders",
+                "Probability": 0.2,
+                "Impact": 0.1,
+                "Mitigation": false,
+                "Residual": 0.1
+            }],
+            "Benefits": [{
+                "Name": "Nihilistic Cult Uptake",
+                "Description": "Target of nihilistic cult uptake of 3% of population.",
+                "Achieved": false,
+                "Alignments": [{
+                    "Value": 0.1,
+                    "Date": "2016-01-01",
+                    "AlignmentCategory": "A3"
+                }, {
+                    "Value": 0.6,
+                    "Date": "2016-01-01",
+                    "AlignmentCategory": "A1"
+                }],
+                "Categories": []
+            }, {
+                "Name": "Population can be demotivated easily online",
+                "Description": "20% of pupulation get online to be demotivated at least once a week.",
+                "Achieved": false,
+                "Alignments": [{
+                    "Value": 0.3,
+                    "Date": "2016-01-01",
+                    "AlignmentCategory": "A3"
+                }, {
+                    "Value": 0.7,
+                    "Date": "2016-01-01",
+                    "AlignmentCategory": "A1"
+                }],
+                "Categories": []
+            }],
+            "Dependencies": ["Web Server Upgrade"]
+        }]
+    }, {
+        "Name": "Web Server Upgrade",
+        "Summary": "Increased performance and storage.",
+        "Creator": "swinmason",
+        "Group": "EPMO",
+        "Owner": "Mr Knowitall",
+        "Managers": [
+            "Misc Managers"
+        ],
+        "OwningBusinessUnit": "CPI",
+        "ImpactedBusinessUnit": "Entropy Innovation Services",
+        "Options": [{
+            "Priority": 8.0,
+            "Complexity": 2.0,
+            "Phases": [{
+                "Name": "Business Case",
+                "StartDate": "2016-01-01",
+                "EndDate": "2016-03-31",
+                "FinancialResources": [{
+                    "Value": 5000,
+                    "Additive": true,
+                    "Date": "2016-01-01",
+                    "Categories": ["OPEX"]
+                }],
+                "StaffResources": [{
+                    "Value": 1,
+                    "Additive": true,
+                    "Date": "2016-01-01",
+                    "Category": "Business Analysts",
+                    "StaffResource": "Mr Blah"
+                }, {
+                    "Value": -1,
+                    "Additive": true,
+                    "Date": "2016-02-28",
+                    "Category": "Business Analysts",
+                    "StaffResource": "Mr Blah"
+                }]
+            }, {
+                "Name": "Production",
+                "StartDate": "2016-03-01",
+                "EndDate": "2016-03-31",
+                "FinancialResources": [{
+                    "Value": 4000,
+                    "Additive": true,
+                    "Date": "2016-03-01",
+                    "Categories": ["OPEX"]
+                }, {
+                    "Value": 50000,
+                    "Additive": true,
+                    "Date": "2016-03-31",
+                    "Categories": ["CAPEX"]
+                }, {
+                    "Value": 10000,
+                    "Additive": true,
+                    "Date": "2017-01-01",
+                    "Categories": ["OPEX"]
+                }, {
+                    "Value": 10000,
+                    "Additive": true,
+                    "Date": "2018-01-01",
+                    "Categories": ["OPEX"]
+                }, {
+                    "Value": 10000,
+                    "Additive": true,
+                    "Date": "2019-01-01",
+                    "Categories": ["OPEX"]
+                }, {
+                    "Value": 10000,
+                    "Additive": true,
+                    "Date": "2020-01-01",
+                    "Categories": ["OPEX"]
+                }],
+                "StaffResources": [{
+                    "Value": 1,
+                    "Additive": true,
+                    "Date": "2016-07-01",
+                    "Category": "Management"
+                }, {
+                    "Value": 1,
+                    "Additive": true,
+                    "Date": "2016-07-01",
+                    "Category": "Project Managers"
+                }, {
+                    "Value": 1,
+                    "Additive": true,
+                    "Date": "2016-07-01",
+                    "Category": "Test Analysts"
+                }, {
+                    "Value": 2,
+                    "Additive": true,
+                    "Date": "2016-07-01",
+                    "Category": "Software Engineers"
+                }, {
+                    "Value": -1,
+                    "Additive": true,
+                    "Date": "2016-11-30",
+                    "Category": "Management"
+                }, {
+                    "Value": -1,
+                    "Additive": true,
+                    "Date": "2016-11-30",
+                    "Category": "Project Managers"
+                }, {
+                    "Value": -1,
+                    "Additive": true,
+                    "Date": "2016-11-30",
+                    "Category": "Test Analysts"
+                }, {
+                    "Value": -2,
+                    "Additive": true,
+                    "Date": "2016-11-30",
+                    "Category": "Software Engineers"
+                }]
+            }],
+            "RiskProfile": [{
+                "Category": "Enterprise - Reputation and Trust",
+                "Probability": 0.2,
+                "Impact": 0.9,
+                "Mitigation": true,
+                "Residual": 0.4
+            }, {
+                "Category": "Enterprise - Investment / Fiscal",
+                "Probability": 0.5,
+                "Impact": 0.2,
+                "Mitigation": true,
+                "Residual": 0.1
+            }, {
+                "Category": "Enterprise - Strategies",
+                "Probability": 0.0,
+                "Impact": 0.0,
+                "Mitigation": true,
+                "Residual": 0.0
+            }, {
+                "Category": "Enterprise - Delivery",
+                "Probability": 0.3,
+                "Impact": 0.8,
+                "Mitigation": true,
+                "Residual": 0.1
+            }, {
+                "Category": "Enterprise - Stakeholders",
+                "Probability": 0.4,
+                "Impact": 0.5,
+                "Mitigation": true,
+                "Residual": 0.3
+            }, {
+                "Category": "AoG - Reputation and Trust",
+                "Probability": 0.3,
+                "Impact": 0.3,
+                "Mitigation": true,
+                "Residual": 0.1
+            }, {
+                "Category": "AoG - Investment / Fiscal",
+                "Probability": 0.8,
+                "Impact": 0.1,
+                "Mitigation": true,
+                "Residual": 0.1
+            }, {
+                "Category": "AoG - Strategies",
+                "Probability": 0.5,
+                "Impact": 0.6,
+                "Mitigation": true,
+                "Residual": 0.2
+            }, {
+                "Category": "AoG - Delivery",
+                "Probability": 0.4,
+                "Impact": 0.2,
+                "Mitigation": true,
+                "Residual": 0.1
+            }, {
+                "Category": "AoG - Stakeholders",
+                "Probability": 0.2,
+                "Impact": 0.1,
+                "Mitigation": false,
+                "Residual": 0.1
+            }],
+            "Benefits": [{
+                "Name": "Web performance",
+                "Description": "50% less requests served per minute",
+                "Achieved": false,
+                "Alignments": [{
+                    "Value": 0.6,
+                    "Date": "2016-01-01",
+                    "AlignmentCategory": "A2"
+                }],
+                "Categories": []
+            }],
 
-                    "Benefits": [
+            "Dependencies": []
+        }]
+    }],
 
-                    ],
+    "Portfolios": [{
+        "Creator": "swinmason",
+        "Group": "EPMO",
+        "Name": "My Awesome Portfolio",
+        "StartYear": "2016-01-01",
+        "EndYear": "2020-12-31",
+        "TimeScale": 4,
 
-                    "Dependencies": [
+        "Projects": [
+            {
+                
+            },
+            {
 
-                    ]
-                }
-            ]
-        }
-    ],
+            }
+        ]
+    }]
 
-    "Portfolios": [
-        {
-            "Creator": "swinmason",
-            "Group": "EPMO",
-            "Name": "My Awesome Portfolio",
-            "StartYear": "2016-01-01",
-            "EndYear": "2020-01-01",
-            "TimeScale": 4,
-            "Projects": [
-
-            ]
-        }
-    ]
-    
 }

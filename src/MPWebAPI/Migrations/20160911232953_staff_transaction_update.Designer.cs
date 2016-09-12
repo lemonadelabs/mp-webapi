@@ -8,9 +8,10 @@ using MPWebAPI.Models;
 namespace MPWebAPI.Migrations
 {
     [DbContext(typeof(PostgresDBContext))]
-    partial class PostgresDBContextModelSnapshot : ModelSnapshot
+    [Migration("20160911232953_staff_transaction_update")]
+    partial class staff_transaction_update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431");
@@ -135,7 +136,11 @@ namespace MPWebAPI.Migrations
 
                     b.Property<int>("ProjectBenefitId");
 
+                    b.Property<float>("RiskBias");
+
                     b.Property<float>("Value");
+
+                    b.Property<float>("Weight");
 
                     b.HasKey("Id");
 
@@ -159,10 +164,6 @@ namespace MPWebAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired();
-
-                    b.Property<float>("RiskBias");
-
-                    b.Property<float>("Weight");
 
                     b.HasKey("Id");
 
@@ -594,7 +595,7 @@ namespace MPWebAPI.Migrations
 
                     b.Property<bool>("Achieved");
 
-                    b.Property<float?>("AchievedValue");
+                    b.Property<float>("AchievedValue");
 
                     b.Property<DateTime>("Date");
 
@@ -632,7 +633,7 @@ namespace MPWebAPI.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("PortfolioId");
+                    b.Property<int>("PlanId");
 
                     b.Property<int>("ProjectOptionId");
 
@@ -640,7 +641,7 @@ namespace MPWebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PortfolioId");
+                    b.HasIndex("PlanId");
 
                     b.HasIndex("ProjectOptionId");
 
@@ -1306,9 +1307,9 @@ namespace MPWebAPI.Migrations
 
             modelBuilder.Entity("MPWebAPI.Models.ProjectConfig", b =>
                 {
-                    b.HasOne("MPWebAPI.Models.Portfolio", "Portfolio")
+                    b.HasOne("MPWebAPI.Models.Portfolio", "Plan")
                         .WithMany("Projects")
-                        .HasForeignKey("PortfolioId")
+                        .HasForeignKey("PlanId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("MPWebAPI.Models.ProjectOption", "ProjectOption")

@@ -12,8 +12,8 @@ namespace MPWebAPI.Models
         public DateTime StartDate { get; set; }
         public List<PhaseConfig> Phases { get; set; }
         
-        public int PlanId { get; set; }
-        public Portfolio Plan { get; set; }
+        public int PortfolioId { get; set; }
+        public Portfolio Portfolio { get; set; }
         
         public int ProjectOptionId { get; set; }
         public ProjectOption ProjectOption { get; set; }    

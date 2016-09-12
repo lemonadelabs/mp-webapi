@@ -9,12 +9,10 @@ namespace MPWebAPI.Models
     public class Alignment
     {
         public int Id { get; set; }
-        public float Weight { get; set; }
+
         public float Value { get; set; }
         public DateTime Date { get; set; }
         public bool Actual { get; set; }
-        public float RiskBias { get; set; }
-        
 
         public int AlignmentCategoryId { get; set; }
         public AlignmentCategory AlignmentCategory { get; set; }

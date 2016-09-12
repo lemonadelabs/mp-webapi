@@ -93,7 +93,8 @@ namespace MPWebAPI.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public string Area { get; set; }
-
+        public float Weight { get; set; }
+        public float RiskBias { get; set; }
         public int GroupId { get; set; }
         public Group Group { get; set; }
 
