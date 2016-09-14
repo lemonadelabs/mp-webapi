@@ -884,15 +884,26 @@
         "Name": "My Awesome Portfolio",
         "StartYear": "2016-01-01",
         "EndYear": "2020-12-31",
+        "Approved": false,
         "TimeScale": 4,
         "Projects": [
             {   
-                
+                "Phases": [],
+                "Project": "Web Server Upgrade",
+                "Option": "Recommended Option"
             },
             {
-
+                "StartDate": "2017-02-01",
+                "Phases": [
+                    {
+                        "StartDate": "2016-07-01",
+                        "EndDate": "2016-12-31",
+                        "ProjectPhase": "Production"
+                    }
+                ],
+                "Project": "Depressing Reality Web Portal",
+                "Option": "Recommended Option"
             }
         ]
     }]
-
 }

@@ -27,7 +27,30 @@ namespace MPWebAPI.Fixtures
             
             public class PortfolioFixture
             {
-
+                public class ProjectConfigFixture
+                {
+                    public class PhaseConfigFixture
+                    {
+                        public DateTime StartDate { get; set; }
+                        public DateTime EndDate { get; set; }
+                        public string ProjectPhase { get; set; }
+                    }
+                    
+                    public DateTime StartDate { get; set; }
+                    public string Project { get; set; }
+                    public string Option { get; set; }
+                    public List<PhaseConfigFixture> Phases { get; set; }                   
+                }
+                
+                public string Creator { get; set; }
+                public string Group { get; set; }
+                public string Name { get; set; }
+                public DateTime StartYear { get; set; }
+                public DateTime EndYear { get; set; }
+                public bool Approved { get; set; }
+                public string ApprovedBy { get; set; }
+                public int TimeScale { get; set; }
+                public List<ProjectConfigFixture> Projects { get; set; }
             }
 
             public class ResourceScenarioFixture
@@ -532,7 +555,42 @@ namespace MPWebAPI.Fixtures
         {
             if (!_dbcontext.Portfolio.Any())
             {
-                
+                foreach (var p in _fixtureData.Portfolios)
+                {
+                    var newPortfolio = new Portfolio() {
+                        Creator = _dbcontext.Users.First(u => u.UserName == p.Creator),
+                        Group = _dbcontext.Group.First(g => g.Name == p.Group),
+                        Name = p.Name,
+                        StartYear = p.StartYear,
+                        EndYear = p.EndYear,
+                        Approved = p.Approved,
+                        ApprovedBy = _dbcontext.Users.FirstOrDefault(u => u.UserName == p.ApprovedBy),
+                    };
+                    _dbcontext.Portfolio.Add(newPortfolio);
+                    _dbcontext.SaveChanges();
+
+                    foreach (var pc in p.Projects)
+                    {
+                        var newProjectConfig = new ProjectConfig() {
+                            StartDate = pc.StartDate,
+                            ProjectOption = _dbcontext.ProjectOption.First(po => po.Description == pc.Option && po.Project.Name == pc.Project),
+                            Portfolio = newPortfolio
+                        };
+                        _dbcontext.ProjectConfig.Add(newProjectConfig);
+                        _dbcontext.SaveChanges();
+
+                        foreach (var ppc in pc.Phases)
+                        {
+                            _dbcontext.PhaseConfig.Add(new PhaseConfig() {
+                                StartDate = ppc.StartDate,
+                                EndDate = ppc.EndDate,
+                                ProjectPhase = _dbcontext.ProjectPhase.First(pp => pp.Name == ppc.ProjectPhase && pp.ProjectOption == newProjectConfig.ProjectOption && pp.ProjectOption.Project.Name == newProjectConfig.ProjectOption.Project.Name),
+                                ProjectConfig = newProjectConfig
+                            });
+                        }
+                        _dbcontext.SaveChanges();                     
+                    }
+                }
             }
         }
 
