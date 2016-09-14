@@ -131,9 +131,97 @@ namespace MPWebAPI.Fixtures
                 public string Group { get; set; }
             }
 
+            public class ProjectFixture
+            {
+                public class OptionsFixture
+                {
+                    
+                    public class RiskProfileFixture
+                    {
+                        public string Category { get; set; }
+                        public float Probability { get; set; }
+                        public float Impact { get; set; }
+                        public bool Mitigation { get; set; }
+                        public float Residual { get; set; }
+                        public DateTime Date { get; set; }
+                        public bool Actual { get; set; }
+                    }
+
+                    public class ProjectBenefitFixture
+                    {
+                        public class AlignmentFixture
+                        {
+                            public float Value { get; set; }
+                            public DateTime Date { get; set; }
+                            public string AlignmentCategory { get; set; }
+                        }
+                        
+                        public string Name { get; set; }
+                        public string Description { get; set; }
+                        public bool Achieved { get; set; }
+                        public List<AlignmentFixture> Alignments { get; set; }
+                        public List<string> Categories { get; set; }
+                    }
+                    
+                    public class PhaseFixture
+                    {
+                        public class FinancialTransactionFixture
+                        {
+                            public decimal Value { get; set; }
+                            public bool Additive { get; set; }
+                            public DateTime Date { get; set; }
+                            public List<string> Categories { get; set; }
+                        }
+
+                        public class StaffTransactionFixture
+                        {
+                            public int Value { get; set; }
+                            public bool Additive { get; set; }
+                            public DateTime Date { get; set; }
+                            public string Category { get; set; }
+                            public string StaffResource { get; set; }
+                        }
+                        
+                        public string Name { get; set; }
+                        public string BusinessCase { get; set; }
+                        public DateTime StartDate { get; set; }
+                        public DateTime EndDate { get; set; }
+                        public List<FinancialTransactionFixture> FinancialResources { get; set; }
+                        public List<StaffTransactionFixture> StaffResources { get; set; }
+                       
+                    }
+
+                    public class DependencyFixture
+                    {
+                        public string Project { get; set; }
+                        public string Option { get; set; }
+                    }
+                    
+                    public string Description { get; set; }
+                    public float Priority { get; set; }
+                    public float Complexity { get; set; }
+                    public List<PhaseFixture> Phases { get; set; }
+                    public List<RiskProfileFixture> RiskProfile { get; set; }
+                    public List<ProjectBenefitFixture> Benefits { get; set; }
+                    public List<DependencyFixture> Dependencies { get; set; }
+                }
+                
+                public string Name { get; set; }
+                public string Summary { get; set; }
+                public string Creator { get; set; }
+                public string Group { get; set; }
+                public string Owner { get; set; }
+                public List<string> Managers { get; set; }
+                public string OwningBusinessUnit { get; set; }
+                public string ImpactedBusinessUnit { get; set; }
+                public List<OptionsFixture> Options { get; set; }
+            }
+
             public class BenefitCategoryFixture
             {
-
+                public string Name { get; set; }
+                public string Description { get; set; }
+                public string Group { get; set; }
             }
             
             public List<GroupFixture> Groups { get; set; }
@@ -144,6 +232,7 @@ namespace MPWebAPI.Fixtures
             public List<StaffResourceCategoryFixture> StaffResourceCategories { get; set; }
             public List<FinancialResourceCategoryFixture> FinancialResourceCategories { get; set; }
             public List<UserFixture> Users { get; set; }
+            public List<ProjectFixture> Projects { get; set; }
             public List<PortfolioFixture> Portfolios { get; set; }
             public List<ResourceScenarioFixture> ResourceScenarios { get; set; }
         }
@@ -162,7 +251,7 @@ namespace MPWebAPI.Fixtures
             )
         {
             _dbcontext = dbcontext;
-            _logger = loggerFactory.CreateLogger<FixtureBuilder>();
+            _logger = loggerFactory.AddDebug().CreateLogger<FixtureBuilder>();
             _userManager = userManager;
             _roleManager = roleManager;
         }
@@ -217,16 +306,196 @@ namespace MPWebAPI.Fixtures
             _logger.LogInformation("Adding Staff Resource Categories...");
             AddStaffResourceCategories();
 
-            _logger.LogInformation("Adding Financial Resource Categories");
+            _logger.LogInformation("Adding Financial Resource Categories...");
             AddFinancialResourceCategories();
+
+            _logger.LogInformation("Adding Benefit Categories...");
+            AddBenefitCategories();
 
             _logger.LogInformation("Adding Resource Scenarios...");
             AddResourceScenarios();
+
+            _logger.LogInformation("Adding Projects...");
+            AddProjects();
 
             _logger.LogInformation("Adding Portfolios...");
             AddPortfolios();
 
             _logger.LogInformation("Fixture {0} added.", fixtureFile);
+        }
+
+        private List<FixtureData.ProjectFixture> DepSort(List<FixtureData.ProjectFixture> insort)
+        {
+            var sorted = new List<FixtureData.ProjectFixture>(insort);
+            // Ensures that for all px, py in ps:
+            // if py in px.deps then py > px
+
+            sorted.Sort((x, y) => {
+                var xAllDeps = x.Options.SelectMany(ox => ox.Dependencies);
+                var yAllDeps = y.Options.SelectMany(oy => oy.Dependencies);
+
+                if (
+                    xAllDeps.Count() == yAllDeps.Count() && xAllDeps.All(xd => yAllDeps.Any(yd => yd.Project == xd.Project && yd.Option == xd.Option)))
+                {
+                    return 0;
+                }
+                else if(yAllDeps.Any(yd => yd.Project == x.Name))
+                {
+                    return -1;
+                }
+                else {
+                    return 1;
+                }
+            });
+            return sorted;
+        }
+
+        private void AddProjects()
+        {
+            if (!_dbcontext.Project.Any())
+            {
+                foreach (var p in DepSort(_fixtureData.Projects))
+                {
+                    var newProject = new Project()
+                    {
+                        Name = p.Name,
+                        Summary = p.Summary,
+                        Creator = _dbcontext.Users.First(u => u.UserName == p.Creator), 
+                        Group = _dbcontext.Group.First(g => g.Name == p.Group),
+                        Owner = _dbcontext.StaffResource.FirstOrDefault(sr => sr.Name == p.Owner),
+                        OwningBusinessUnit = _dbcontext.BusinessUnit.FirstOrDefault(bu => bu.Name == p.OwningBusinessUnit),
+                        ImpactedBusinessUnit = _dbcontext.BusinessUnit.FirstOrDefault(ibu => ibu.Name == p.ImpactedBusinessUnit),
+                    };
+                    _dbcontext.Project.Add(newProject);
+                    _dbcontext.SaveChanges();
+                    _dbcontext.AddRange(p.Managers.Select(m => new StaffResourceProject() {
+                                StaffResource = _dbcontext.StaffResource.FirstOrDefault(sr => sr.Name == m),
+                                Project = newProject         
+                          }));
+                    _dbcontext.SaveChanges();
+                    
+                    foreach (var o in p.Options)
+                    {
+                        var option = new ProjectOption() {
+                            Priority = o.Priority,
+                            Complexity = o.Complexity,
+                            Description = o.Description,
+                            Project = newProject
+                        };
+                        _dbcontext.ProjectOption.Add(option);
+                        _dbcontext.SaveChanges();
+
+                        foreach (var phase in o.Phases)
+                        {
+                            var newPhase = new ProjectPhase()
+                            {
+                                Name = phase.Name,
+                                StartDate = phase.StartDate,
+                                EndDate = phase.EndDate,
+                                ProjectOption = option
+                            };
+                            _dbcontext.ProjectPhase.Add(newPhase);
+                            _dbcontext.SaveChanges();
+
+                           foreach (var ft in phase.FinancialResources)
+                           {
+                                var newft = new FinancialTransaction() {
+                                    Value = ft.Value,
+                                    Additive = ft.Additive,
+                                    Date = ft.Date,
+                                    ProjectPhase = newPhase
+                                };
+                                _dbcontext.FinancialTransaction.Add(newft);
+                                _dbcontext.SaveChanges();
+
+                                foreach (var ftrc in ft.Categories)
+                                {
+                                    var newftrc = new FinancialTransactionResourceCategory() {
+                                        FinancialResourceCategory = _dbcontext.FinancialResourceCategory.FirstOrDefault(frc => frc.Name == ftrc),
+                                        FinancialTransaction = newft 
+                                    };
+                                    _dbcontext.Add(newftrc);
+                                    _dbcontext.SaveChanges();
+                                }                               
+                           }
+
+                           foreach (var st in phase.StaffResources)
+                           {
+                               var newStaffTransaction = new StaffTransaction() {
+                                   Value = st.Value,
+                                   Additive = st.Additive,
+                                   Date = st.Date,
+                                   Category = _dbcontext.StaffResourceCategory.FirstOrDefault(src => src.Name == st.Category),
+                                   StaffResource = _dbcontext.StaffResource.FirstOrDefault(sr => sr.Name == st.StaffResource),
+                                   ProjectPhase = newPhase
+                               };
+                           }
+                        }
+
+                        foreach (var rp in o.RiskProfile)
+                        {
+                            var newRiskProfile = new RiskProfile()
+                            {
+                                RiskCategory = _dbcontext.RiskCategory.First(rc => rc.Name == rp.Category),
+                                Probability = rp.Probability,
+                                Impact = rp.Impact,
+                                Mitigation = rp.Mitigation ? 1.0f : 0.0f,
+                                Residual = rp.Residual,
+                                Actual = rp.Actual,
+                                ProjectOption = option
+                            };
+                            _dbcontext.RiskProfile.Add(newRiskProfile);
+                        }
+                        _dbcontext.SaveChanges();
+
+                        foreach (var b in o.Benefits)
+                        {
+                            var newBenefit = new ProjectBenefit()
+                            {
+                                Name = b.Name,
+                                Description = b.Description,
+                                Achieved = b.Achieved,
+                                ProjectOption = option
+                            };
+                            _dbcontext.ProjectBenefit.Add(newBenefit);
+                            _dbcontext.SaveChanges();
+
+                            foreach (var a in b.Alignments)
+                            {
+                                var newAlignment = new Alignment()
+                                {
+                                    Value = a.Value,
+                                    Date = a.Date,
+                                    AlignmentCategory = _dbcontext.AlignmentCategory.FirstOrDefault(ac => ac.Name == a.AlignmentCategory),
+                                    ProjectBenefit = newBenefit
+                                };
+                                _dbcontext.Alignment.Add(newAlignment);
+                            }
+                            _dbcontext.SaveChanges();
+
+                            foreach (var bc in b.Categories)
+                            {
+                                var pbbc = new ProjectBenefitBenefitCategory() {
+                                    ProjectBenefit = newBenefit,
+                                    BenefitCategory = _dbcontext.BenefitCategory.First(c => c.Name == bc)
+                                };
+                                _dbcontext.Add(pbbc);
+                            }
+                            _dbcontext.SaveChanges();
+                        }
+
+                        foreach (var dep in o.Dependencies)
+                        {
+                            var newDep = new ProjectDependency() {
+                                DependsOn = _dbcontext.ProjectOption.First(po => po.Project.Name == dep.Project && po.Description == dep.Option),
+                                RequiredBy = option 
+                            };
+                            _dbcontext.Add(newDep);
+                        }
+                        _dbcontext.SaveChanges();
+                    }
+                }
+            }
         }
 
         private void AddFinancialResourceCategories()
@@ -316,7 +585,7 @@ namespace MPWebAPI.Fixtures
                         _dbcontext.SaveChanges();
                     }
 
-                    // FinancialResources
+                    // Financial Resources
                     foreach (var fr in rs.FinancialResources)
                     {
                         var financialResource = new FinancialResource() {
@@ -456,7 +725,23 @@ namespace MPWebAPI.Fixtures
                         Name = rc.Name,
                         Bias = rc.Bias,
                         Group = _dbcontext.Group.First(g => g.Name == rc.Group)
-                    });                    
+                    });                   
+                }
+                _dbcontext.SaveChanges();
+            }
+        }
+
+        private void AddBenefitCategories()
+        {
+            if (!_dbcontext.BenefitCategory.Any())
+            {
+                foreach (var bc in _fixtureData.BenefitCategories)
+                {
+                    _dbcontext.BenefitCategory.Add(new BenefitCategory() {
+                        Name = bc.Name,
+                        Description = bc.Description,
+                        Group = _dbcontext.Group.First(g => g.Name == bc.Group)
+                    });
                 }
                 _dbcontext.SaveChanges();
             }

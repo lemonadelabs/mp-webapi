@@ -88,6 +88,8 @@
         "Group": "EPMO"
     }],
 
+    "BenefitCategories": [],
+
     "AlignmentCategories": [{
         "Name": "A1",
         "Description": "Promote apathy amongst population",
@@ -428,7 +430,7 @@
         "OwningBusinessUnit": "Entropy Innovation Services",
         "ImpactedBusinessUnit": "Entropy Innovation Services",
         "Options": [{
-            "Description": "",
+            "Description": "Recommended Option",
             "Priority": 6.0,
             "Complexity": 9.0,
             "Phases": [{
@@ -582,61 +584,71 @@
                 "Probability": 0.4,
                 "Impact": 0.7,
                 "Mitigation": true,
-                "Residual": 0.4
+                "Residual": 0.4,
+                "Date": "2016-01-01" 
             }, {
                 "Category": "Enterprise - Investment / Fiscal",
                 "Probability": 0.7,
                 "Impact": 0.3,
                 "Mitigation": true,
-                "Residual": 0.1
+                "Residual": 0.1,
+                "Date": "2016-01-01" 
             }, {
                 "Category": "Enterprise - Strategies",
                 "Probability": 0.5,
                 "Impact": 0.9,
                 "Mitigation": true,
-                "Residual": 0.5
+                "Residual": 0.5,
+                "Date": "2016-01-01" 
             }, {
                 "Category": "Enterprise - Delivery",
                 "Probability": 0.9,
                 "Impact": 0.3,
                 "Mitigation": true,
-                "Residual": 0.1
+                "Residual": 0.1,
+                "Date": "2016-01-01" 
             }, {
                 "Category": "Enterprise - Stakeholders",
                 "Probability": 0.4,
                 "Impact": 0.5,
                 "Mitigation": true,
-                "Residual": 0.3
+                "Residual": 0.3,
+                "Date": "2016-01-01" 
             }, {
                 "Category": "AoG - Reputation and Trust",
                 "Probability": 0.3,
                 "Impact": 0.3,
                 "Mitigation": true,
-                "Residual": 0.1
+                "Residual": 0.1,
+                "Date": "2016-01-01" 
             }, {
                 "Category": "AoG - Investment / Fiscal",
                 "Probability": 0.8,
                 "Impact": 0.1,
                 "Mitigation": true,
-                "Residual": 0.1
+                "Residual": 0.1,
+                "Date": "2016-01-01" 
             }, {
                 "Category": "AoG - Strategies",
                 "Probability": 0.5,
                 "Impact": 0.6,
                 "Mitigation": true,
-                "Residual": 0.2
+                "Residual": 0.2,
+                "Date": "2016-01-01" 
             }, {
                 "Category": "AoG - Delivery",
                 "Probability": 0.4,
                 "Impact": 0.2,
                 "Mitigation": true,
-                "Residual": 0.1
+                "Residual": 0.1,
+                "Date": "2016-01-01" 
             }, {
                 "Category": "AoG - Stakeholders",
                 "Probability": 0.2,
                 "Impact": 0.1,
                 "Mitigation": false,
-                "Residual": 0.1
+                "Residual": 0.1,
+                "Date": "2016-01-01" 
             }],
             "Benefits": [{
                 "Name": "Nihilistic Cult Uptake",
@@ -667,7 +679,12 @@
                 }],
                 "Categories": []
             }],
-            "Dependencies": ["Web Server Upgrade"]
+            "Dependencies": [
+                {
+                    "Project": "Web Server Upgrade",
+                    "Option": "Recommended Option"
+                }
+            ]
         }]
     }, {
         "Name": "Web Server Upgrade",
@@ -681,6 +698,7 @@
         "OwningBusinessUnit": "CPI",
         "ImpactedBusinessUnit": "Entropy Innovation Services",
         "Options": [{
+            "Description": "Recommended Option",
             "Priority": 8.0,
             "Complexity": 2.0,
             "Phases": [{
@@ -867,9 +885,8 @@
         "StartYear": "2016-01-01",
         "EndYear": "2020-12-31",
         "TimeScale": 4,
-
         "Projects": [
-            {
+            {   
                 
             },
             {
