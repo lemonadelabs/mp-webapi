@@ -20,7 +20,7 @@ namespace MPWebAPI.Models
 
         // Ownership
         public List<ResourceScenario> ResourceScenarios { get; set; }
-        public List<Portfolio>Portfolios{ get; set; }
+        public List<Portfolio> Portfolios { get; set; }
         public List<Project> Projects { get; set; }
         public List<Portfolio> PortfoliosApproved { get; set; }
         public List<ResourceScenario> ResourceScenariosApproved { get; set; }

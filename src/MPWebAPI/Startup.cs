@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using MPWebAPI.Models;
-using Swashbuckle.Swagger.Model;
 using MPWebAPI.Fixtures;
 
 namespace MPWebAPI
@@ -47,25 +46,6 @@ namespace MPWebAPI
             
             services.AddMvc();
 
-            services.AddSwaggerGen();
-            services.ConfigureSwaggerGen(
-                options => 
-                options.SingleApiVersion(
-                    new Info()
-                    {
-                        Version = "v1",
-                        Title = "Merlin: Plan Web API",
-                        Description = "Provides persistance storage and business logic services to Merlin: Plan",
-                        TermsOfService = "None",
-                        Contact = new Contact() {
-                            Name = "Sam Win-Mason",
-                            Email = "sam@lemonadelabs.io",
-                            Url = "http://lemonadelabs.io"
-                        }
-                    }
-                )
-            );
-
             services.AddOpenIddict<MerlinPlanUser, PostgresDBContext>()
                 .EnableTokenEndpoint("/api/auth/token")
                 .EnableLogoutEndpoint("/api/auth/logout")
@@ -99,8 +79,6 @@ namespace MPWebAPI
                 }
             );
             app.UseMvc();
-            app.UseSwagger();
-            app.UseSwaggerUi();
            
             var fixtureConfig = Configuration.GetSection("Fixtures");
             if(fixtureConfig.GetValue<bool>("Enabled"))
