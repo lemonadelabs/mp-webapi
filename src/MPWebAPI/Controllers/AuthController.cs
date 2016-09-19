@@ -38,7 +38,6 @@ namespace MPWebAPI.Controllers
         public async Task<IActionResult> Token()
         {
             var request = HttpContext.GetOpenIdConnectRequest();
-            _logger.LogDebug(request.IsPasswordGrantType().ToString());
             if (request.IsPasswordGrantType())
             {
                 // Check username and password validity
@@ -92,7 +91,6 @@ namespace MPWebAPI.Controllers
 
                 return SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme);
             }
-            _logger.LogDebug("Did we get here?");
             return BadRequest(new OpenIdConnectResponse {
                 Error = OpenIdConnectConstants.Errors.UnsupportedGrantType,
                 ErrorDescription = "The specified grant type is not supported."

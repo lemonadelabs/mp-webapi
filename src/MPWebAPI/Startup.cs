@@ -1,4 +1,5 @@
-using Microsoft.AspNetCore.Builder;
+using System;
+using Microsoft.AspNetCore.Builder; 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,7 +53,9 @@ namespace MPWebAPI
                 .AllowPasswordFlow()
                 .AllowRefreshTokenFlow()
                 .DisableHttpsRequirement()
+                .SetAccessTokenLifetime(TimeSpan.FromSeconds(3600))
                 .AddEphemeralSigningKey();
+                
 
             services.AddScoped<IMerlinPlanRepository, MerlinPlanRepository>();
             services.AddTransient<IFixtureBuilder, FixtureBuilder>();
