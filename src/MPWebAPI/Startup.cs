@@ -48,7 +48,6 @@ namespace MPWebAPI
 
             services.AddOpenIddict<MerlinPlanUser, PostgresDBContext>()
                 .EnableTokenEndpoint("/api/auth/token")
-                .EnableLogoutEndpoint("/api/auth/logout")
                 .UseJsonWebTokens()
                 .AllowPasswordFlow()
                 .AllowRefreshTokenFlow()

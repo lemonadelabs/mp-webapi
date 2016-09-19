@@ -166,7 +166,18 @@
         "Email": "sam@lemonadelabs.io",
         "Roles": ["Lemonade Admin"],
         "Groups": ["EPMO"]
-    }, {
+    },
+    {
+        "UserName": "admin",
+        "FirstName": "Admin",
+        "LastName": "Admin",
+        "EmployeeId": "0008",
+        "Password": "admin",
+        "Email": "foo@lemonadelabs.io",
+        "Roles": ["Lemonade Admin"],
+        "Groups": ["EPMO"]
+    },
+    {
         "UserName": "asandhu",
         "FirstName": "Amardeep",
         "LastName": "Sandhu",
