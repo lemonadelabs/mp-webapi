@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace MPWebAPI.Models
@@ -23,9 +24,10 @@ namespace MPWebAPI.Models
             }
         }
 
-        public void AddOrganisation(Organisation org)
+        public async Task AddOrganisation(Organisation org)
         {
-            throw new NotImplementedException();
+            _dbcontext.Organisation.Add(org);
+            await _dbcontext.SaveChangesAsync();
         }
 
         public void AddOrganisations(IEnumerable<Organisation> orgs)

@@ -53,6 +53,9 @@ With the application running direct your browser to `http://localhost:5000/swagg
 2. From inside the /src/MPWebAPI folder, run `dotnet ef database update` (This is only necessary if the update has a new migration)
 3. From inside the /src/MPWebAPI folder, run `dotnet run`
 
+## API Documentation
+[https://documenter.getpostman.com/view/788789/merlin-plan-web-api/2LNYSK](https://documenter.getpostman.com/view/788789/merlin-plan-web-api/2LNYSK)
+
 
 
 

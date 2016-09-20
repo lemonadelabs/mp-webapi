@@ -4,7 +4,7 @@ namespace MPWebAPI.ViewModels
 {
     public class ViewModel
     {
-        protected virtual void MapToModel(object model)
+        public virtual void MapToModel(object model)
         {
             MapProperties(this, model);
         }

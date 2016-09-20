@@ -27,5 +27,13 @@ namespace MPWebAPI.Controllers
              return _mprepo.Organisations.Select(o => new OrganisationViewModel(o));
         }
 
+        [HttpPost]
+        public async Task Post([FromBody]OrganisationViewModel orgvm)
+        {
+            // Some validation here!
+            var newOrg = new Organisation();
+            orgvm.MapToModel(newOrg);
+            await _mprepo.AddOrganisation(newOrg);
+        }
     }
 }

@@ -13,6 +13,8 @@ namespace MPWebAPI.ViewModels
             Users = org.Users.Select(u => new OrganisationViewModel.User { Id = u.Id, Name = u.UserName});
         }
 
+        public OrganisationViewModel() {}
+
         public class Group
         {
             public int Id { get; set; }

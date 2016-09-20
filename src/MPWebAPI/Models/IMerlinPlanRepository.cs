@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MPWebAPI.Models
 {
@@ -9,7 +10,7 @@ namespace MPWebAPI.Models
     {
         // Organisations
         IEnumerable<Organisation> Organisations { get;}
-        void AddOrganisation(Organisation org);
+        Task AddOrganisation(Organisation org);
         void RemoveOrganisation(int orgId);
         void AddOrganisations(IEnumerable<Organisation> orgs);
         void RemoveOrganisations(IEnumerable<int> orgIds);
