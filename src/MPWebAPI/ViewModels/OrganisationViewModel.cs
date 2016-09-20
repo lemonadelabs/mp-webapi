@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using MPWebAPI.Models;
 
@@ -28,15 +29,24 @@ namespace MPWebAPI.ViewModels
         }
 
         public int Id { get; set; }
+        
+        [Required]
         public string Name { get; set; }
+        
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string Address3 { get; set; }
         public string PostCode { get; set; }
         public string Country { get; set; }
+
+        [EmailAddress]
         public string Contact { get; set; }
+
         public string WebDomain { get; set; }
+
+        [Range(1, 12)]
         public int FinancialYearStart { get; set; }
+        
         public IEnumerable<OrganisationViewModel.Group> Groups { get; set; }
         public IEnumerable<OrganisationViewModel.User> Users { get; set; }
     }

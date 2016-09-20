@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace MPWebAPI.Models
 {
     /// <summary>
@@ -5,7 +7,7 @@ namespace MPWebAPI.Models
     /// </summary>
     public interface IMerlinPlanBL
     {
-        
+        Task CreateOrganisation(Organisation org);
     }    
 }
 

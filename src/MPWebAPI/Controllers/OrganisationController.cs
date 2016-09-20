@@ -11,11 +11,13 @@ namespace MPWebAPI.Controllers
     [Route("api/[controller]")]
     public class OrganisationController : Controller
     {
-        private IMerlinPlanRepository _mprepo;
+        private readonly IMerlinPlanRepository _mprepo;
+        private readonly IMerlinPlanBL _mpbl;
 
-        public OrganisationController(IMerlinPlanRepository mprepo)
+        public OrganisationController(IMerlinPlanRepository mprepo, IMerlinPlanBL mpbl)
         {
             _mprepo = mprepo;
+            _mpbl = mpbl;
         }
         
         [HttpGet]
@@ -45,12 +47,12 @@ namespace MPWebAPI.Controllers
             {
                 var newOrg = new Organisation();
                 orgvm.MapToModel(newOrg);
-                await _mprepo.AddOrganisation(newOrg);
+                await _mpbl.CreateOrganisation(newOrg);
                 return Ok();    
             }
             else 
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
         }
 
@@ -87,7 +89,7 @@ namespace MPWebAPI.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
         }
     }
