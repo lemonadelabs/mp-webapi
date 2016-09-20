@@ -10,8 +10,6 @@ namespace MPWebAPI.ViewModels
         public OrganisationViewModel(Organisation org)
         {
             MapToViewModel(org);
-            Groups = org.Groups.Select(g => new OrganisationViewModel.Group { Id = g.Id, Name = g.Name});
-            Users = org.Users.Select(u => new OrganisationViewModel.User { Id = u.Id, Name = u.UserName});
         }
 
         public OrganisationViewModel() {}
@@ -46,8 +44,5 @@ namespace MPWebAPI.ViewModels
 
         [Range(1, 12)]
         public int FinancialYearStart { get; set; }
-        
-        public IEnumerable<OrganisationViewModel.Group> Groups { get; set; }
-        public IEnumerable<OrganisationViewModel.User> Users { get; set; }
     }
 }

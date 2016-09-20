@@ -20,6 +20,21 @@ namespace MPWebAPI.Controllers
             _mpbl = mpbl;
         }
         
+        // Groups
+        [HttpGet("{id}/group")]
+        public IActionResult GetGroups(int id)
+        {
+            var org = _mprepo.Organisations.FirstOrDefault(o => o.Id == id);
+            if (org != null)
+            {
+                return new JsonResult(_mprepo.GetOrganisationGroups(org).Select(g => new GroupViewModel(g)));
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         [HttpGet]
         public IEnumerable<OrganisationViewModel> GetAll()
         {

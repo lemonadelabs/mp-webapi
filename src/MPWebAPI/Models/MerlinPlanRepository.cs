@@ -1,7 +1,8 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace MPWebAPI.Models
 {
@@ -14,20 +15,41 @@ namespace MPWebAPI.Models
             _dbcontext = dbcontext;
         }
 
+        public IEnumerable<Group> Groups
+        {
+            get
+            {
+                return _dbcontext.Group;
+            }
+        }
+
         public IEnumerable<Organisation> Organisations
         {
             get
             {
-                return _dbcontext.Organisation
-                    .Include(o => o.Groups)
-                    .Include(o => o.Users);
+                return _dbcontext.Organisation;
             }
+        }
+
+        public IEnumerable<Group> GetOrganisationGroups(Organisation org)
+        {
+            return _dbcontext.Group.Where(g => g.OrganisationId == org.Id);
+        }
+
+        public Task AddGroup(Group g)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task AddOrganisation(Organisation org)
         {
             _dbcontext.Organisation.Add(org);
             await _dbcontext.SaveChangesAsync();
+        }
+
+        public Task RemoveGroup(Group g)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task RemoveOrganisation(Organisation org)
