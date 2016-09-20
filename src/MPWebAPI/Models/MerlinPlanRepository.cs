@@ -30,24 +30,15 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
-        public void AddOrganisations(IEnumerable<Organisation> orgs)
+        public async Task RemoveOrganisation(Organisation org)
         {
-            throw new NotImplementedException();
+            _dbcontext.Organisation.Remove(org);
+            await _dbcontext.SaveChangesAsync();
         }
 
-        public void RemoveOrganisation(int orgId)
+        public async Task SaveChanges()
         {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveOrganisations(IEnumerable<int> orgIds)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateOrganisation(Organisation org)
-        {
-            throw new NotImplementedException();
+            await _dbcontext.SaveChangesAsync();
         }
     }    
 }

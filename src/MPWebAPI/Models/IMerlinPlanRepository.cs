@@ -11,9 +11,7 @@ namespace MPWebAPI.Models
         // Organisations
         IEnumerable<Organisation> Organisations { get;}
         Task AddOrganisation(Organisation org);
-        void RemoveOrganisation(int orgId);
-        void AddOrganisations(IEnumerable<Organisation> orgs);
-        void RemoveOrganisations(IEnumerable<int> orgIds);
-        void UpdateOrganisation(Organisation org);
+        Task RemoveOrganisation(Organisation org);
+        Task SaveChanges();
     }    
 }
