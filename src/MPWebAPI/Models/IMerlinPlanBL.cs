@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace MPWebAPI.Models
 {
@@ -8,6 +10,7 @@ namespace MPWebAPI.Models
     public interface IMerlinPlanBL
     {
         Task CreateOrganisation(Organisation org);
+        Task<IdentityResult> CreateUser(MerlinPlanUser newUser, string password, IEnumerable<string> roles);
     }    
 }
 

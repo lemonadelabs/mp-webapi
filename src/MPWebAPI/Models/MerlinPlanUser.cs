@@ -32,7 +32,7 @@ namespace MPWebAPI.Models
 
         // Related resource data
         public StaffResource StaffResource { get; set; }
-        public int? StaffResourceId {get; set;}
+        public int? StaffResourceId { get; set; }
     }
 
     public class UserGroup
