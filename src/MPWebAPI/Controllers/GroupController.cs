@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
 
@@ -77,6 +78,38 @@ namespace MPWebAPI.Controllers
             else
             {
                 return NotFound();
+            }
+        }
+
+
+        public class AddUserRequest
+        {
+            public IEnumerable<string> Users { get; set; }
+        } 
+
+        [HttpPost("{groupId}/user")]
+        public async Task<IActionResult> AddUser(int groupId, [FromBody] AddUserRequest r)
+        {
+            if (ModelState.IsValid)
+            {
+                var group = _mprepo.Groups.First(g => g.Id == groupId);
+                if (group != null)
+                {
+                    var userModels = await _userManager.Users.Where(u => r.Users.Contains(u.Id)).ToListAsync();
+                    foreach (var u in userModels)
+                    {
+                        await _mprepo.AddUserToGroupAsync(u, group);    
+                    }
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }    
+            }
+            else
+            {
+                return BadRequest(ModelState);
             }
         }
     }

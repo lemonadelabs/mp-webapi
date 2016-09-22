@@ -73,5 +73,21 @@ namespace MPWebAPI.Models
                 .Where(ug => ug.GroupId == g.Id)
                 .Select(ug => ug.User).ToListAsync();
         }
+
+        public async Task AddUserToGroupAsync(MerlinPlanUser user, Group group)
+        {
+            // Check to see that user is not already in the group
+            var exists = await _dbcontext.UserGroup
+                .AnyAsync(ug => ug.GroupId == group.Id && ug.UserId == user.Id);
+
+            if (!exists)
+            {
+                var userGroup = new UserGroup();
+                userGroup.Group = group;
+                userGroup.User = user;
+                _dbcontext.UserGroup.Add(userGroup);
+                await _dbcontext.SaveChangesAsync();
+            }
+        }
     }    
 }
