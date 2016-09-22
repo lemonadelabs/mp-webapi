@@ -104,7 +104,7 @@ namespace MPWebAPI.Controllers
             var org = _mprepo.Organisations.FirstOrDefault(o => o.Id == id);
             if (org != null)
             {
-                await _mprepo.RemoveOrganisation(org);
+                await _mprepo.RemoveOrganisationAsync(org);
                 return Ok();
             }
             else
@@ -121,7 +121,7 @@ namespace MPWebAPI.Controllers
                 if (org != null)
                 {
                     orgvm.MapToModel(org);
-                    await _mprepo.SaveChanges();
+                    await _mprepo.SaveChangesAsync();
                     return Ok();
                 }
                 else

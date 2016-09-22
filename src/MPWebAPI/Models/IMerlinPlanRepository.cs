@@ -10,15 +10,15 @@ namespace MPWebAPI.Models
     {
         // Organisations
         IEnumerable<Organisation> Organisations { get; }
-        Task AddOrganisation(Organisation org);
-        Task RemoveOrganisation(Organisation org);
+        Task AddOrganisationAsync(Organisation org);
+        Task RemoveOrganisationAsync(Organisation org);
         IEnumerable<Group> GetOrganisationGroups(Organisation org);
-        Task SaveChanges();
+        Task SaveChangesAsync();
 
         // Groups
         IEnumerable<Group> Groups { get; }
-        Task AddGroup(Group g);
-        Task RemoveGroup(Group g);
-        Task<IEnumerable<MerlinPlanUser>> GetGroupMembers(Group g);
+        Task AddGroupAsync(Group g);
+        Task RemoveGroupAsync(Group g);
+        Task<IEnumerable<MerlinPlanUser>> GetGroupMembersAsync(Group g);
     }    
 }

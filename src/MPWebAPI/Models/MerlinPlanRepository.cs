@@ -38,36 +38,36 @@ namespace MPWebAPI.Models
             }
         }
 
-        public async Task AddGroup(Group g)
+        public async Task AddGroupAsync(Group g)
         {
             _dbcontext.Group.Add(g);
             await _dbcontext.SaveChangesAsync();
         }
 
-        public async Task RemoveGroup(Group g)
+        public async Task RemoveGroupAsync(Group g)
         {
             _dbcontext.Group.Remove(g);
             await _dbcontext.SaveChangesAsync();
         }
 
-        public async Task AddOrganisation(Organisation org)
+        public async Task AddOrganisationAsync(Organisation org)
         {
             _dbcontext.Organisation.Add(org);
             await _dbcontext.SaveChangesAsync();
         }
 
-        public async Task RemoveOrganisation(Organisation org)
+        public async Task RemoveOrganisationAsync(Organisation org)
         {
             _dbcontext.Organisation.Remove(org);
             await _dbcontext.SaveChangesAsync();
         }
 
-        public async Task SaveChanges()
+        public async Task SaveChangesAsync()
         {
             await _dbcontext.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<MerlinPlanUser>> GetGroupMembers(Group g)
+        public async Task<IEnumerable<MerlinPlanUser>> GetGroupMembersAsync(Group g)
         {
             return await _dbcontext.UserGroup
                 .Where(ug => ug.GroupId == g.Id)

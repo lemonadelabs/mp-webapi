@@ -32,7 +32,7 @@ namespace MPWebAPI.Controllers
             {
                 var newGroup = new Group();
                 group.MapToModel(newGroup);
-                await _mprepo.AddGroup(newGroup);
+                await _mprepo.AddGroupAsync(newGroup);
                 return new JsonResult(new GroupViewModel(newGroup));
             }
             else
@@ -68,7 +68,7 @@ namespace MPWebAPI.Controllers
             var gr = _mprepo.Groups.First(g => g.Id == id);
             if (gr != null)
             {
-                var users = await _mprepo.GetGroupMembers(gr);
+                var users = await _mprepo.GetGroupMembersAsync(gr);
                 var userViews = await ConvertToUserViewModelAsync(users, _userManager); 
                 return new JsonResult(
                         userViews  

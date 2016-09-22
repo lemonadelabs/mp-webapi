@@ -28,7 +28,7 @@ namespace MPWebAPI.Models
         /// <returns></returns>
         public async Task CreateOrganisation(Organisation org)
         {
-            await _mprepo.AddOrganisation(org);
+            await _mprepo.AddOrganisationAsync(org);
             // TODO: Add default user
             // TODO: Add default group
         }
