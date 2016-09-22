@@ -89,5 +89,18 @@ namespace MPWebAPI.Models
                 await _dbcontext.SaveChangesAsync();
             }
         }
+
+        public async Task RemoveUserFromGroupAsync(MerlinPlanUser user, Group group)
+        {
+            var exists = await _dbcontext.UserGroup
+                .Where(ug => ug.GroupId == group.Id && ug.UserId == user.Id)
+                .FirstOrDefaultAsync();
+            
+            if (exists != null)
+            {
+                _dbcontext.UserGroup.Remove(exists);
+                await _dbcontext.SaveChangesAsync();
+            }
+        }
     }    
 }

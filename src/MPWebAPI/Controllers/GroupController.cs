@@ -82,13 +82,13 @@ namespace MPWebAPI.Controllers
         }
 
 
-        public class AddUserRequest
+        public class UserRequest
         {
             public IEnumerable<string> Users { get; set; }
         } 
 
         [HttpPost("{groupId}/user")]
-        public async Task<IActionResult> AddUser(int groupId, [FromBody] AddUserRequest r)
+        public async Task<IActionResult> AddUser(int groupId, [FromBody] UserRequest r)
         {
             if (ModelState.IsValid)
             {
@@ -112,5 +112,32 @@ namespace MPWebAPI.Controllers
                 return BadRequest(ModelState);
             }
         }
+
+        [HttpDelete("{groupId}/user")]
+        public async Task<IActionResult> RemoveUser(int groupId, [FromBody] UserRequest r)
+        {
+            if (ModelState.IsValid)
+            {
+                var group = _mprepo.Groups.First(g => g.Id == groupId);
+                if (group != null)
+                {
+                    var userModels = await _userManager.Users.Where(u => r.Users.Contains(u.Id)).ToListAsync();
+                    foreach (var u in userModels)
+                    {
+                        await _mprepo.RemoveUserFromGroupAsync(u, group);    
+                    }
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }         
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
     }
 }
