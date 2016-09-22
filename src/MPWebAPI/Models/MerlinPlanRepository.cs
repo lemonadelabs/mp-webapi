@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace MPWebAPI.Models
 {
@@ -37,20 +38,22 @@ namespace MPWebAPI.Models
             }
         }
 
-        public Task AddGroup(Group g)
+        public async Task AddGroup(Group g)
         {
-            throw new NotImplementedException();
+            _dbcontext.Group.Add(g);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveGroup(Group g)
+        {
+            _dbcontext.Group.Remove(g);
+            await _dbcontext.SaveChangesAsync();
         }
 
         public async Task AddOrganisation(Organisation org)
         {
             _dbcontext.Organisation.Add(org);
             await _dbcontext.SaveChangesAsync();
-        }
-
-        public Task RemoveGroup(Group g)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task RemoveOrganisation(Organisation org)
@@ -62,6 +65,13 @@ namespace MPWebAPI.Models
         public async Task SaveChanges()
         {
             await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<MerlinPlanUser>> GetGroupMembers(Group g)
+        {
+            return await _dbcontext.UserGroup
+                .Where(ug => ug.GroupId == g.Id)
+                .Select(ug => ug.User).ToListAsync();
         }
     }    
 }

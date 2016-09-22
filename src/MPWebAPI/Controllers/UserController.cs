@@ -9,7 +9,7 @@ using MPWebAPI.ViewModels;
 namespace MPWebAPI.Controllers
 {
     [Route("api/[controller]")]
-    public class UserController : Controller
+    public class UserController : MerlinPlanController
     {
         
         public class Register
@@ -31,7 +31,7 @@ namespace MPWebAPI.Controllers
         [HttpGet]
         public IEnumerable<UserViewModel> Get()
         {
-            return ConvertToViewModel(_userManager.Users.ToList());
+            return ConvertToUserViewModelAsync(_userManager.Users.ToList(), _userManager).Result;
         }
 
         [HttpGet("{id}")]
@@ -40,7 +40,7 @@ namespace MPWebAPI.Controllers
             var user = _userManager.Users.ToList().FirstOrDefault(u => u.Id == id);
             if (user != null)
             {
-                return new JsonResult(ConvertToViewModel(new List<MerlinPlanUser> { user }).First());
+                return new JsonResult(ConvertToUserViewModelAsync(new List<MerlinPlanUser> { user }, _userManager).Result.First());
             }
             else
             {
@@ -59,7 +59,7 @@ namespace MPWebAPI.Controllers
                 var result = await _mpbl.CreateUser(user, r.Password, r.UserDetails.Roles);
                 if (result.Succeeded)
                 {
-                    return new JsonResult(ConvertToViewModel(new List<MerlinPlanUser> {user}).First());
+                    return new JsonResult(ConvertToUserViewModelAsync(new List<MerlinPlanUser> {user}, _userManager).Result.Single()) ;
                 }
                 else
                 {
@@ -77,11 +77,44 @@ namespace MPWebAPI.Controllers
                 var userm = _userManager.Users.ToList().FirstOrDefault(u => u.Id == id);
                 if (userm != null)
                 {
+                    if (user.Id != id)
+                    {
+                        return BadRequest(
+                            new {
+                                    Id = new List<string> {"User id in the url request must match the Id in the JSON body"}
+                                }
+                            );
+                    }
+                    
+                    // Update the user details
                     user.MapToModel(userm);
                     var result = await _userManager.UpdateAsync(userm);
                     if (result.Succeeded)
                     {
-                        return Ok();
+                        
+                        // Update the user roles
+                        var currentRoles = await _userManager.GetRolesAsync(userm);
+                        var rolesToDelete = currentRoles.Where(r => !user.Roles.Contains(r));
+                        var rolesToAdd = user.Roles.Where(r => !currentRoles.Contains(r));
+                        var roleRemoveResult = await _userManager.RemoveFromRolesAsync(userm, rolesToDelete);
+
+                        if(roleRemoveResult.Succeeded)
+                        {
+                            var roleAddResult = await _userManager.AddToRolesAsync(userm, rolesToAdd);
+                            if (roleAddResult.Succeeded)
+                            {
+                                return Ok();
+                            }
+                            else
+                            {
+                                return BadRequest(roleAddResult);
+                            }
+                        }
+                        else
+                        {
+                            return BadRequest(roleRemoveResult);
+                        } 
+
                     }
                     else
                     {
@@ -117,18 +150,6 @@ namespace MPWebAPI.Controllers
             {
                 return NotFound();
             }
-        }
-
-        private IEnumerable<UserViewModel> ConvertToViewModel(IEnumerable<MerlinPlanUser> users)
-        {
-            var viewModels = new List<UserViewModel>();
-            foreach (var u in users)
-            {
-                var uvm = new UserViewModel(u);
-                uvm.Roles = _userManager.GetRolesAsync(u).Result;
-                viewModels.Add(uvm);
-            }
-            return viewModels;
         }
     }
 }

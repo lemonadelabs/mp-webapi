@@ -17,7 +17,7 @@ namespace MPWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [Produces("application/json")]
-    public class AuthController : Controller
+    public class AuthController : MerlinPlanController
     {
         private readonly OpenIddictUserManager<MerlinPlanUser> _userManager;
         private readonly SignInManager<MerlinPlanUser> _signInManager;

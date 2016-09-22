@@ -19,6 +19,6 @@ namespace MPWebAPI.Models
         IEnumerable<Group> Groups { get; }
         Task AddGroup(Group g);
         Task RemoveGroup(Group g);
-
+        Task<IEnumerable<MerlinPlanUser>> GetGroupMembers(Group g);
     }    
 }

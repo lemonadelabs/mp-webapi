@@ -31,6 +31,4 @@ namespace MPWebAPI.Models
         public int OrganisationId { get; set; }
         public Organisation Organisation { get; set; }
     }
-
-    
 }
