@@ -10,7 +10,13 @@ namespace MPWebAPI.Models
     public interface IMerlinPlanBL
     {
         Task CreateOrganisation(Organisation org);
-        Task<IdentityResult> CreateUser(MerlinPlanUser newUser, string password, IEnumerable<string> roles);
+        Task<IdentityResult> CreateUser(
+            MerlinPlanUser newUser, 
+            string password, 
+            IEnumerable<string> roles
+            );
+        
+        Task<MerlinPlanBLResult> ParentGroupAsync(Group child, Group parent);
     }    
 }
 

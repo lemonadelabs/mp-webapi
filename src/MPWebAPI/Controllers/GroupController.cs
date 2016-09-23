@@ -139,5 +139,32 @@ namespace MPWebAPI.Controllers
             }
         }
 
+        [HttpPost("{childId}/group/{parentId}")]
+        public async Task<IActionResult> ParentGroup(int childId, int parentId)
+        {
+            if (ModelState.IsValid)
+            {
+                var childGroup = _mprepo.Groups.FirstOrDefault(g => g.Id == childId);
+                var parentGroup = _mprepo.Groups.FirstOrDefault(g => g.Id == parentId);
+
+                if (childGroup == null || parentGroup == null)
+                {
+                    return NotFound();
+                }
+                var result = await _mpbl.ParentGroupAsync(childGroup, parentGroup);
+                if (result.Succeeded)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
     }
 }

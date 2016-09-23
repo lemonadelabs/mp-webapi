@@ -56,5 +56,55 @@ namespace MPWebAPI.Models
             }
             return result;
         }
+
+        public async Task<MerlinPlanBLResult> ParentGroupAsync(Group child, Group parent)
+        {
+            var result = new MerlinPlanBLResult();
+            
+            // check if groups are the same
+            if (child.Id == parent.Id)
+            {
+                result.AddError("ChildId", "A group cannot be a parent of itself.");
+                return result;
+            }
+
+            // check that parent is not a child of child (circular grouping)
+            var cGroup = parent;
+            while (cGroup.Parent != null)
+            {
+                if (cGroup.Parent.Id == child.Id)
+                {
+                    result.AddError("ParentId", "The parent cannot be a child of the child");
+                    return result;
+                }
+                cGroup = cGroup.Parent;
+            }
+
+            // Do parenting
+            await _mprepo.ParentGroupAsync(child, parent);
+            return result; 
+        }
+    }
+
+    public class MerlinPlanBLResult
+    {
+        public MerlinPlanBLResult()
+        {
+            Succeeded = true;
+            Errors = new Dictionary<string, List<string>>();
+        }
+
+        public void AddError(string key, string error)
+        {
+            Succeeded = false;
+            if (!Errors.ContainsKey(key))
+            {
+                Errors.Add(key, new List<string> {error});
+            }
+            Errors[key].Add(error);
+        }
+        
+        public bool Succeeded { get; set; }
+        public Dictionary<string, List<string>> Errors { get; set; }
     }    
 }

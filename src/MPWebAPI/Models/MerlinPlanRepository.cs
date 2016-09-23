@@ -102,5 +102,11 @@ namespace MPWebAPI.Models
                 await _dbcontext.SaveChangesAsync();
             }
         }
+
+        public async Task ParentGroupAsync(Group child, Group parent)
+        {
+            child.Parent = parent;
+            await _dbcontext.SaveChangesAsync();
+        }
     }    
 }
