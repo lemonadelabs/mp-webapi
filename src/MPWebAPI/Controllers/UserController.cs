@@ -17,7 +17,7 @@ namespace MPWebAPI.Controllers
             public UserViewModel UserDetails { get; set; }
             public string Password { get; set; }
         }
-        
+
         private UserManager<MerlinPlanUser> _userManager;
         private IMerlinPlanBL _businessLogic;
 
@@ -25,6 +25,13 @@ namespace MPWebAPI.Controllers
         {
             _userManager = userManager;
             _businessLogic = mpbl;
+        }
+        
+        [HttpGet("validate")]
+        public IActionResult ValidateEmail([FromQuery] string email)
+        {
+            var result = _userManager.Users.Any(u => u.Email == email);
+            return new JsonResult(new {Valid = !result});
         }
 
         [HttpGet]
