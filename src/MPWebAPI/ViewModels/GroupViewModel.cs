@@ -10,7 +10,10 @@ namespace MPWebAPI.ViewModels
             MapToViewModel(g);
         }
 
-        public GroupViewModel() {}
+        public GroupViewModel() 
+        {
+            Active = true;
+        }
         
         public int Id { get; set; }
 

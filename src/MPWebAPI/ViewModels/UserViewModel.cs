@@ -12,7 +12,10 @@ namespace MPWebAPI.ViewModels
             MapToViewModel(u);
         }
 
-        public UserViewModel() {}
+        public UserViewModel() 
+        {
+            Active = true;
+        }
 
         public string Id { get; set; }
 
