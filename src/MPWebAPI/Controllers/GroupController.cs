@@ -51,7 +51,7 @@ namespace MPWebAPI.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var gr = _repository.Groups.First(g => g.Id == id);
+            var gr = _repository.Groups.FirstOrDefault(g => g.Id == id);
             if (gr != null)
             {
                 return new JsonResult(new GroupViewModel(gr));
@@ -65,7 +65,7 @@ namespace MPWebAPI.Controllers
         [HttpGet("{id}/user")]
         public async Task<IActionResult> GroupUser(int id)
         {
-            var gr = _repository.Groups.First(g => g.Id == id);
+            var gr = _repository.Groups.FirstOrDefault(g => g.Id == id);
             if (gr != null)
             {
                 var users = await _repository.GetGroupMembersAsync(gr);
@@ -91,7 +91,7 @@ namespace MPWebAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                var group = _repository.Groups.First(g => g.Id == groupId);
+                var group = _repository.Groups.FirstOrDefault(g => g.Id == groupId);
                 if (group != null)
                 {
                     var userModels = await _userManager.Users.Where(u => r.Users.Contains(u.Id)).ToListAsync();
@@ -117,7 +117,7 @@ namespace MPWebAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                var group = _repository.Groups.First(g => g.Id == groupId);
+                var group = _repository.Groups.FirstOrDefault(g => g.Id == groupId);
                 if (group != null)
                 {
                     var userModels = await _userManager.Users.Where(u => r.Users.Contains(u.Id)).ToListAsync();
