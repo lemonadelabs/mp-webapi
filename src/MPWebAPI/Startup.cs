@@ -59,7 +59,7 @@ namespace MPWebAPI
 
             services.AddScoped<IMerlinPlanRepository, MerlinPlanRepository>();
             services.AddTransient<IFixtureBuilder, FixtureBuilder>();
-            services.AddSingleton<IMerlinPlanBL, MerlinPlanBL>();
+            services.AddScoped<IMerlinPlanBL, MerlinPlanBL>();
 
         }
 

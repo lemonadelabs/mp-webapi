@@ -80,11 +80,27 @@ namespace MPWebAPI.Models
                 cGroup = cGroup.Parent;
             }
 
+            // check both groups belong to the same org
+            if (child.OrganisationId != parent.OrganisationId)
+            {
+                result.AddError("OrganisationId", "Both groups need to belong to the same organisation.");
+                return result;
+            }
+
             // Do parenting
             await _mprepo.ParentGroupAsync(child, parent);
             return result; 
         }
+
+        public async Task<MerlinPlanBLResult> UnparentGroupAsync(Group group)
+        {
+            var result = new MerlinPlanBLResult();
+            await _mprepo.UnparentGroupAsync(group);
+            return result;
+        }
     }
+
+    
 
     public class MerlinPlanBLResult
     {

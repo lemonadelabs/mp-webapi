@@ -17,6 +17,7 @@ namespace MPWebAPI.Models
             );
         
         Task<MerlinPlanBLResult> ParentGroupAsync(Group child, Group parent);
+        Task<MerlinPlanBLResult> UnparentGroupAsync(Group group);
     }    
 }
 

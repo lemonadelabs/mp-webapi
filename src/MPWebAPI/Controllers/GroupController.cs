@@ -13,7 +13,7 @@ namespace MPWebAPI.Controllers
     public class GroupController : MerlinPlanController
     {
         private readonly IMerlinPlanRepository _mprepo;
-        private readonly IMerlinPlanBL _mpbl;
+        private readonly IMerlinPlanBL _businessLogic;
         private readonly UserManager<MerlinPlanUser> _userManager;
 
         public GroupController(
@@ -22,7 +22,7 @@ namespace MPWebAPI.Controllers
             UserManager<MerlinPlanUser> userManager)
         {
             _mprepo = mprepo;
-            _mpbl = mpbl;
+            _businessLogic = mpbl;
             _userManager = userManager;
         }
 
@@ -138,6 +138,20 @@ namespace MPWebAPI.Controllers
                 return BadRequest(ModelState);
             }
         }
+        
+
+        [HttpDelete("{childId}/group")]
+        public async Task<IActionResult> UnparentGroup(int childId)
+        {
+            var childGroup = _mprepo.Groups.FirstOrDefault(g => g.Id == childId);
+            if (childGroup == null)
+            {
+                return NotFound();
+            }
+            var result = await _businessLogic.UnparentGroupAsync(childGroup);
+            return Ok();
+        }    
+
 
         [HttpPost("{childId}/group/{parentId}")]
         public async Task<IActionResult> ParentGroup(int childId, int parentId)
@@ -151,7 +165,7 @@ namespace MPWebAPI.Controllers
                 {
                     return NotFound();
                 }
-                var result = await _mpbl.ParentGroupAsync(childGroup, parentGroup);
+                var result = await _businessLogic.ParentGroupAsync(childGroup, parentGroup);
                 if (result.Succeeded)
                 {
                     return Ok();

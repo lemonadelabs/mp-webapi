@@ -3,18 +3,22 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace MPWebAPI.Models
 {
     public class MerlinPlanRepository : IMerlinPlanRepository
     {
         private readonly PostgresDBContext _dbcontext;
+        private readonly ILogger _logger;
         
         public MerlinPlanRepository(
-            PostgresDBContext dbcontext
+            PostgresDBContext dbcontext,
+            ILoggerFactory loggerFactory
             )
         {
             _dbcontext = dbcontext;
+            _logger = loggerFactory.CreateLogger("MerlinPlanRepository");
         }
 
         public IEnumerable<Organisation> Organisations
@@ -106,6 +110,12 @@ namespace MPWebAPI.Models
         public async Task ParentGroupAsync(Group child, Group parent)
         {
             child.Parent = parent;
+            var result = await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task UnparentGroupAsync(Group group)
+        {
+            group.Parent = null;
             await _dbcontext.SaveChangesAsync();
         }
     }    
