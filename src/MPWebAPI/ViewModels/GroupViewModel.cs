@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using MPWebAPI.Models;
 
 namespace MPWebAPI.ViewModels
@@ -15,6 +13,8 @@ namespace MPWebAPI.ViewModels
         public GroupViewModel() {}
         
         public int Id { get; set; }
+
+        public bool Active { get; set; }
 
         [Required]
         public int OrganisationId { get; set; }

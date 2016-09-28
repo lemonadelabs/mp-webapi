@@ -8,12 +8,19 @@ namespace MPWebAPI.Models
     /// </summary>
     public class Group
     {
+        public Group()
+        {
+            Active = true;
+        }
+        
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         
         public int? ParentId { get; set; }
         public Group Parent { get; set; }
+
+        public bool Active { get; set; }
         
         public List<Group> Children { get; set; }
         public List<UserGroup> Members { get; set; }

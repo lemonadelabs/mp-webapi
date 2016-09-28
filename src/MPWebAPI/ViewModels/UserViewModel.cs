@@ -16,6 +16,9 @@ namespace MPWebAPI.ViewModels
 
         public string Id { get; set; }
 
+        public bool Active { get; set; }
+
+        [EmailAddress]
         [Required]
         public string UserName { get; set; }
 

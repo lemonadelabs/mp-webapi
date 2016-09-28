@@ -136,15 +136,9 @@ namespace MPWebAPI.Controllers
             var user = _userManager.Users.ToList().FirstOrDefault(u => u.Id == id);
             if (user != null)
             {
-                var result = await _userManager.DeleteAsync(user);
-                if (result.Succeeded)
-                {
-                    return new OkResult();
-                }
-                else
-                {
-                    return BadRequest(result);
-                }
+                user.Active = false;
+                await _userManager.UpdateAsync(user);
+                return Ok();
             }
             else
             {

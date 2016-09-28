@@ -24,5 +24,6 @@ namespace MPWebAPI.Models
         Task RemoveUserFromGroupAsync(MerlinPlanUser user, Group group);
         Task ParentGroupAsync(Group child, Group parent);
         Task UnparentGroupAsync(Group group);
+        Task GroupSetActive(Group g, bool active);
     }    
 }

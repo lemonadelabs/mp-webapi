@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -116,6 +115,12 @@ namespace MPWebAPI.Models
         public async Task UnparentGroupAsync(Group group)
         {
             group.Parent = null;
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task GroupSetActive(Group g, bool active)
+        {
+            g.Active = active;
             await _dbcontext.SaveChangesAsync();
         }
     }    

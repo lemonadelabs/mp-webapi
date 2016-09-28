@@ -8,6 +8,11 @@ namespace MPWebAPI.Models
     /// </summary>
     public class MerlinPlanUser : OpenIddictUser
     {
+        public MerlinPlanUser()
+        {
+            Active = true;
+        }
+        
         public int OrganisationId { get; set; }
         public Organisation Organisation { get; set; }
         
@@ -15,6 +20,8 @@ namespace MPWebAPI.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string NickName { get; set; }
+        
+        public bool Active { get; set; }
         
         public List<UserGroup> Groups { get; set; }
 
