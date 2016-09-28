@@ -10,12 +10,12 @@ namespace MPWebAPI.Models
     /// </summary>
     public class MerlinPlanBL : IMerlinPlanBL
     {
-        private readonly IMerlinPlanRepository _mprepo;
+        private readonly IMerlinPlanRepository _respository;
         private readonly UserManager<MerlinPlanUser> _userManager;
         
         public MerlinPlanBL(IMerlinPlanRepository mprepo, UserManager<MerlinPlanUser> userManager)
         {
-            _mprepo = mprepo;
+            _respository = mprepo;
             _userManager = userManager;
         }
         
@@ -27,9 +27,12 @@ namespace MPWebAPI.Models
         /// <returns></returns>
         public async Task CreateOrganisation(Organisation org)
         {
-            await _mprepo.AddOrganisationAsync(org);
-            // TODO: Add default user
-            // TODO: Add default group
+            await _respository.AddOrganisationAsync(org);
+            var orgGroup = new Group {
+                Name = org.Name,
+                Organisation = org
+            };
+            await _respository.AddGroupAsync(orgGroup);
         }
 
         /// <summary>
@@ -41,7 +44,7 @@ namespace MPWebAPI.Models
         /// <returns></returns>
         public async Task<IdentityResult> CreateUser(MerlinPlanUser newUser, string password, IEnumerable<string> roles)
         {
-            var org = _mprepo.Organisations.First(o => o.Id == newUser.OrganisationId);
+            var org = _respository.Organisations.First(o => o.Id == newUser.OrganisationId);
             newUser.Organisation = org;
             var result = await _userManager.CreateAsync(newUser, password);
             if (result.Succeeded)
@@ -87,14 +90,14 @@ namespace MPWebAPI.Models
             }
 
             // Do parenting
-            await _mprepo.ParentGroupAsync(child, parent);
+            await _respository.ParentGroupAsync(child, parent);
             return result; 
         }
 
         public async Task<MerlinPlanBLResult> UnparentGroupAsync(Group group)
         {
             var result = new MerlinPlanBLResult();
-            await _mprepo.UnparentGroupAsync(group);
+            await _respository.UnparentGroupAsync(group);
             return result;
         }
     }
