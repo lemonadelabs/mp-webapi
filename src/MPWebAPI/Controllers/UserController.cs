@@ -18,14 +18,13 @@ namespace MPWebAPI.Controllers
             public string Password { get; set; }
         }
         
-        
         private UserManager<MerlinPlanUser> _userManager;
-        private IMerlinPlanBL _mpbl;
+        private IMerlinPlanBL _businessLogic;
 
         public UserController(UserManager<MerlinPlanUser> userManager, IMerlinPlanBL mpbl)
         {
             _userManager = userManager;
-            _mpbl = mpbl;
+            _businessLogic = mpbl;
         }
 
         [HttpGet]
@@ -56,7 +55,7 @@ namespace MPWebAPI.Controllers
                 var user = new MerlinPlanUser();
                 r.UserDetails.Id = user.Id;
                 r.UserDetails.MapToModel(user);
-                var result = await _mpbl.CreateUser(user, r.Password, r.UserDetails.Roles);
+                var result = await _businessLogic.CreateUser(user, r.Password, r.UserDetails.Roles);
                 if (result.Succeeded)
                 {
                     return new JsonResult(ConvertToUserViewModelAsync(new List<MerlinPlanUser> {user}, _userManager).Result.Single()) ;
