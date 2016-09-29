@@ -3,7 +3,7 @@
   
   "dependencies": {
     "MPWebAPI": {
-      "version": "1.0.0",
+      "version": "0.1.0",
       "target": "project"
     },
 
@@ -17,6 +17,13 @@
   },
   
   "frameworks": {
-    "netcoreapp1.0":{}
+    "netcoreapp1.0": {
+            "dependencies": {
+                "Microsoft.NETCore.App": {
+                    "type": "platform",
+                    "version": "1.0.0"
+                }
+            }
+        }
   }
 }
