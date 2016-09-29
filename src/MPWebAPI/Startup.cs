@@ -39,6 +39,7 @@ namespace MPWebAPI
                     options.Password.RequireLowercase = false;
                     options.Password.RequireNonAlphanumeric = false;
                     options.Password.RequireUppercase = false;
+                    options.Lockout.AllowedForNewUsers = true;
                 }
             )
                 .AddEntityFrameworkStores<PostgresDBContext>()

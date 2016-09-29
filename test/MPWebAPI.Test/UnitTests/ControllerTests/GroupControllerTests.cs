@@ -6,28 +6,31 @@ using Microsoft.AspNetCore.Identity;
 using MPWebAPI.Controllers;
 using System.Collections.Generic;
 using MPWebAPI.ViewModels;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Builder;
 
 namespace MPWebAPI.Test.UnitTests.ControllerTests
 {
     public class GroupControllerTests
     {
-        private readonly Mock<IMerlinPlanRepository> _repository;
-        private readonly Mock<IMerlinPlanBL> _businessLogic;
-        private readonly Mock<UserManager<MerlinPlanUser>> _userManager;
         private readonly GroupController _controller;
         
         public GroupControllerTests() 
         {
-            _repository = new Mock<IMerlinPlanRepository>();
-            _repository.Setup(repo => repo.Groups).Returns(GetTestGroups());
+            var repository = new Mock<IMerlinPlanRepository>();
+            repository.Setup(repo => repo.Groups).Returns(GetTestGroups());
             
-            _businessLogic = new Mock<IMerlinPlanBL>();
-            _userManager = new Mock<UserManager<MerlinPlanUser>>();
-            _controller = new GroupController(
-                _repository.Object, 
-                _businessLogic.Object, 
-                _userManager.Object
-            );
+            var businessLogic = new Mock<IMerlinPlanBL>();
+            
+            var userStore = new Mock<IUserStore<MerlinPlanUser>>();
+            var quserStore = userStore.As<IQueryableUserStore<MerlinPlanUser>>();
+           
+            // var userManager = new UserManager<MerlinPlanUser>( 
+            // _controller = new GroupController(
+            //     repository.Object, 
+            //     businessLogic.Object, 
+            //     userManager.Object
+            // );
         }
 
         [Fact]

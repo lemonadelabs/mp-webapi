@@ -224,7 +224,7 @@
 
     "ResourceScenarios": [{
         "Name": "Baseline Scenario",
-        "Creator": "swinmason",
+        "Creator": "sam@lemonadelabs.io",
         "Group": "EPMO",
         "StaffResources": [{
             "Name": "Mr Knowitall",
@@ -432,7 +432,7 @@
     "Projects": [{
         "Name": "Depressing Reality Web Portal",
         "Summary": "A site hilighting just how goddam shit the world is",
-        "Creator": "swinmason",
+        "Creator": "sam@lemonadelabs.io",
         "Group": "EPMO",
         "Owner": "Mr Knowitall",
         "Managers": [
@@ -700,7 +700,7 @@
     }, {
         "Name": "Web Server Upgrade",
         "Summary": "Increased performance and storage.",
-        "Creator": "swinmason",
+        "Creator": "sam@lemonadelabs.io",
         "Group": "EPMO",
         "Owner": "Mr Knowitall",
         "Managers": [
@@ -890,7 +890,7 @@
     }],
 
     "Portfolios": [{
-        "Creator": "swinmason",
+        "Creator": "sam@lemonadelabs.io",
         "Group": "EPMO",
         "Name": "My Awesome Portfolio",
         "StartYear": "2016-01-01",
