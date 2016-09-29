@@ -16,7 +16,7 @@ namespace MPWebAPI.Controllers
         private readonly IMerlinPlanBL _mpbl;
         private readonly UserManager<MerlinPlanUser> _userManager;
 
-        public OrganisationController(UserManager<MerlinPlanUser> mprepo, IMerlinPlanBL mpbl, UserManager<MerlinPlanUser> userManager)
+        public OrganisationController(IMerlinPlanRepository mprepo, IMerlinPlanBL mpbl, UserManager<MerlinPlanUser> userManager)
         {
             _mprepo = mprepo;
             _mpbl = mpbl;
