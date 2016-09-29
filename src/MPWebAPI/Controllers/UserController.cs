@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MPWebAPI.Filters;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
 
@@ -41,115 +42,92 @@ namespace MPWebAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [ValidateUserExists]
         public IActionResult Get(string id)
         {
-            var user = _userManager.Users.ToList().FirstOrDefault(u => u.Id == id);
-            if (user != null)
-            {
-                return new JsonResult(ConvertToUserViewModelAsync(new List<MerlinPlanUser> { user }, _userManager).Result.First());
-            }
-            else
-            {
-                return NotFound();
-            }
+            return new JsonResult(
+                ConvertToUserViewModelAsync(
+                    new List<MerlinPlanUser> { _userManager.Users.Single(u => u.Id == id) }, _userManager).Result.First());
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Post([FromBody] Register r)
         {
-            if (ModelState.IsValid)
+            var user = new MerlinPlanUser();
+            r.UserDetails.Id = user.Id;
+            r.UserDetails.MapToModel(user);
+            var result = await _businessLogic.CreateUser(user, r.Password, r.UserDetails.Roles);
+            if (result.Succeeded)
             {
-                var user = new MerlinPlanUser();
-                r.UserDetails.Id = user.Id;
-                r.UserDetails.MapToModel(user);
-                var result = await _businessLogic.CreateUser(user, r.Password, r.UserDetails.Roles);
-                if (result.Succeeded)
-                {
-                    return new JsonResult(ConvertToUserViewModelAsync(new List<MerlinPlanUser> {user}, _userManager).Result.Single()) ;
-                }
-                else
-                {
-                    return new JsonResult(result);
-                }                                                        
+                return new JsonResult(ConvertToUserViewModelAsync(new List<MerlinPlanUser> {user}, _userManager).Result.Single()) ;
             }
-            return BadRequest(ModelState);
+            else
+            {
+                return new JsonResult(result);
+            }                                                        
         }
 
         [HttpPut("{id}")]
+        [ValidateModel]
+        [ValidateUserExists]
         public async Task<IActionResult> Put(string id, [FromBody] UserViewModel user)
         {
-            if(ModelState.IsValid)
+            var userm = _userManager.Users.Single(u => u.Id == id);
+            if (user.Id != id)
             {
-                var userm = _userManager.Users.ToList().FirstOrDefault(u => u.Id == id);
-                if (userm != null)
-                {
-                    if (user.Id != id)
-                    {
-                        return BadRequest(
-                            new {
-                                    Id = new List<string> {"User id in the url request must match the Id in the JSON body"}
-                                }
-                            );
-                    }
-                    
-                    // Update the user details
-                    user.MapToModel(userm);
-                    var result = await _userManager.UpdateAsync(userm);
-                    if (result.Succeeded)
-                    {
-                        
-                        // Update the user roles
-                        var currentRoles = await _userManager.GetRolesAsync(userm);
-                        var rolesToDelete = currentRoles.Where(r => !user.Roles.Contains(r));
-                        var rolesToAdd = user.Roles.Where(r => !currentRoles.Contains(r));
-                        var roleRemoveResult = await _userManager.RemoveFromRolesAsync(userm, rolesToDelete);
-
-                        if(roleRemoveResult.Succeeded)
-                        {
-                            var roleAddResult = await _userManager.AddToRolesAsync(userm, rolesToAdd);
-                            if (roleAddResult.Succeeded)
-                            {
-                                return Ok();
-                            }
-                            else
-                            {
-                                return BadRequest(roleAddResult);
-                            }
+                return BadRequest(
+                    new {
+                            Id = new List<string> {"User id in the url request must match the Id in the JSON body"}
                         }
-                        else
-                        {
-                            return BadRequest(roleRemoveResult);
-                        } 
+                    );
+            }
+            
+            // Update the user details
+            user.MapToModel(userm);
+            var result = await _userManager.UpdateAsync(userm);
+            if (result.Succeeded)
+            {
+                
+                // Update the user roles
+                var currentRoles = await _userManager.GetRolesAsync(userm);
+                var rolesToDelete = currentRoles.Where(r => !user.Roles.Contains(r));
+                var rolesToAdd = user.Roles.Where(r => !currentRoles.Contains(r));
+                var roleRemoveResult = await _userManager.RemoveFromRolesAsync(userm, rolesToDelete);
 
+                if(roleRemoveResult.Succeeded)
+                {
+                    var roleAddResult = await _userManager.AddToRolesAsync(userm, rolesToAdd);
+                    if (roleAddResult.Succeeded)
+                    {
+                        return Ok();
                     }
                     else
                     {
-                        return BadRequest(result);
+                        return BadRequest(roleAddResult);
                     }
                 }
                 else
                 {
-                    return NotFound();
-                }
+                    return BadRequest(roleRemoveResult);
+                } 
+
             }
-            return BadRequest(ModelState);
+            else
+            {
+                return BadRequest(result);
+            }
         }
         
 
         [HttpDelete("{id}")]
+        [ValidateUserExists]
         public async Task<IActionResult> Delete(string id)
         {
-            var user = _userManager.Users.ToList().FirstOrDefault(u => u.Id == id);
-            if (user != null)
-            {
-                user.Active = false;
-                await _userManager.UpdateAsync(user);
-                return Ok();
-            }
-            else
-            {
-                return NotFound();
-            }
+            var user = _userManager.Users.Single(u => u.Id == id);
+            user.Active = false;
+            await _userManager.UpdateAsync(user);
+            return Ok();
         }
     }
 }

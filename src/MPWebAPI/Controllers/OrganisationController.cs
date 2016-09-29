@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MPWebAPI.Filters;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
 
@@ -15,7 +16,7 @@ namespace MPWebAPI.Controllers
         private readonly IMerlinPlanBL _mpbl;
         private readonly UserManager<MerlinPlanUser> _userManager;
 
-        public OrganisationController(IMerlinPlanRepository mprepo, IMerlinPlanBL mpbl, UserManager<MerlinPlanUser> userManager)
+        public OrganisationController(UserManager<MerlinPlanUser> mprepo, IMerlinPlanBL mpbl, UserManager<MerlinPlanUser> userManager)
         {
             _mprepo = mprepo;
             _mpbl = mpbl;
@@ -24,42 +25,30 @@ namespace MPWebAPI.Controllers
         
         
         [HttpGet("{id}/group")]
+        [ValidateOrganisationExists]
         public IActionResult GetGroups(int id)
         {
-            var org = _mprepo.Organisations.FirstOrDefault(o => o.Id == id);
-            if (org != null)
-            {
-                return new JsonResult(_mprepo.GetOrganisationGroups(org).Select(g => new GroupViewModel(g)));
-            }
-            else
-            {
-                return NotFound();
-            }
+            return new JsonResult(
+                _mprepo.GetOrganisationGroups(
+                    _mprepo.Organisations.Single(o => o.Id == id)).Select(g => new GroupViewModel(g)));
         }
 
         [HttpGet("{id}/user")]
+        [ValidateOrganisationExists]
         public IActionResult GetUsers(int id)
         {
-            var org = _mprepo.Organisations.FirstOrDefault(o => o.Id == id);
-            if (org != null)
+            var users = _userManager.Users.ToList()
+                .Where(u => u.OrganisationId == id);
+            
+            var viewModels = new List<UserViewModel>();
+            
+            foreach (var u in users)
             {
-                var users = _userManager.Users.ToList()
-                    .Where(u => u.OrganisationId == org.Id);
-                
-                var viewModels = new List<UserViewModel>();
-                
-                foreach (var u in users)
-                {
-                    var uvm = new UserViewModel(u);
-                    uvm.Roles = _userManager.GetRolesAsync(u).Result;
-                    viewModels.Add(uvm);
-                }
-                return new JsonResult(viewModels);
+                var uvm = new UserViewModel(u);
+                uvm.Roles = _userManager.GetRolesAsync(u).Result;
+                viewModels.Add(uvm);
             }
-            else
-            {
-                return NotFound();
-            }
+            return new JsonResult(viewModels);
         }
 
         [HttpGet]
@@ -69,69 +58,44 @@ namespace MPWebAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [ValidateOrganisationExists]
         public IActionResult Get(int id)
         {
-             var org = _mprepo.Organisations.FirstOrDefault(o => o.Id == id);
-             if (org != null)
-             {
-                 return new JsonResult(new OrganisationViewModel(org));
-             }
-             else
-             {
-                 return NotFound();
-             }
+            return new JsonResult(new OrganisationViewModel(_mprepo.Organisations.Single(o => o.Id == id)));
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Post([FromBody] OrganisationViewModel orgvm)
         {
-            if (ModelState.IsValid)
-            {
-                var newOrg = new Organisation();
-                orgvm.MapToModel(newOrg);
-                await _mpbl.CreateOrganisation(newOrg);
-                return Ok();    
-            }
-            else 
-            {
-                return BadRequest(ModelState);
-            }
+            var newOrg = new Organisation();
+            orgvm.MapToModel(newOrg);
+            await _mpbl.CreateOrganisation(newOrg);
+            return Ok();    
         }
 
         [HttpDelete("{id}")]
+        [ValidateOrganisationExists]
         public async Task<IActionResult> Delete(int id)
         {
-            var org = _mprepo.Organisations.FirstOrDefault(o => o.Id == id);
+            await _mprepo.RemoveOrganisationAsync(_mprepo.Organisations.Single(o => o.Id == id));
+            return Ok();
+        }
+
+        [HttpPut]
+        [ValidateModel]
+        public async Task<IActionResult> Update([FromBody] OrganisationViewModel orgvm)
+        {
+            var org = _mprepo.Organisations.FirstOrDefault(o => o.Id == orgvm.Id);
             if (org != null)
             {
-                await _mprepo.RemoveOrganisationAsync(org);
+                orgvm.MapToModel(org);
+                await _mprepo.SaveChangesAsync();
                 return Ok();
             }
             else
             {
                 return NotFound();
-            }
-        }
-
-        public async Task<IActionResult> Update([FromBody] OrganisationViewModel orgvm)
-        {
-            if (ModelState.IsValid)
-            {
-                var org = _mprepo.Organisations.FirstOrDefault(o => o.Id == orgvm.Id);
-                if (org != null)
-                {
-                    orgvm.MapToModel(org);
-                    await _mprepo.SaveChangesAsync();
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            else
-            {
-                return BadRequest(ModelState);
             }
         }
     }
