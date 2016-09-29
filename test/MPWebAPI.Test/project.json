@@ -1,5 +1,5 @@
 {
-  "testRunner": "xUnit",
+  "testRunner": "xunit",
   
   "dependencies": {
     "MPWebAPI": {
@@ -15,7 +15,7 @@
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "Moq": "4.6.38-alpha"
   },
-  
+
   "frameworks": {
     "netcoreapp1.0": {
             "dependencies": {
