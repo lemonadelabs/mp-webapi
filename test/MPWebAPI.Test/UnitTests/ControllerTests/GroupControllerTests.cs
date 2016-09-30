@@ -1,13 +1,11 @@
-using System;
 using Xunit;
 using Moq;
 using MPWebAPI.Models;
-using Microsoft.AspNetCore.Identity;
 using MPWebAPI.Controllers;
 using System.Collections.Generic;
 using MPWebAPI.ViewModels;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace MPWebAPI.Test.UnitTests.ControllerTests
 {
@@ -19,25 +17,30 @@ namespace MPWebAPI.Test.UnitTests.ControllerTests
         {
             var repository = new Mock<IMerlinPlanRepository>();
             repository.Setup(repo => repo.Groups).Returns(GetTestGroups());
-            
             var businessLogic = new Mock<IMerlinPlanBL>();
-            
-            var userStore = new Mock<IUserStore<MerlinPlanUser>>();
-            var quserStore = userStore.As<IQueryableUserStore<MerlinPlanUser>>();
-           
-            // var userManager = new UserManager<MerlinPlanUser>( 
-            // _controller = new GroupController(
-            //     repository.Object, 
-            //     businessLogic.Object, 
-            //     userManager.Object
-            // );
+            _controller = new GroupController(repository.Object, businessLogic.Object, null);
         }
 
         [Fact]
         public void Get_ReturnsListOfViewModels()
         {
             var result = _controller.Get();
-            Assert.IsType(typeof(IEnumerable<GroupViewModel>), result);
+            Assert.IsType<List<GroupViewModel>>(result);
+            Assert.Equal(3, result.Count);
+        }
+
+        [Fact]
+        public void Get_ReturnsModelInstance()
+        {
+            var result = _controller.Get(1);
+            Assert.IsType<JsonResult>(result);
+        }
+
+        [Fact]
+        public async Task GetGroupMembers_ReturnsJSONResult()
+        {
+            var result = await _controller.GroupUser(1);
+            Assert.IsType<JsonResult>(result);
         }
 
         private List<Group> GetTestGroups()

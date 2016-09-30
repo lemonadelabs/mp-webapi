@@ -35,11 +35,19 @@ namespace MPWebAPI.ViewModels
 
         [Required]
         public string FirstName { get; set; }
-
+        
+        [Required]
         public string LastName { get; set; }
         public string NickName { get; set; }
 
         public IEnumerable<string> Roles { get; set; }
+        public IEnumerable<GroupData> Groups { get; set; }
+
+        public class GroupData
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+        }
     }
 
 }

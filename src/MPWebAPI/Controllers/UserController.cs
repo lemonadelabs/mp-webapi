@@ -19,13 +19,15 @@ namespace MPWebAPI.Controllers
             public string Password { get; set; }
         }
 
-        private UserManager<MerlinPlanUser> _userManager;
-        private IMerlinPlanBL _businessLogic;
+        private readonly UserManager<MerlinPlanUser> _userManager;
+        private readonly IMerlinPlanBL _businessLogic;
+        private readonly IMerlinPlanRepository _repository;
 
-        public UserController(UserManager<MerlinPlanUser> userManager, IMerlinPlanBL mpbl)
+        public UserController(UserManager<MerlinPlanUser> userManager, IMerlinPlanBL mpbl, IMerlinPlanRepository repo)
         {
             _userManager = userManager;
             _businessLogic = mpbl;
+            _repository = repo;
         }
         
         [HttpGet("validate")]
@@ -38,7 +40,7 @@ namespace MPWebAPI.Controllers
         [HttpGet]
         public IEnumerable<UserViewModel> Get()
         {
-            return ConvertToUserViewModelAsync(_userManager.Users.ToList(), _userManager).Result;
+            return ConvertToUserViewModelAsync(_userManager.Users, _userManager).Result;
         }
 
         [HttpGet("{id}")]

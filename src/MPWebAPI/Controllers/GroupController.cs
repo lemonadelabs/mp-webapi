@@ -38,9 +38,9 @@ namespace MPWebAPI.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<GroupViewModel> Get()
+        public List<GroupViewModel> Get()
         {
-            return _repository.Groups.Select(g => new GroupViewModel(g));
+            return _repository.Groups.Select(g => new GroupViewModel(g)).ToList();
         }
 
         [HttpGet("{id}")]

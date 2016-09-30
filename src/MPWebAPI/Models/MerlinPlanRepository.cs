@@ -3,23 +3,28 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Identity;
 
 namespace MPWebAPI.Models
 {
     public class MerlinPlanRepository : IMerlinPlanRepository
     {
         private readonly PostgresDBContext _dbcontext;
+        private readonly UserManager<MerlinPlanUser> _userManager;
         private readonly ILogger _logger;
         
         public MerlinPlanRepository(
             PostgresDBContext dbcontext,
+            UserManager<MerlinPlanUser> userManager,
             ILoggerFactory loggerFactory
             )
         {
             _dbcontext = dbcontext;
             _logger = loggerFactory.CreateLogger("MerlinPlanRepository");
+            _userManager = userManager;
         }
 
+       
         public IEnumerable<Organisation> Organisations
         {
             get

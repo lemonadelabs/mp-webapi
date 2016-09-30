@@ -15,6 +15,9 @@ namespace MPWebAPI.Models
         IEnumerable<Group> GetOrganisationGroups(Organisation org);
         Task SaveChangesAsync();
 
+        // Users
+        
+
         // Groups
         IEnumerable<Group> Groups { get; }
         Task AddGroupAsync(Group group);
