@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
+using System;
 
 namespace MPWebAPI.Models
 {
@@ -45,6 +46,15 @@ namespace MPWebAPI.Models
                 return _dbcontext.Group;
             }
         }
+
+        public IEnumerable<MerlinPlanUser> Users
+        {
+            get
+            {
+                return _userManager.Users.ToList();
+            }
+        }
+
 
         public async Task AddGroupAsync(Group g)
         {
@@ -127,6 +137,31 @@ namespace MPWebAPI.Models
         {
             g.Active = active;
             await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetUserRolesAsync(MerlinPlanUser user)
+        {
+            return await _userManager.GetRolesAsync(user);
+        }
+
+        public async Task<IdentityResult> UpdateUserAsync(MerlinPlanUser user)
+        {
+            return await _userManager.UpdateAsync(user);
+        }
+
+        public async Task<IdentityResult> RemoveUserFromRolesAsync(MerlinPlanUser user, IEnumerable<string> rolesToDelete)
+        {
+            return await _userManager.RemoveFromRolesAsync(user, rolesToDelete);
+        }
+
+        public async Task<IdentityResult> AddUserToRolesAsync(MerlinPlanUser user, IEnumerable<string> rolesToAdd)
+        {
+            return await _userManager.AddToRolesAsync(user, rolesToAdd);
+        }
+
+        public async Task<IEnumerable<Group>> GetUserGroupsAsync(MerlinPlanUser user)
+        {
+            return await _dbcontext.UserGroup.Where(ug => ug.UserId == user.Id).Select(ug => ug.Group).ToListAsync();
         }
     }    
 }

@@ -93,7 +93,7 @@ namespace MPWebAPI.Filters
                     var id = context.ActionArguments["id"] as string;
                     if (id != null)
                     {
-                        if (await _userManager.Users.ToAsyncEnumerable().All(u => u.Id == id))
+                        if (await _userManager.Users.ToAsyncEnumerable().All(u => u.Id != id))
                         {
                             context.Result = new NotFoundObjectResult(id);
                             return;

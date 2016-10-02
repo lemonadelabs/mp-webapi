@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MPWebAPI.Filters;
 using MPWebAPI.Models;
@@ -19,13 +18,11 @@ namespace MPWebAPI.Controllers
             public string Password { get; set; }
         }
 
-        private readonly UserManager<MerlinPlanUser> _userManager;
         private readonly IMerlinPlanBL _businessLogic;
         private readonly IMerlinPlanRepository _repository;
 
-        public UserController(UserManager<MerlinPlanUser> userManager, IMerlinPlanBL mpbl, IMerlinPlanRepository repo)
+        public UserController(IMerlinPlanBL mpbl, IMerlinPlanRepository repo)
         {
-            _userManager = userManager;
             _businessLogic = mpbl;
             _repository = repo;
         }
@@ -33,14 +30,14 @@ namespace MPWebAPI.Controllers
         [HttpGet("validate")]
         public IActionResult ValidateEmail([FromQuery] string email)
         {
-            var result = _userManager.Users.Any(u => u.Email == email);
+            var result = _repository.Users.Any(u => u.Email == email);
             return new JsonResult(new {Valid = !result});
         }
 
         [HttpGet]
-        public IEnumerable<UserViewModel> Get()
+        public async Task<IEnumerable<UserViewModel>> Get()
         {
-            return ConvertToUserViewModelAsync(_userManager.Users, _userManager).Result;
+            return await ConvertToUserViewModelAsync(_repository.Users, _repository);
         }
 
         [HttpGet("{id}")]
@@ -49,7 +46,7 @@ namespace MPWebAPI.Controllers
         {
             return new JsonResult(
                 ConvertToUserViewModelAsync(
-                    new List<MerlinPlanUser> { _userManager.Users.Single(u => u.Id == id) }, _userManager).Result.First());
+                    new List<MerlinPlanUser> { _repository.Users.Single(u => u.Id == id) }, _repository).Result.First());
         }
 
         [HttpPost]
@@ -62,7 +59,7 @@ namespace MPWebAPI.Controllers
             var result = await _businessLogic.CreateUser(user, r.Password, r.UserDetails.Roles);
             if (result.Succeeded)
             {
-                return new JsonResult(ConvertToUserViewModelAsync(new List<MerlinPlanUser> {user}, _userManager).Result.Single()) ;
+                return new JsonResult(ConvertToUserViewModelAsync(new List<MerlinPlanUser> {user}, _repository).Result.Single()) ;
             }
             else
             {
@@ -75,7 +72,7 @@ namespace MPWebAPI.Controllers
         [ValidateUserExists]
         public async Task<IActionResult> Put(string id, [FromBody] UserViewModel user)
         {
-            var userm = _userManager.Users.Single(u => u.Id == id);
+            var userm = _repository.Users.Single(u => u.Id == id);
             if (user.Id != id)
             {
                 return BadRequest(
@@ -87,19 +84,19 @@ namespace MPWebAPI.Controllers
             
             // Update the user details
             user.MapToModel(userm);
-            var result = await _userManager.UpdateAsync(userm);
+            var result = await _repository.UpdateUserAsync(userm);
             if (result.Succeeded)
             {
                 
                 // Update the user roles
-                var currentRoles = await _userManager.GetRolesAsync(userm);
+                var currentRoles = await _repository.GetUserRolesAsync(userm);
                 var rolesToDelete = currentRoles.Where(r => !user.Roles.Contains(r));
                 var rolesToAdd = user.Roles.Where(r => !currentRoles.Contains(r));
-                var roleRemoveResult = await _userManager.RemoveFromRolesAsync(userm, rolesToDelete);
+                var roleRemoveResult = await _repository.RemoveUserFromRolesAsync(userm, rolesToDelete);
 
                 if(roleRemoveResult.Succeeded)
                 {
-                    var roleAddResult = await _userManager.AddToRolesAsync(userm, rolesToAdd);
+                    var roleAddResult = await _repository.AddUserToRolesAsync(userm, rolesToAdd);
                     if (roleAddResult.Succeeded)
                     {
                         return Ok();
@@ -126,9 +123,9 @@ namespace MPWebAPI.Controllers
         [ValidateUserExists]
         public async Task<IActionResult> Delete(string id)
         {
-            var user = _userManager.Users.Single(u => u.Id == id);
+            var user = _repository.Users.Single(u => u.Id == id);
             user.Active = false;
-            await _userManager.UpdateAsync(user);
+            await _repository.UpdateUserAsync(user);
             return Ok();
         }
     }

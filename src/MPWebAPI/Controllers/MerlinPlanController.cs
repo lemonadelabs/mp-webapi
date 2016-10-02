@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
@@ -14,14 +14,16 @@ namespace MPWebAPI.Controllers
     {
         protected async Task<IEnumerable<UserViewModel>> ConvertToUserViewModelAsync (
             IEnumerable<MerlinPlanUser> users, 
-            UserManager<MerlinPlanUser> userManager
+            IMerlinPlanRepository repo
             )
         {
             var viewModels = new List<UserViewModel>();
             foreach (var u in users)
             {
                 var uvm = new UserViewModel(u);
-                uvm.Roles = await userManager.GetRolesAsync(u);
+                uvm.Roles = await repo.GetUserRolesAsync(u);
+                var gs = await repo.GetUserGroupsAsync(u);
+                uvm.Groups = gs.Select(g => new UserViewModel.GroupData { Id = g.Id, Name = g.Name});
                 viewModels.Add(uvm);
             }
             return viewModels;

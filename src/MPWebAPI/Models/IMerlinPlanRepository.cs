@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace MPWebAPI.Models
 {
@@ -16,7 +17,12 @@ namespace MPWebAPI.Models
         Task SaveChangesAsync();
 
         // Users
-        
+        IEnumerable<MerlinPlanUser> Users { get; }
+        Task<IEnumerable<string>> GetUserRolesAsync(MerlinPlanUser user);
+        Task<IdentityResult> UpdateUserAsync(MerlinPlanUser user);
+        Task<IdentityResult> RemoveUserFromRolesAsync(MerlinPlanUser userm, IEnumerable<string> rolesToDelete);
+        Task<IdentityResult> AddUserToRolesAsync(MerlinPlanUser userm, IEnumerable<string> rolesToAdd);
+        Task<IEnumerable<Group>> GetUserGroupsAsync(MerlinPlanUser user);
 
         // Groups
         IEnumerable<Group> Groups { get; }

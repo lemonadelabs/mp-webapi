@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
 using MPWebAPI.Filters;
@@ -15,16 +13,11 @@ namespace MPWebAPI.Controllers
     {
         private readonly IMerlinPlanRepository _repository;
         private readonly IMerlinPlanBL _businessLogic;
-        private readonly UserManager<MerlinPlanUser> _userManager;
 
-        public GroupController(
-            IMerlinPlanRepository mprepo, 
-            IMerlinPlanBL mpbl, 
-            UserManager<MerlinPlanUser> userManager)
+        public GroupController(IMerlinPlanRepository mprepo, IMerlinPlanBL mpbl)
         {
             _repository = mprepo;
             _businessLogic = mpbl;
-            _userManager = userManager;
         }
 
         [HttpPost]
@@ -55,7 +48,7 @@ namespace MPWebAPI.Controllers
         public async Task<IActionResult> GroupUser(int id)
         {
             var users = await _repository.GetGroupMembersAsync(_repository.Groups.Single(g => g.Id == id));
-            var userViews = await ConvertToUserViewModelAsync(users, _userManager); 
+            var userViews = await ConvertToUserViewModelAsync(users, _repository); 
             return new JsonResult(
                     userViews  
                 );
@@ -71,7 +64,7 @@ namespace MPWebAPI.Controllers
         [ValidateGroupExists]
         public async Task<IActionResult> AddUser(int id, [FromBody] UserRequest r)
         {
-            var userModels = await _userManager.Users.Where(u => r.Users.Contains(u.Id)).ToListAsync();
+            var userModels = _repository.Users.Where(u => r.Users.Contains(u.Id));
             foreach (var u in userModels)
             {
                 await _repository.AddUserToGroupAsync(u, _repository.Groups.Single(g => g.Id == id));    
@@ -84,7 +77,7 @@ namespace MPWebAPI.Controllers
         [ValidateGroupExists]
         public async Task<IActionResult> RemoveUser(int id, [FromBody] UserRequest r)
         {
-            var userModels = await _userManager.Users.Where(u => r.Users.Contains(u.Id)).ToListAsync();
+            var userModels = _repository.Users.Where(u => r.Users.Contains(u.Id));
             foreach (var u in userModels)
             {
                 await _repository.RemoveUserFromGroupAsync(u, _repository.Groups.Single(g => g.Id == id));    

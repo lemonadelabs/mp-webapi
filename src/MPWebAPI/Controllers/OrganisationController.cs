@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MPWebAPI.Filters;
 using MPWebAPI.Models;
@@ -14,13 +13,11 @@ namespace MPWebAPI.Controllers
     {
         private readonly IMerlinPlanRepository _mprepo;
         private readonly IMerlinPlanBL _mpbl;
-        private readonly UserManager<MerlinPlanUser> _userManager;
 
-        public OrganisationController(IMerlinPlanRepository mprepo, IMerlinPlanBL mpbl, UserManager<MerlinPlanUser> userManager)
+        public OrganisationController(IMerlinPlanRepository mprepo, IMerlinPlanBL mpbl)
         {
             _mprepo = mprepo;
             _mpbl = mpbl;
-            _userManager = userManager;
         }
         
         
@@ -37,17 +34,9 @@ namespace MPWebAPI.Controllers
         [ValidateOrganisationExists]
         public IActionResult GetUsers(int id)
         {
-            var users = _userManager.Users.ToList()
+            var users = _mprepo.Users.ToList()
                 .Where(u => u.OrganisationId == id);
-            
-            var viewModels = new List<UserViewModel>();
-            
-            foreach (var u in users)
-            {
-                var uvm = new UserViewModel(u);
-                uvm.Roles = _userManager.GetRolesAsync(u).Result;
-                viewModels.Add(uvm);
-            }
+            var viewModels = ConvertToUserViewModelAsync(users, _mprepo);
             return new JsonResult(viewModels);
         }
 
