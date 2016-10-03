@@ -163,5 +163,10 @@ namespace MPWebAPI.Models
         {
             return await _dbcontext.UserGroup.Where(ug => ug.UserId == user.Id).Select(ug => ug.Group).ToListAsync();
         }
+
+        public async Task<IdentityResult> CreateUserAsync(MerlinPlanUser user, string password)
+        {
+            return await _userManager.CreateAsync(user, password);
+        }
     }    
 }

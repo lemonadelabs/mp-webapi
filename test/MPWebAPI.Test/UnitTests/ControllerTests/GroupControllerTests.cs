@@ -18,7 +18,7 @@ namespace MPWebAPI.Test.UnitTests.ControllerTests
             var repository = new Mock<IMerlinPlanRepository>();
             repository.Setup(repo => repo.Groups).Returns(GetTestGroups());
             var businessLogic = new Mock<IMerlinPlanBL>();
-            _controller = new GroupController(repository.Object, businessLogic.Object, null);
+            _controller = new GroupController(repository.Object, businessLogic.Object);
         }
 
         [Fact]

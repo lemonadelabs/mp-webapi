@@ -23,6 +23,7 @@ namespace MPWebAPI.Models
         Task<IdentityResult> RemoveUserFromRolesAsync(MerlinPlanUser userm, IEnumerable<string> rolesToDelete);
         Task<IdentityResult> AddUserToRolesAsync(MerlinPlanUser userm, IEnumerable<string> rolesToAdd);
         Task<IEnumerable<Group>> GetUserGroupsAsync(MerlinPlanUser user);
+        Task<IdentityResult> CreateUserAsync(MerlinPlanUser user, string password);
 
         // Groups
         IEnumerable<Group> Groups { get; }

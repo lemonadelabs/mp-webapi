@@ -29,7 +29,11 @@ namespace MPWebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             var sqlConnectionString = Configuration["DevDB:ConnectionString"];
-            
+
+            services.AddOptions();
+            services.Configure<MerlinPlanBLOptions>(
+                Configuration.GetSection("BusinessRules"));
+
             services.AddDbContext<PostgresDBContext>(options => options.UseNpgsql(sqlConnectionString));
             
             services.AddIdentity<MerlinPlanUser, IdentityRole>(options => 

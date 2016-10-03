@@ -2,21 +2,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 
 namespace MPWebAPI.Models
 {
+    
+    // Config options for MerlinPlanBL
+    public class MerlinPlanBLOptions
+    {
+        public string DefaultRole { get; set; }
+    }
+    
+    
     /// <summary>
     /// Concrete implementation of the Merlin Plan business logic
     /// </summary>
     public class MerlinPlanBL : IMerlinPlanBL
     {
         private readonly IMerlinPlanRepository _respository;
-        private readonly UserManager<MerlinPlanUser> _userManager;
+        private readonly IOptions<MerlinPlanBLOptions> _options;
         
-        public MerlinPlanBL(IMerlinPlanRepository mprepo, UserManager<MerlinPlanUser> userManager)
+        public MerlinPlanBL(IOptions<MerlinPlanBLOptions> options, IMerlinPlanRepository mprepo)
         {
             _respository = mprepo;
-            _userManager = userManager;
+            _options = options;
         }
         
         /// <summary>
@@ -46,11 +55,14 @@ namespace MPWebAPI.Models
         {
             var org = _respository.Organisations.First(o => o.Id == newUser.OrganisationId);
             newUser.Organisation = org;
-            var result = await _userManager.CreateAsync(newUser, password);
+            var result = await _respository.CreateUserAsync(newUser, password);
             if (result.Succeeded)
             {
-                // Add user to groups
-                var roleAddResult = await _userManager.AddToRolesAsync(newUser, roles);
+                var rolesToAdd = (roles == null || roles.Count() == 0) ? 
+                    new List<string> {_options.Value.DefaultRole} : roles;
+                
+                // Add user to roles
+                var roleAddResult = await _respository.AddUserToRolesAsync(newUser, rolesToAdd);
                 if (!roleAddResult.Succeeded)
                 {
                     return roleAddResult;
