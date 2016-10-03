@@ -4,6 +4,8 @@
   "description": "The Web API for Merlin: Plan",
   "copyright": "Lemonade Labs Limited 2016",
 
+  "userSecretsId": "io.lemonadelabs.mp-webapi",
+
   "dependencies": {
     "Microsoft.NETCore.App": {
       "version": "1.0.0",
@@ -27,7 +29,8 @@
     "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0",
     "AspNet.Security.OAuth.Validation": "1.0.0-alpha2-final",
     "OpenIddict": "1.0.0-*",
-    "Microsoft.AspNetCore.Authentication.JwtBearer": "1.0.0"
+    "Microsoft.AspNetCore.Authentication.JwtBearer": "1.0.0",
+    "SendGrid.NetCore": "1.0.0-rtm-00002"
   },
 
   "tools": {

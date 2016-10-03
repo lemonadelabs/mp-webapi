@@ -58,6 +58,7 @@ namespace MPWebAPI.Models
             var result = await _respository.CreateUserAsync(newUser, password);
             if (result.Succeeded)
             {
+                // Add default role if none provided.
                 var rolesToAdd = (roles == null || roles.Count() == 0) ? 
                     new List<string> {_options.Value.DefaultRole} : roles;
                 
