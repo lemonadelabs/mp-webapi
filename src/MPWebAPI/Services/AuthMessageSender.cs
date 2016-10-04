@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using SendGrid;
 
 namespace MPWebAPI.Services
@@ -28,28 +29,16 @@ namespace MPWebAPI.Services
         
         public async Task SendEmailAsync(string email, string subject, string message)
         {
-            // var sgMessage = new SendGridMessage();
-            // sgMessage.AddTo(email);
-            // sgMessage.From = new System.Net.Mail.MailAddress("mailer@merlinmail.lemonadelabs.io", "donotreply");
-            // sgMessage.Subject = subject;
-            // sgMessage.Text = message;
-            // sgMessage.Html = message;
-            // var credentials = new System.Net.NetworkCredential(Options.SendGridUser, Options.SendGridAPIKey);
-            // var transportWeb = new SendGrid.Web(credentials);
-
             var sgMessage = new SendGridMessage();
             sgMessage.AddTo(email);
             sgMessage.From = new System.Net.Mail.MailAddress("mailer@merlinmail.lemonadelabs.io", "donotreply");
             sgMessage.Subject = subject;
             sgMessage.Text = message;
             sgMessage.Html = message;
-            var sgClient = new SendGrid.Client(Options.SendGridAPIKey);
-            //var response = await sgClient.Post("", );
-
-
+            var transportWeb = new SendGrid.Web(Options.SendGridAPIKey);
             try
             {
-                // await transportWeb.DeliverAsync(sgMessage);    
+                await transportWeb.DeliverAsync(sgMessage);    
             }
             catch (Exceptions.InvalidApiRequestException e)
             {

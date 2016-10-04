@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -14,9 +15,33 @@ namespace MPWebAPI.Controllers
     public class UserController : MerlinPlanController
     {
         
+        // Post request models
         public class Register
         {
             public UserViewModel UserDetails { get; set; }
+            public string Password { get; set; }
+        }
+
+        public class ConfirmEmailRequest
+        {
+            public string Code { get; set; }
+            
+            [EmailAddress]
+            public string Email { get; set;}
+        }
+
+        public class PasswordResetRequest
+        {
+            [EmailAddress]
+            public string Email { get; set; }
+            public bool SendEmail { get; set; }
+        }
+
+        public class NewPasswordRequest
+        {
+            [EmailAddress]
+            public string Email { get; set; }
+            public string Code { get; set; }
             public string Password { get; set; }
         }
 
@@ -60,6 +85,88 @@ namespace MPWebAPI.Controllers
                     new List<MerlinPlanUser> { _repository.Users.Single(u => u.Id == id) }, _repository).Result.First());
         }
 
+        [HttpPost("password")]
+        [ValidateModel]
+        public async Task<IActionResult> Password([FromBody] NewPasswordRequest request)
+        {
+            var user = await _userManager.FindByNameAsync(request.Email);
+            if (user != null)
+            {
+                var result = await _userManager.ResetPasswordAsync(user, request.Code, request.Password);
+                if (result.Succeeded)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost("passwordreset")]
+        [ValidateModel]
+        public async Task<IActionResult> PasswordReset([FromBody] PasswordResetRequest request)
+        {
+            var user = await _userManager.FindByNameAsync(request.Email);
+            if (user != null)
+            {
+                if (await _userManager.IsEmailConfirmedAsync(user))
+                {
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    if (request.SendEmail)
+                    {
+                        var callbackUrl = "";
+                        await _emailSender.SendEmailAsync(
+                            user.UserName, 
+                            "Reset your Merlin: Plan Password", 
+                            $"Please reset your Merlin: Plan password by clicking this <a href='{callbackUrl}'>link</a>"
+                        );
+                        return Ok();
+                    }
+                    else
+                    {
+                        return new JsonResult(new {Email = user.UserName, Code = token});                        
+                    }
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost("confirm")]
+        [ValidateModel]
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest emailConfirm)
+        {
+            var user = _repository.Users.Where(u => u.UserName == emailConfirm.Email).SingleOrDefault();
+            if (user != null)
+            {
+                var result = await _userManager.ConfirmEmailAsync(user, emailConfirm.Code);
+                if (result.Succeeded)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         [HttpPost]
         [ValidateModel]
         public async Task<IActionResult> Post([FromBody] Register r)
@@ -71,13 +178,13 @@ namespace MPWebAPI.Controllers
             if (result.Succeeded)
             {
                 // Send email validation
-                // var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                // await _emailSender.SendEmailAsync(
-                //     user.UserName, 
-                //     "Confirm your Merlin: Plan account", 
-                //     $"Please confirm your Merlin: Plan account by clicking this link: <a href='{callbackUrl}'>link</a>"
-                //);
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var callbackUrl = "";
+                await _emailSender.SendEmailAsync(
+                    user.UserName, 
+                    "Confirm your Merlin: Plan account", 
+                    $"Please confirm your Merlin: Plan account by clicking this <a href='{callbackUrl}'>link</a>"
+                );
                 return new JsonResult(ConvertToUserViewModelAsync(new List<MerlinPlanUser> {user}, _repository).Result.Single()) ;
             }
             else
@@ -133,7 +240,7 @@ namespace MPWebAPI.Controllers
             }
             else
             {
-                return BadRequest(result);
+                return BadRequest(result.Errors);
             }
         }
         
