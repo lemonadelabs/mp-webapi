@@ -1,5 +1,5 @@
 using System;
-using Microsoft.AspNetCore.Builder; 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using MPWebAPI.Models;
 using MPWebAPI.Fixtures;
+using MPWebAPI.Services;
 
 namespace MPWebAPI
 {
@@ -39,6 +40,7 @@ namespace MPWebAPI
             services.AddOptions();
             services.Configure<MerlinPlanBLOptions>(
                 Configuration.GetSection("BusinessRules"));
+            services.Configure<AuthMessageSenderOptions>(Configuration);
 
             services.AddDbContext<PostgresDBContext>(options => options.UseNpgsql(sqlConnectionString));
             
@@ -71,7 +73,7 @@ namespace MPWebAPI
             services.AddScoped<IMerlinPlanRepository, MerlinPlanRepository>();
             services.AddTransient<IFixtureBuilder, FixtureBuilder>();
             services.AddScoped<IMerlinPlanBL, MerlinPlanBL>();
-
+            services.AddSingleton<IEmailSender, AuthMessageSender>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

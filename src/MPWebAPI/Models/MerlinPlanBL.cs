@@ -13,7 +13,6 @@ namespace MPWebAPI.Models
         public string DefaultRole { get; set; }
     }
     
-    
     /// <summary>
     /// Concrete implementation of the Merlin Plan business logic
     /// </summary>
@@ -22,7 +21,10 @@ namespace MPWebAPI.Models
         private readonly IMerlinPlanRepository _respository;
         private readonly IOptions<MerlinPlanBLOptions> _options;
         
-        public MerlinPlanBL(IOptions<MerlinPlanBLOptions> options, IMerlinPlanRepository mprepo)
+        public MerlinPlanBL(
+            IOptions<MerlinPlanBLOptions> options, 
+            IMerlinPlanRepository mprepo
+            )
         {
             _respository = mprepo;
             _options = options;

@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MPWebAPI.Filters;
 using MPWebAPI.Models;
+using MPWebAPI.Services;
 using MPWebAPI.ViewModels;
 
 namespace MPWebAPI.Controllers
@@ -20,11 +22,20 @@ namespace MPWebAPI.Controllers
 
         private readonly IMerlinPlanBL _businessLogic;
         private readonly IMerlinPlanRepository _repository;
+        private readonly UserManager<MerlinPlanUser> _userManager;
+        private readonly IEmailSender _emailSender;
 
-        public UserController(IMerlinPlanBL mpbl, IMerlinPlanRepository repo)
+        public UserController(
+            IMerlinPlanBL mpbl, 
+            IMerlinPlanRepository repo, 
+            UserManager<MerlinPlanUser> userManager,
+            IEmailSender emailSender
+            )
         {
             _businessLogic = mpbl;
             _repository = repo;
+            _userManager = userManager;
+            _emailSender = emailSender;
         }
         
         [HttpGet("validate")]
@@ -59,6 +70,14 @@ namespace MPWebAPI.Controllers
             var result = await _businessLogic.CreateUser(user, r.Password, r.UserDetails.Roles);
             if (result.Succeeded)
             {
+                // Send email validation
+                // var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                // await _emailSender.SendEmailAsync(
+                //     user.UserName, 
+                //     "Confirm your Merlin: Plan account", 
+                //     $"Please confirm your Merlin: Plan account by clicking this link: <a href='{callbackUrl}'>link</a>"
+                //);
                 return new JsonResult(ConvertToUserViewModelAsync(new List<MerlinPlanUser> {user}, _repository).Result.Single()) ;
             }
             else

@@ -37,7 +37,7 @@ namespace MPWebAPI.Controllers
             var users = _mprepo.Users.ToList()
                 .Where(u => u.OrganisationId == id);
             var viewModels = ConvertToUserViewModelAsync(users, _mprepo);
-            return new JsonResult(viewModels);
+            return new JsonResult(viewModels.Result);
         }
 
         [HttpGet]

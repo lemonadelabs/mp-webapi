@@ -10,6 +10,7 @@ namespace MPWebAPI.ViewModels
         public UserViewModel(MerlinPlanUser u)
         {
             MapToViewModel(u);
+            UserEmailConfirmed = u.EmailConfirmed;
         }
 
         public UserViewModel() 
@@ -42,6 +43,8 @@ namespace MPWebAPI.ViewModels
 
         public IEnumerable<string> Roles { get; set; }
         public IEnumerable<GroupData> Groups { get; set; }
+
+        public bool UserEmailConfirmed { get; set; }
 
         public class GroupData
         {
