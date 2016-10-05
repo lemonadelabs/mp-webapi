@@ -707,6 +707,7 @@ namespace MPWebAPI.Fixtures
                         EmployeeId = u.EmployeeId,
                         Email = u.Email,
                         Organisation = _dbcontext.Organisation.First(),
+                        EmailConfirmed = true
                     };
 
                     await _userManager.CreateAsync(newUser, u.Password);

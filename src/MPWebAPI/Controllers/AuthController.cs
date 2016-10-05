@@ -58,6 +58,15 @@ namespace MPWebAPI.Controllers
                     });
                 }
 
+                // If the user's email is not confirmed then they can't log in
+                if (!await _userManager.IsEmailConfirmedAsync(user))
+                {
+                    return BadRequest(new OpenIdConnectResponse {
+                        Error = OpenIdConnectConstants.Errors.InvalidGrant,
+                        ErrorDescription = "The user's email has not been confirmed."
+                    });
+                }
+
                 // Check if the user can sign in
                 if (!await _signInManager.CanSignInAsync(user)) {
                     return BadRequest(new OpenIdConnectResponse {
