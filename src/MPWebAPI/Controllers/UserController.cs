@@ -8,13 +8,13 @@ using MPWebAPI.Filters;
 using MPWebAPI.Models;
 using MPWebAPI.Services;
 using MPWebAPI.ViewModels;
+using System.Net;
 
 namespace MPWebAPI.Controllers
 {
     [Route("api/[controller]")]
     public class UserController : MerlinPlanController
     {
-        
         // Post request models
         public class Register
         {
@@ -117,14 +117,15 @@ namespace MPWebAPI.Controllers
             {
                 if (await _userManager.IsEmailConfirmedAsync(user))
                 {
-                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var token = WebUtility.UrlEncode(await _userManager.GeneratePasswordResetTokenAsync(user));
                     if (request.SendEmail)
                     {
-                        var callbackUrl = "";
+                        var encodedEmail = WebUtility.UrlEncode(request.Email);
+                        var callbackUrl = $"{_emailSender.UrlHost}/login/resetpassword/{encodedEmail}/{token}";
                         await _emailSender.SendEmailAsync(
                             user.UserName, 
                             "Reset your Merlin: Plan Password", 
-                            $"Please reset your Merlin: Plan password by clicking this <a href='{callbackUrl}'>link</a>"
+                            $"Please reset your Merlin: Plan password by clicking this <a href=\"{callbackUrl}\">link</a>"
                         );
                         return Ok();
                     }
@@ -178,12 +179,13 @@ namespace MPWebAPI.Controllers
             if (result.Succeeded)
             {
                 // Send email validation
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var callbackUrl = "";
+                var code = WebUtility.UrlEncode(await _userManager.GenerateEmailConfirmationTokenAsync(user));
+                var encodedUserName = WebUtility.UrlEncode(user.UserName);
+                var callbackUrl = $"{_emailSender.UrlHost}/confirm/email/{encodedUserName}/{code}";
                 await _emailSender.SendEmailAsync(
                     user.UserName, 
                     "Confirm your Merlin: Plan account", 
-                    $"Please confirm your Merlin: Plan account by clicking this <a href='{callbackUrl}'>link</a>"
+                    $"Please confirm your Merlin: Plan account by clicking this <a href=\"{callbackUrl}\">link</a>"
                 );
                 return new JsonResult(ConvertToUserViewModelAsync(new List<MerlinPlanUser> {user}, _repository).Result.Single()) ;
             }

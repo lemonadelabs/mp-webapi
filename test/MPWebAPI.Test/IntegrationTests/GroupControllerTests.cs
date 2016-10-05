@@ -17,8 +17,7 @@ namespace MPWebAPI.Test.IntegrationTests
         public GroupControllerTests()
         {
             _server = new TestServer(
-                new WebHostBuilder().UseStartup<MPWebAPI.Startup>()
-                );
+                new WebHostBuilder().UseStartup<MPWebAPI.Startup>());
             _client = _server.CreateClient();
         }
 
@@ -27,8 +26,5 @@ namespace MPWebAPI.Test.IntegrationTests
         {
             //_client.
         }
-        
-
-
     }
 }

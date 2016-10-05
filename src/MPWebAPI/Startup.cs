@@ -23,14 +23,16 @@ namespace MPWebAPI
 
             if (env.IsDevelopment())
             {
-                builder = builder.AddUserSecrets();
+                builder = builder.AddUserSecrets("io.lemonadelabs.mp-webapi");
             }
 
             builder = builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+            HostingEnvironment = env;
         }
 
         public IConfigurationRoot Configuration { get; }
+        public IHostingEnvironment HostingEnvironment { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -38,9 +40,19 @@ namespace MPWebAPI
             var sqlConnectionString = Configuration["DevDBConnectionString"];
             
             services.AddOptions();
+            
             services.Configure<MerlinPlanBLOptions>(
                 Configuration.GetSection("BusinessRules"));
-            services.Configure<AuthMessageSenderOptions>(Configuration);
+
+            services.Configure<AuthMessageSenderOptions>(options => 
+                {
+                    options.SendGridAPIKey = Configuration["SendGridAPIKey"];
+                    options.SendGridUser = Configuration["SendGridUser"];
+                    options.UrlHost = (HostingEnvironment.IsDevelopment()) ? 
+                        Configuration.GetSection("FrontendHost").GetValue<string>("development") : 
+                        Configuration.GetSection("FrontendHost").GetValue<string>("production");
+                } 
+            );
 
             services.AddDbContext<PostgresDBContext>(options => options.UseNpgsql(sqlConnectionString));
             
@@ -68,7 +80,6 @@ namespace MPWebAPI
                 .DisableHttpsRequirement()
                 .SetAccessTokenLifetime(TimeSpan.FromSeconds(3600))
                 .AddEphemeralSigningKey();
-                
 
             services.AddScoped<IMerlinPlanRepository, MerlinPlanRepository>();
             services.AddTransient<IFixtureBuilder, FixtureBuilder>();

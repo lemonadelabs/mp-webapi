@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using SendGrid;
 
 namespace MPWebAPI.Services
@@ -11,21 +10,25 @@ namespace MPWebAPI.Services
     {
         public string SendGridUser { get; set; }
         public string SendGridAPIKey { get; set; }
+        public string UrlHost { get; set; }
     }
     
     public class AuthMessageSender : IEmailSender
     {
-        
         public readonly ILogger _logger;
+        public string UrlHost { get; set; }
 
-        public AuthMessageSender(IOptions<AuthMessageSenderOptions> options, ILoggerFactory loggerFactory)
+        public AuthMessageSender(
+            IOptions<AuthMessageSenderOptions> options, 
+            ILoggerFactory loggerFactory
+            )
         {
             Options = options.Value;
+            UrlHost = options.Value.UrlHost;
             _logger = loggerFactory.CreateLogger("AuthMessageSender");
         }
 
         public AuthMessageSenderOptions Options { get; }
-        
         
         public async Task SendEmailAsync(string email, string subject, string message)
         {

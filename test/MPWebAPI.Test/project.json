@@ -18,6 +18,11 @@
   },
 
   "frameworks": {
-    "netcoreapp1.0": {}
+    "netcoreapp1.0": {
+      "imports": [
+        "dotnet54",
+        "portable-net45+win8" 
+      ]
+    }
   }
 }
