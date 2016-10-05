@@ -121,7 +121,7 @@ namespace MPWebAPI.Controllers
                     if (request.SendEmail)
                     {
                         var encodedEmail = WebUtility.UrlEncode(request.Email);
-                        var callbackUrl = $"{_emailSender.UrlHost}/login/resetpassword/{encodedEmail}/{token}";
+                        var callbackUrl = $"{_emailSender.UrlHost}/login/resetpassword?email={encodedEmail}&code={token}";
                         await _emailSender.SendEmailAsync(
                             user.UserName, 
                             "Reset your Merlin: Plan Password", 
@@ -181,7 +181,7 @@ namespace MPWebAPI.Controllers
                 // Send email validation
                 var code = WebUtility.UrlEncode(await _userManager.GenerateEmailConfirmationTokenAsync(user));
                 var encodedUserName = WebUtility.UrlEncode(user.UserName);
-                var callbackUrl = $"{_emailSender.UrlHost}/confirm/email/{encodedUserName}/{code}";
+                var callbackUrl = $"{_emailSender.UrlHost}/confirm/email?email={encodedUserName}&code={code}";
                 await _emailSender.SendEmailAsync(
                     user.UserName, 
                     "Confirm your Merlin: Plan account", 
