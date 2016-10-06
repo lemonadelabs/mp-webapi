@@ -165,7 +165,7 @@
         "Password": "sam",
         "Email": "sam@lemonadelabs.io",
         "Roles": ["Lemonade Admin"],
-        "Groups": ["EPMO"]
+        "Groups": []
     },
     {
         "UserName": "foo@lemonadelabs.io",

@@ -304,8 +304,8 @@ namespace MPWebAPI.Fixtures
 
             if(flushDb)
             {
-                _dbcontext.Database.EnsureDeleted();
-                _dbcontext.Database.Migrate();
+                await _dbcontext.Database.EnsureDeletedAsync();
+                await _dbcontext.Database.MigrateAsync();
             }
 
             _logger.LogInformation("Adding Organisations...");

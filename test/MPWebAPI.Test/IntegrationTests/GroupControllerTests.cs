@@ -7,6 +7,8 @@ using System.Linq;
 using MPWebAPI.ViewModels;
 using System.Net.Http;
 using MPWebAPI.Test.Fixtures;
+using MPWebAPI.Controllers;
+using Microsoft.EntityFrameworkCore;
 
 namespace MPWebAPI.Test.IntegrationTests
 {
@@ -107,6 +109,18 @@ namespace MPWebAPI.Test.IntegrationTests
             Assert.Equal(HttpStatusCode.BadRequest, postResponse.StatusCode);
         }
 
+        [Fact]
+        public async Task AddUserToGroup()
+        {
+            var user = await fixture.DBContext.Users.FirstOrDefaultAsync(u => u.UserName == "sam@lemonadelabs.io");
+            Assert.NotNull(user);
+            Assert.True(await fixture.DBContext.UserGroup.AllAsync(ug => ug.UserId != user.Id));
+            var ur = new GroupController.UserRequest();
+            ur.Users = new List<string> {user.Id};
+            var postResponse = await fixture.Client.PostAsJsonAsync("/api/group/1/user", ur);
+            Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
+            Assert.True(await fixture.DBContext.UserGroup.AnyAsync(ug => ug.UserId == user.Id && ug.GroupId == 1));
+        }
 
     }
 }
