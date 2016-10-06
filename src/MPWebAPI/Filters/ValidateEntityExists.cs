@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -32,9 +33,17 @@ namespace MPWebAPI.Filters
                             context.Result = new NotFoundObjectResult(id.Value);
                             return;
                         }
+                        else
+                        {
+                             await next();
+                        }
                     }
                 }
-                await next();        
+                else
+                {
+                    context.Result = new NotFoundResult();
+                    return;
+                }
             }
         }
     }
@@ -65,9 +74,17 @@ namespace MPWebAPI.Filters
                             context.Result = new NotFoundObjectResult(id.Value);
                             return;
                         }
+                        else
+                        {
+                            await next();            
+                        }
                     }
                 }
-                await next();        
+                else
+                {
+                    context.Result = new NotFoundResult();
+                    return;
+                }
             }
         }
     }
@@ -98,9 +115,17 @@ namespace MPWebAPI.Filters
                             context.Result = new NotFoundObjectResult(id);
                             return;
                         }
+                        else
+                        {
+                            await next();            
+                        }
                     }
                 }
-                await next();        
+                else
+                {
+                    context.Result = new NotFoundResult();
+                    return;                    
+                }
             }
         }
     }    

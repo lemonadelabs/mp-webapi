@@ -279,10 +279,10 @@ namespace MPWebAPI.Fixtures
             _roleManager = roleManager;
         }
         
-        public async void AddFixture(string fixtureFile, bool flushDb = false)
+        public async Task AddFixture(string fixtureFile, bool flushDb = false)
         {
             var fixturePath = Path.Combine(
-                Directory.GetCurrentDirectory(), 
+                Directory.GetCurrentDirectory(),
                 Path.Combine("Fixtures", fixtureFile));
             
             string fixtureJSON = null;

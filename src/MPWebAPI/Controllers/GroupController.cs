@@ -24,6 +24,12 @@ namespace MPWebAPI.Controllers
         [ValidateModel]
         public async Task<IActionResult> Post([FromBody] GroupViewModel group)
         {
+            // Check org is a valid organisation
+            if (_repository.Organisations.All(o => o.Id != group.OrganisationId))
+            {
+                return BadRequest(new {OrganisationId = "Organisation does not exist."});
+            }
+            
             var newGroup = new Group();
             group.MapToModel(newGroup);
             await _repository.AddGroupAsync(newGroup);

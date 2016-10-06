@@ -1,9 +1,11 @@
 
+using System.Threading.Tasks;
+
 namespace MPWebAPI.Fixtures
 {
     public interface IFixtureBuilder
     {
-        void AddFixture(string fixtureFile, bool flushDb = false);
+        Task AddFixture(string fixtureFile, bool flushDb = false);
     }    
 }
 
