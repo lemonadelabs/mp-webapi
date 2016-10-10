@@ -28,8 +28,6 @@ namespace MPWebAPI.Models
         public DbSet<PhaseConfig> PhaseConfig { get; set; }
         public DbSet<Portfolio> Portfolio { get; set; }
         public DbSet<PortfolioUser> PortfolioUser { get; set; }
-        public DbSet<PortfolioTag> PortfolioTag { get; set; }
-        public DbSet<PTag> PTag { get; set; }
         public DbSet<Project> Project { get; set; }
         public DbSet<ProjectBenefit> ProjectBenefit { get; set; }
         public DbSet<ProjectConfig> ProjectConfig { get; set; }
