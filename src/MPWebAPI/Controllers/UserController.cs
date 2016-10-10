@@ -25,6 +25,7 @@ namespace MPWebAPI.Controllers
         public class ConfirmEmailRequest
         {
             public string Code { get; set; }
+            public string Password { get; set;}
             
             [EmailAddress]
             public string Email { get; set;}
@@ -92,7 +93,12 @@ namespace MPWebAPI.Controllers
             var user = await _userManager.FindByNameAsync(request.Email);
             if (user != null)
             {
-                var result = await _userManager.ResetPasswordAsync(user, request.Code, request.Password);
+                var result = await _userManager.ResetPasswordAsync(
+                    user, 
+                    request.Code, 
+                    request.Password
+                );
+                
                 if (result.Succeeded)
                 {
                     return Ok();
@@ -150,12 +156,34 @@ namespace MPWebAPI.Controllers
         public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest emailConfirm)
         {
             var user = _repository.Users.Where(u => u.UserName == emailConfirm.Email).SingleOrDefault();
+
             if (user != null)
             {
+                if (await _userManager.IsEmailConfirmedAsync(user))
+                {
+                    return BadRequest("User's email is already confirmed");                
+                }
+                
                 var result = await _userManager.ConfirmEmailAsync(user, emailConfirm.Code);
                 if (result.Succeeded)
                 {
-                    return Ok();
+                    if (emailConfirm.Password != null)
+                    {
+                        // Change password
+                        var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                        var passwordChangeResult = await Password(new NewPasswordRequest 
+                        {
+                            Email = emailConfirm.Email,
+                            Code = code,
+                            Password = emailConfirm.Password
+                        });
+                        return passwordChangeResult;    
+                    }
+                    else
+                    {
+                        return Ok();
+                    }
+                    
                 }
                 else
                 {
