@@ -28,6 +28,8 @@ namespace MPWebAPI.Models
         public DbSet<PhaseConfig> PhaseConfig { get; set; }
         public DbSet<Portfolio> Portfolio { get; set; }
         public DbSet<PortfolioUser> PortfolioUser { get; set; }
+        public DbSet<PortfolioTag> PortfolioTag { get; set; }
+        public DbSet<PTag> PTag { get; set; }
         public DbSet<Project> Project { get; set; }
         public DbSet<ProjectBenefit> ProjectBenefit { get; set; }
         public DbSet<ProjectConfig> ProjectConfig { get; set; }
@@ -272,12 +274,12 @@ namespace MPWebAPI.Models
                 .IsRequired();
             
             builder.Entity<PortfolioUser>()
-                .HasKey(pu => new {pu.PlanId, pu.UserId});
+                .HasKey(pu => new {pu.PortfolioId, pu.UserId});
             
             builder.Entity<PortfolioUser>()
-                .HasOne(pu => pu.Plan)
+                .HasOne(pu => pu.Portfolio)
                 .WithMany(p => p.ShareUser)
-                .HasForeignKey(pu => pu.PlanId);
+                .HasForeignKey(pu => pu.PortfolioId);
             
             builder.Entity<PortfolioUser>()
                 .HasOne(pu => pu.User)
