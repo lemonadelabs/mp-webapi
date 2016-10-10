@@ -25,12 +25,28 @@ namespace MPWebAPI.Models
         public MerlinPlanUser ApprovedBy { get; set; }
         public List<PortfolioUser> ShareUser { get; set; }
         public List<ProjectConfig> Projects { get; set; }
+        public List<PortfolioTag> Tags { get; set; }
+    }
+
+    public class PTag
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class PortfolioTag
+    {
+        public int PTagId { get; set; }
+        public PTag PTag { get; set; } 
+        
+        public int PortfolioId { get; set; }
+        public Portfolio Portfolio { get; set; }
     }
     
     public class PortfolioUser
     {
-        public int PlanId { get; set; }
-        public Portfolio Plan { get; set; }
+        public int PortfolioId { get; set; }
+        public Portfolio Portfolio { get; set; }
 
         public string UserId { get; set; }
         public MerlinPlanUser User { get; set; }
