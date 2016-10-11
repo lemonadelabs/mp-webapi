@@ -27,6 +27,8 @@ namespace MPWebAPI.Models
         public DbSet<Organisation> Organisation { get; set; }
         public DbSet<PhaseConfig> PhaseConfig { get; set; }
         public DbSet<Portfolio> Portfolio { get; set; }
+        public DbSet<PortfolioTag> PortfolioTag { get; set; }
+        public DbSet<ProjectConfigPortfolioTag> ProjectConfigPortfolioTag { get; set; }
         public DbSet<PortfolioUser> PortfolioUser { get; set; }
         public DbSet<Project> Project { get; set; }
         public DbSet<ProjectBenefit> ProjectBenefit { get; set; }
@@ -284,6 +286,24 @@ namespace MPWebAPI.Models
                 .WithMany(u => u.SharedPortfolios)
                 .HasForeignKey(pu => pu.UserId);
             
+            builder.Entity<PortfolioTag>()
+                .HasOne(pt => pt.Portfolio)
+                .WithMany(p => p.PortfolioTags)
+                .HasForeignKey(pt => pt.PortfolioId);
+            
+            builder.Entity<ProjectConfigPortfolioTag>()
+                .HasOne(pcpt => pcpt.PortfolioTag)
+                .WithMany(pt => pt.Projects)
+                .HasForeignKey(pcpt => pcpt.PortfolioTagId);
+            
+            builder.Entity<ProjectConfigPortfolioTag>()
+                .HasOne(pcpt => pcpt.ProjectConfig)
+                .WithMany()
+                .HasForeignKey(pcpt => pcpt.ProjectConfigId);
+            
+            builder.Entity<ProjectConfigPortfolioTag>()
+                .HasKey(pcpt => new {pcpt.PortfolioTagId, pcpt.ProjectConfigId});
+            
             // Project
             builder.Entity<Project>()
                 .HasOne(p => p.Creator)
@@ -393,6 +413,7 @@ namespace MPWebAPI.Models
             builder.Entity<ProjectConfig>()
                 .Property(pc => pc.StartDate)
                 .IsRequired();
+            
             
             // ProjectOption
             builder.Entity<ProjectOption>()
