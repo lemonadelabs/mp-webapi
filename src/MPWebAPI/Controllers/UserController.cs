@@ -35,7 +35,6 @@ namespace MPWebAPI.Controllers
         {
             [EmailAddress]
             public string Email { get; set; }
-            public bool SendEmail { get; set; }
         }
 
         public class NewPasswordRequest
@@ -124,21 +123,14 @@ namespace MPWebAPI.Controllers
                 if (await _userManager.IsEmailConfirmedAsync(user))
                 {
                     var token = WebUtility.UrlEncode(await _userManager.GeneratePasswordResetTokenAsync(user));
-                    if (request.SendEmail)
-                    {
-                        var encodedEmail = WebUtility.UrlEncode(request.Email);
-                        var callbackUrl = $"{_emailSender.UrlHost}/login/resetpassword?email={encodedEmail}&code={token}";
-                        await _emailSender.SendEmailAsync(
-                            user.UserName, 
-                            "Reset your Merlin: Plan Password", 
-                            $"Please reset your Merlin: Plan password by clicking this <a href=\"{callbackUrl}\">link</a>"
-                        );
-                        return Ok();
-                    }
-                    else
-                    {
-                        return new JsonResult(new {Email = user.UserName, Code = token});                        
-                    }
+                    var encodedEmail = WebUtility.UrlEncode(request.Email);
+                    var callbackUrl = $"{_emailSender.UrlHost}/login/resetpassword?email={encodedEmail}&code={token}";
+                    await _emailSender.SendEmailAsync(
+                        user.UserName, 
+                        "Reset your Merlin: Plan Password", 
+                        $"Please reset your Merlin: Plan password by clicking this <a href=\"{callbackUrl}\">link</a>"
+                    );
+                    return Ok();
                 }
                 else
                 {
