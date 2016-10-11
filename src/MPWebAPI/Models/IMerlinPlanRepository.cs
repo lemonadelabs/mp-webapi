@@ -35,5 +35,8 @@ namespace MPWebAPI.Models
         Task ParentGroupAsync(Group child, Group parent);
         Task UnparentGroupAsync(Group group);
         Task GroupSetActive(Group g, bool active);
+
+        // Resource Scenarios
+        IEnumerable<ResourceScenario> ResourceScenarios { get; }
     }    
 }

@@ -23,8 +23,18 @@ namespace MPWebAPI.Models
             _logger = loggerFactory.CreateLogger("MerlinPlanRepository");
             _userManager = userManager;
         }
-
        
+        public IEnumerable<ResourceScenario> ResourceScenarios
+        {
+            get
+            {
+                return _dbcontext.ResourceScenario
+                    .Include(rs => rs.Creator)
+                    .Include(rs => rs.ApprovedBy)
+                    .Include(rs => rs.Group);
+            }
+        }
+
         public IEnumerable<Organisation> Organisations
         {
             get

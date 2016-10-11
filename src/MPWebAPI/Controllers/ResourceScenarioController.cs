@@ -3,42 +3,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using MPWebAPI.Models;
+using MPWebAPI.ViewModels;
 
 namespace MPWebAPI.Controllers
 {
     [Route("api/[controller]")]
     public class ResourceScenarioController : Controller
     {
-        // GET api/values
+        
+        private readonly IMerlinPlanRepository _repository;
+        private readonly IMerlinPlanBL _businessLogic;
+        private readonly ILogger _logger;
+        
+        public ResourceScenarioController(
+            IMerlinPlanRepository repository, 
+            IMerlinPlanBL businessLogic,
+            ILoggerFactory loggerFactory
+            )
+        {
+            _repository = repository;
+            _businessLogic = businessLogic;
+            _logger = loggerFactory.CreateLogger<ResourceScenarioController>();
+        }
+        
+        /// <summary>
+        /// Get all resource scenarios in the system. 
+        /// </summary>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<ResourceScenarioViewModel> Get()
         {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return _repository.ResourceScenarios.Select(rs => new ResourceScenarioViewModel(rs));
         }
     }
 }
