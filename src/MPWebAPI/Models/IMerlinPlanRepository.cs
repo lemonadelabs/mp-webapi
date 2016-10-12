@@ -41,7 +41,7 @@ namespace MPWebAPI.Models
         Task<IEnumerable<ResourceScenario>> GetUserSharedResourceScenariosForUserAsync(MerlinPlanUser user);
         Task<IEnumerable<ResourceScenario>> GetGroupSharedResourceScenariosForUserAsync(MerlinPlanUser user);
         Task<IEnumerable<ResourceScenario>> GetOrganisationSharedResourceScenariosAsync(Organisation org);
-        Task ShareResourceScenarioWithGroupAsync(ResourceScenario scenario);
-        Task UnshareResourceScenarioWithGroupAsync(ResourceScenario scenario);
+        Task ShareResourceScenarioWithGroupAsync(ResourceScenario scenario, bool share);
+        Task ShareResourceScenarioWithOrgAsync(ResourceScenario scenario, bool share);
     }    
 }

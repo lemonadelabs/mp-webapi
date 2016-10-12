@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
 using MPWebAPI.Filters;
+using UserSharedScenario = MPWebAPI.Controllers.ResourceScenarioController.UserAccessResponse.UserSharedScenario;
+using GroupSharedScenario = MPWebAPI.Controllers.ResourceScenarioController.UserAccessResponse.GroupSharedScenario;
 
 namespace MPWebAPI.Controllers
 {
@@ -29,6 +31,7 @@ namespace MPWebAPI.Controllers
             public List<ResourceScenarioViewModel> Created { get; set; }
             public List<GroupSharedScenario> GroupShare { get; set; }
             public List<UserSharedScenario> UserShare { get; set; }
+            public List<GroupSharedScenario> OrgShare { get; set; }
         }
         
         private readonly IMerlinPlanRepository _repository;
@@ -79,14 +82,42 @@ namespace MPWebAPI.Controllers
         public async Task ShareWithGroup(int id)
         {
             var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
-            await _repository.ShareResourceScenarioWithGroupAsync(rs);
+            await _repository.ShareResourceScenarioWithGroupAsync(rs, true);
         }
 
         [HttpPut("{id}/group/unshare")]
         public async Task UnshareWithGroup(int id)
         {
             var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
-            await _repository.UnshareResourceScenarioWithGroupAsync(rs);
+            await _repository.ShareResourceScenarioWithGroupAsync(rs, false);
+        }
+
+         [HttpPut("{id}/share")]
+        public async Task ShareWithOrg(int id)
+        {
+            var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
+            await _repository.ShareResourceScenarioWithOrgAsync(rs, true);
+        }
+
+        [HttpPut("{id}/unshare")]
+        public async Task UnshareWithOrg(int id)
+        {
+            var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
+            await _repository.ShareResourceScenarioWithOrgAsync(rs, false);
+        }
+
+        [HttpPut("{id}/user/{userName}/share")]
+        public async Task ShareWithUser(int id, string userName)
+        {
+            var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
+            await _repository.ShareResourceScenarioWithOrgAsync(rs, false);
+        }
+
+        [HttpPut("{id}/user/{userName}/unshare")]
+        public async Task UnshareWithUser(int id, string userName)
+        {
+            var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
+            await _repository.ShareResourceScenarioWithOrgAsync(rs, false);
         }
 
         [HttpGet("useraccess/{id}")]
@@ -97,42 +128,12 @@ namespace MPWebAPI.Controllers
             var userShare = await _repository.GetUserSharedResourceScenariosForUserAsync(user);
             var groupShare = await _repository.GetGroupSharedResourceScenariosForUserAsync(user);
             var allShare = await _repository.GetOrganisationSharedResourceScenariosAsync(user.Organisation);
-            
-           
+            var owned = _repository.ResourceScenarios.Where(rs => rs.Creator.Id == id);
 
-            var allPlusGroup = new List<ResourceScenario>();
-            
-            if (allShare != null)
-            {
-                allPlusGroup.AddRange(allShare);    
-            }
-          
-            if (groupShare != null)
-            {
-                allPlusGroup.AddRange(groupShare);    
-            }
+            var groupSharedScenarios = ResourceScenariosByGroup(groupShare.ToList());
+            var orgSharedScenarios = ResourceScenariosByGroup(allShare.ToList());
 
-            var groupSharedScenarios = new List<UserAccessResponse.GroupSharedScenario>();
-            foreach (var rs in allPlusGroup)
-            {
-                var g = groupSharedScenarios.FirstOrDefault(gss => gss.Group.Id == rs.Group.Id);
-                if (g != null)
-                {
-                    g.Scenarios.Add(new ResourceScenarioViewModel(rs));
-                }
-                else
-                {
-                    var newgss = new UserAccessResponse.GroupSharedScenario 
-                    {
-                        Group = new GroupViewModel(rs.Group),
-                        Scenarios = new List<ResourceScenarioViewModel>(
-                            new ResourceScenarioViewModel[] {new ResourceScenarioViewModel(rs)})
-                    };
-                    groupSharedScenarios.Add(newgss);
-                }
-            }
-
-            var userSharedScenarios = new List<UserAccessResponse.UserSharedScenario>();
+            var userSharedScenarios = new List<UserSharedScenario>();
             foreach (var rs in userShare)
             {
                 var u = userSharedScenarios.FirstOrDefault(uss => uss.User.UserName == rs.Creator.UserName);
@@ -142,7 +143,7 @@ namespace MPWebAPI.Controllers
                 }
                 else
                 {
-                    var newuss = new UserAccessResponse.UserSharedScenario
+                    var newuss = new UserSharedScenario
                     {
                         User = new UserViewModel(rs.Creator),
                         Scenarios = new List<ResourceScenarioViewModel>(
@@ -151,16 +152,39 @@ namespace MPWebAPI.Controllers
                 }
             }
 
-            var owned = _repository.ResourceScenarios.Where(rs => rs.Creator.Id == id);
-
             return new JsonResult(
                 new UserAccessResponse 
                 {
                     Created = owned.Select(o => new ResourceScenarioViewModel(o)).ToList(),
                     GroupShare = groupSharedScenarios,
+                    OrgShare = orgSharedScenarios,
                     UserShare = userSharedScenarios
                 }
             );
+        }
+
+        private List<GroupSharedScenario> ResourceScenariosByGroup(List<ResourceScenario> scenarios)
+        {
+            var groupedScenarios = new List<GroupSharedScenario>();
+            foreach (var rs in scenarios)
+            {
+                var g = groupedScenarios.FirstOrDefault(ass => ass.Group.Id == rs.Group.Id);
+                if (g != null)
+                {
+                    g.Scenarios.Add(new ResourceScenarioViewModel(rs));
+                }
+                else
+                {
+                    var newass = new GroupSharedScenario 
+                    {
+                        Group = new GroupViewModel(rs.Group),
+                        Scenarios = new List<ResourceScenarioViewModel>(
+                            new ResourceScenarioViewModel[] {new ResourceScenarioViewModel(rs)})
+                    };
+                    groupedScenarios.Add(newass);
+                }
+            }
+            return groupedScenarios;
         }
     }
 }

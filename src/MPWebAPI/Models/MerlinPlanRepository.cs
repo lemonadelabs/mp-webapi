@@ -218,15 +218,16 @@ namespace MPWebAPI.Models
                 .ToListAsync();
         }
 
-        public async Task ShareResourceScenarioWithGroupAsync(ResourceScenario scenario)
+        public async Task ShareResourceScenarioWithGroupAsync(ResourceScenario scenario, bool share)
         {
-            scenario.ShareGroup = true;
+            scenario.ShareGroup = share;
             await _dbcontext.SaveChangesAsync();
         }
 
-        public async Task UnshareResourceScenarioWithGroupAsync(ResourceScenario scenario)
+       
+        public async Task ShareResourceScenarioWithOrgAsync(ResourceScenario scenario, bool share)
         {
-            scenario.ShareGroup = false;
+            scenario.ShareAll = share;
             await _dbcontext.SaveChangesAsync();
         }
     }    
