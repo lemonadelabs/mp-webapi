@@ -38,5 +38,8 @@ namespace MPWebAPI.Models
 
         // Resource Scenarios
         IEnumerable<ResourceScenario> ResourceScenarios { get; }
+        Task<IEnumerable<ResourceScenario>> GetUserSharedResourceScenariosForUserAsync(MerlinPlanUser user);
+        Task<IEnumerable<ResourceScenario>> GetGroupSharedResourceScenariosForUserAsync(MerlinPlanUser user);
+        Task<IEnumerable<ResourceScenario>> GetOrganisationSharedResourceScenariosAsync(Organisation org);
     }    
 }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
+using System;
 
 namespace MPWebAPI.Models
 {
@@ -52,7 +53,8 @@ namespace MPWebAPI.Models
         {
             get
             {
-                return _dbcontext.Group;
+                return _dbcontext.Group
+                    .Include(g => g.ResourceScenarios);
             }
         }
 
@@ -60,7 +62,9 @@ namespace MPWebAPI.Models
         {
             get
             {
-                return _userManager.Users.ToList();
+                return _userManager.Users
+                    .Include(u => u.Organisation)
+                    .ToList();
             }
         }
 
@@ -170,12 +174,46 @@ namespace MPWebAPI.Models
 
         public async Task<IEnumerable<Group>> GetUserGroupsAsync(MerlinPlanUser user)
         {
-            return await _dbcontext.UserGroup.Where(ug => ug.UserId == user.Id).Select(ug => ug.Group).ToListAsync();
+            return await _dbcontext.UserGroup
+                .Include(ug => ug.Group)
+                .ThenInclude(g => g.ResourceScenarios)
+                .Where(ug => ug.UserId == user.Id)
+                .Select(ug => ug.Group)
+                .ToListAsync();
         }
 
         public async Task<IdentityResult> CreateUserAsync(MerlinPlanUser user, string password)
         {
             return await _userManager.CreateAsync(user, password);
+        }
+
+        public async Task<IEnumerable<ResourceScenario>> GetUserSharedResourceScenariosForUserAsync(MerlinPlanUser user)
+        {
+            var populatedUser = await _userManager.Users
+                .Include(u => u.SharedResourceScenarios)
+                .ThenInclude(rsu => rsu.ResourceScenario)
+                .Where(u => u.Id == user.Id)
+                .FirstAsync();
+            
+            return populatedUser.SharedResourceScenarios?.Select(srs => srs.ResourceScenario);
+        }
+
+        public async Task<IEnumerable<ResourceScenario>> GetGroupSharedResourceScenariosForUserAsync(MerlinPlanUser user)
+        {
+            var groups = await GetUserGroupsAsync(user);
+            return groups
+                .Where(gr => gr.ResourceScenarios != null)
+                .SelectMany(g => g.ResourceScenarios)
+                .Where(rs => rs.ShareGroup)
+                .ToList();
+        }
+
+        public async Task<IEnumerable<ResourceScenario>> GetOrganisationSharedResourceScenariosAsync(Organisation org)
+        {
+            return await _dbcontext.ResourceScenario
+                .Include(rs => rs.Group)
+                .Where(rs => rs.Group.OrganisationId == org.Id && rs.ShareAll)
+                .ToListAsync();
         }
     }    
 }
