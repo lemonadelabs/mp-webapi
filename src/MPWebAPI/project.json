@@ -21,7 +21,7 @@
     "Microsoft.Extensions.Logging.Console": "1.0.0",
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
-    "Npgsql.EntityFrameworkCore.PostgreSQL": "1.0.1",
+    "Npgsql.EntityFrameworkCore.PostgreSQL": "1.0.2",
     "Microsoft.EntityFrameworkCore": "1.0.1",
     "Microsoft.AspNetCore.Identity": "1.0.0",
     "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0",
@@ -30,7 +30,7 @@
     "AspNet.Security.OAuth.Validation": "1.0.0-alpha2-final",
     "OpenIddict": "1.0.0-*",
     "Microsoft.AspNetCore.Authentication.JwtBearer": "1.0.0",
-    "SendGrid.NetCore": "1.0.0-rtm-00002"
+    "SendGrid.NetCore": "1.0.0-*"
   },
 
   "tools": {

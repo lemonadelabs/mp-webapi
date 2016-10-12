@@ -75,6 +75,20 @@ namespace MPWebAPI.Controllers
             );
         }
 
+        [HttpPut("{id}/group/share")]
+        public async Task ShareWithGroup(int id)
+        {
+            var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
+            await _repository.ShareResourceScenarioWithGroupAsync(rs);
+        }
+
+        [HttpPut("{id}/group/unshare")]
+        public async Task UnshareWithGroup(int id)
+        {
+            var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
+            await _repository.UnshareResourceScenarioWithGroupAsync(rs);
+        }
+
         [HttpGet("useraccess/{id}")]
         [ValidateUserExists]
         public async Task<IActionResult> GetAllForUser(string id)
@@ -84,6 +98,8 @@ namespace MPWebAPI.Controllers
             var groupShare = await _repository.GetGroupSharedResourceScenariosForUserAsync(user);
             var allShare = await _repository.GetOrganisationSharedResourceScenariosAsync(user.Organisation);
             
+           
+
             var allPlusGroup = new List<ResourceScenario>();
             
             if (allShare != null)
@@ -112,6 +128,7 @@ namespace MPWebAPI.Controllers
                         Scenarios = new List<ResourceScenarioViewModel>(
                             new ResourceScenarioViewModel[] {new ResourceScenarioViewModel(rs)})
                     };
+                    groupSharedScenarios.Add(newgss);
                 }
             }
 

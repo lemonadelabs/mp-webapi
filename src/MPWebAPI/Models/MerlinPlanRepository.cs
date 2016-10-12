@@ -176,7 +176,6 @@ namespace MPWebAPI.Models
         {
             return await _dbcontext.UserGroup
                 .Include(ug => ug.Group)
-                .ThenInclude(g => g.ResourceScenarios)
                 .Where(ug => ug.UserId == user.Id)
                 .Select(ug => ug.Group)
                 .ToListAsync();
@@ -200,12 +199,15 @@ namespace MPWebAPI.Models
 
         public async Task<IEnumerable<ResourceScenario>> GetGroupSharedResourceScenariosForUserAsync(MerlinPlanUser user)
         {
-            var groups = await GetUserGroupsAsync(user);
+            var groups = await _dbcontext.UserGroup
+                .Include(ug => ug.Group)
+                .ThenInclude(g => g.ResourceScenarios)
+                .Where(ug => ug.UserId == user.Id).ToListAsync();
+            
             return groups
-                .Where(gr => gr.ResourceScenarios != null)
-                .SelectMany(g => g.ResourceScenarios)
-                .Where(rs => rs.ShareGroup)
-                .ToList();
+                .Where(ug => ug.Group.ResourceScenarios != null)
+                .Select(ug => ug.Group).SelectMany(g => g.ResourceScenarios)
+                .Where(rs => rs.ShareGroup);
         }
 
         public async Task<IEnumerable<ResourceScenario>> GetOrganisationSharedResourceScenariosAsync(Organisation org)
@@ -214,6 +216,18 @@ namespace MPWebAPI.Models
                 .Include(rs => rs.Group)
                 .Where(rs => rs.Group.OrganisationId == org.Id && rs.ShareAll)
                 .ToListAsync();
+        }
+
+        public async Task ShareResourceScenarioWithGroupAsync(ResourceScenario scenario)
+        {
+            scenario.ShareGroup = true;
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task UnshareResourceScenarioWithGroupAsync(ResourceScenario scenario)
+        {
+            scenario.ShareGroup = false;
+            await _dbcontext.SaveChangesAsync();
         }
     }    
 }
