@@ -8,6 +8,7 @@ using MPWebAPI.ViewModels;
 using MPWebAPI.Filters;
 using UserSharedScenario = MPWebAPI.Controllers.ResourceScenarioController.UserAccessResponse.UserSharedScenario;
 using GroupSharedScenario = MPWebAPI.Controllers.ResourceScenarioController.UserAccessResponse.GroupSharedScenario;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MPWebAPI.Controllers
 {
@@ -59,6 +60,67 @@ namespace MPWebAPI.Controllers
         {
             return _repository.ResourceScenarios.Select(
                 rs => new ResourceScenarioViewModel(rs));
+        }
+
+        [HttpDelete("{id}")]
+        //[Authorize(Roles = "Project Admin, Lemonade Admin")]
+        [ValidateResourceScenarioExists]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var scenario = _repository.ResourceScenarios.First(rs => rs.Id == id);
+            await _repository.RemoveResourceScenarioAsync(scenario);
+            return Ok();
+        }
+
+        [HttpPost]
+        //[Authorize(Roles = "Project Admin, Lemonade Admin")]
+        [ValidateModel]
+        public async Task<IActionResult> Post([FromBody] ResourceScenarioViewModel scenario)
+        {
+            var newRS = new ResourceScenario();
+            
+            // Do basic mapping
+            scenario.MapToModel(newRS);
+
+            // Add creator object
+            // check creator is valid user            
+            var creator = await _repository.FindUserByUserNameAsync(scenario.Creator);
+            if (creator == null)
+            {
+                return BadRequest(new {Creator = $"Creator {scenario.Creator} can't be found"});
+            }
+            newRS.Creator = creator;
+
+            // Add group object
+            // check that group is valid
+            var group = _repository.Groups.FirstOrDefault(g => g.Id == scenario.Group);
+            if (group == null)
+            {
+                return BadRequest(new {Group = $"Group with id {scenario.Group} not found"});
+            }
+            
+            // check that creator belongs to group
+            var gMembers = await _repository.GetGroupMembersAsync(group);
+            if (!gMembers.Contains(creator))
+            {
+                return BadRequest(new { Group = $"Creator doesnt belong to group"});
+            }
+            newRS.Group = group;
+
+            // Add approved by
+            // check that user is valid
+            if (scenario.ApprovedBy != null)
+            {
+                var approvedBy = await _repository.FindUserByUserNameAsync(scenario.ApprovedBy);
+                if (approvedBy == null)
+                {
+                    return BadRequest(new { ApprovedBy = $"Approver {scenario.ApprovedBy} can't be found" });
+                }
+                newRS.ApprovedBy = approvedBy;    
+            }
+
+            await _repository.AddResourceScenarioAsync(newRS);
+            return new JsonResult(new ResourceScenarioViewModel(newRS));
         }
 
         [HttpGet("group/{id}")]

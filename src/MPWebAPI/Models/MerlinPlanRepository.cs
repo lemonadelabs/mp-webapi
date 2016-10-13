@@ -259,5 +259,17 @@ namespace MPWebAPI.Models
         {
             return await _userManager.FindByNameAsync(userName);
         }
+
+        public async Task AddResourceScenarioAsync(ResourceScenario scenario)
+        {
+            _dbcontext.ResourceScenario.Add(scenario);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveResourceScenarioAsync(ResourceScenario scenario)
+        {
+            _dbcontext.ResourceScenario.Remove(scenario);
+            await _dbcontext.SaveChangesAsync();
+        }
     }    
 }

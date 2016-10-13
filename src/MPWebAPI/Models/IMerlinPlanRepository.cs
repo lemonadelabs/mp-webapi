@@ -46,5 +46,7 @@ namespace MPWebAPI.Models
         Task ShareResourceScenarioWithOrgAsync(ResourceScenario scenario, bool share);
         Task ShareResourceScenarioWithUserAsync(ResourceScenario scenario, MerlinPlanUser user);
         Task UnshareResourceScenarioWithUserAsync(ResourceScenario scenario, MerlinPlanUser user);
+        Task AddResourceScenarioAsync(ResourceScenario scenario);
+        Task RemoveResourceScenarioAsync(ResourceScenario scenario);
     }    
 }
