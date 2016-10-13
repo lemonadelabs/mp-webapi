@@ -33,6 +33,11 @@ namespace MPWebAPI.Controllers
             public List<UserSharedScenario> UserShare { get; set; }
             public List<GroupSharedScenario> OrgShare { get; set; }
         }
+
+        public class UserList
+        {
+            public IEnumerable<string> Users { get; set; }
+        }
         
         private readonly IMerlinPlanRepository _repository;
         private readonly IMerlinPlanBL _businessLogic;
@@ -79,45 +84,91 @@ namespace MPWebAPI.Controllers
         }
 
         [HttpPut("{id}/group/share")]
-        public async Task ShareWithGroup(int id)
+        [ValidateResourceScenarioExists]
+        public async Task<IActionResult> ShareWithGroup(int id)
         {
             var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
             await _repository.ShareResourceScenarioWithGroupAsync(rs, true);
+            return Ok();
         }
 
         [HttpPut("{id}/group/unshare")]
-        public async Task UnshareWithGroup(int id)
+        [ValidateResourceScenarioExists]
+        public async Task<IActionResult> UnshareWithGroup(int id)
         {
             var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
             await _repository.ShareResourceScenarioWithGroupAsync(rs, false);
+            return Ok();
         }
 
-         [HttpPut("{id}/share")]
-        public async Task ShareWithOrg(int id)
+        [HttpPut("{id}/share")]
+        [ValidateResourceScenarioExists]
+        public async Task<IActionResult> ShareWithOrg(int id)
         {
             var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
             await _repository.ShareResourceScenarioWithOrgAsync(rs, true);
+            return Ok();
         }
 
         [HttpPut("{id}/unshare")]
-        public async Task UnshareWithOrg(int id)
+        [ValidateResourceScenarioExists]
+        public async Task<IActionResult> UnshareWithOrg(int id)
         {
             var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
             await _repository.ShareResourceScenarioWithOrgAsync(rs, false);
+            return Ok();
         }
 
-        [HttpPut("{id}/user/{userName}/share")]
-        public async Task ShareWithUser(int id, string userName)
+        [HttpPut("{id}/user/share")]
+        [ValidateResourceScenarioExists]
+        public async Task<IActionResult> ShareWithUser(int id, [FromBody] UserList userNameList)
         {
             var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
-            await _repository.ShareResourceScenarioWithOrgAsync(rs, false);
+            var users = new List<MerlinPlanUser>();
+            foreach (var userName in userNameList.Users)
+            {
+               var u = await _repository.FindUserByUserNameAsync(userName);
+               if (u != null)
+               {
+                   users.Add(u);
+               }
+               else
+               {
+                   return BadRequest(new { Users = $"User {userName} does not exist." });
+               } 
+            }
+
+            foreach (var user in users)
+            {
+                await _repository.ShareResourceScenarioWithUserAsync(rs, user);
+            }
+            return Ok();
         }
 
-        [HttpPut("{id}/user/{userName}/unshare")]
-        public async Task UnshareWithUser(int id, string userName)
+        [HttpPut("{id}/user/unshare")]
+        [ValidateResourceScenarioExists]
+        public async Task<IActionResult> UnshareWithUser(int id, [FromBody] UserList userNameList)
         {
             var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
-            await _repository.ShareResourceScenarioWithOrgAsync(rs, false);
+            var users = new List<MerlinPlanUser>();
+            foreach (var userName in userNameList.Users)
+            {
+               var u = await _repository.FindUserByUserNameAsync(userName);
+               if (u != null)
+               {
+                   users.Add(u);
+               }
+               else
+               {
+                   return BadRequest(new { Users = $"User {userName} does not exist." });
+               } 
+            }
+
+            foreach (var user in users)
+            {
+                await _repository.UnshareResourceScenarioWithUserAsync(rs, user);
+            }
+            return Ok();
         }
 
         [HttpGet("useraccess/{id}")]
@@ -149,6 +200,7 @@ namespace MPWebAPI.Controllers
                         Scenarios = new List<ResourceScenarioViewModel>(
                             new ResourceScenarioViewModel[] { new ResourceScenarioViewModel(rs) })
                     };
+                    userSharedScenarios.Add(newuss);
                 }
             }
 

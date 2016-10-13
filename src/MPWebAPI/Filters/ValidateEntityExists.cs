@@ -89,6 +89,46 @@ namespace MPWebAPI.Filters
         }
     }
 
+    public class ValidateResourceScenarioExistsAttribute : TypeFilterAttribute
+    {
+        public ValidateResourceScenarioExistsAttribute() : base(typeof(ValidateResourceScenarioExists)) {}
+        
+        private class ValidateResourceScenarioExists : IAsyncActionFilter
+        {
+            private readonly IMerlinPlanRepository _repository;
+            
+            public ValidateResourceScenarioExists(IMerlinPlanRepository mprepo)
+            {
+                _repository = mprepo;
+            }
+            
+            public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+            {
+                if (context.ActionArguments.ContainsKey("id"))
+                {
+                    var id = context.ActionArguments["id"] as int?;
+                    if (id.HasValue)
+                    {
+                        if (await _repository.ResourceScenarios.ToAsyncEnumerable().All(o => o.Id != id.Value))
+                        {
+                            context.Result = new NotFoundObjectResult(id.Value);
+                            return;
+                        }
+                        else
+                        {
+                            await next();            
+                        }
+                    }
+                }
+                else
+                {
+                    context.Result = new NotFoundResult();
+                    return;
+                }
+            }
+        }
+    }
+
 
     public class ValidateUserExistsAttribute : TypeFilterAttribute
     {

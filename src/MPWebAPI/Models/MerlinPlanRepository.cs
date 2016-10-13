@@ -175,7 +175,6 @@ namespace MPWebAPI.Models
         public async Task<IEnumerable<Group>> GetUserGroupsAsync(MerlinPlanUser user)
         {
             return await _dbcontext.UserGroup
-                .Include(ug => ug.Group)
                 .Where(ug => ug.UserId == user.Id)
                 .Select(ug => ug.Group)
                 .ToListAsync();
@@ -188,13 +187,9 @@ namespace MPWebAPI.Models
 
         public async Task<IEnumerable<ResourceScenario>> GetUserSharedResourceScenariosForUserAsync(MerlinPlanUser user)
         {
-            var populatedUser = await _userManager.Users
-                .Include(u => u.SharedResourceScenarios)
-                .ThenInclude(rsu => rsu.ResourceScenario)
-                .Where(u => u.Id == user.Id)
-                .FirstAsync();
-            
-            return populatedUser.SharedResourceScenarios?.Select(srs => srs.ResourceScenario);
+            return await _dbcontext.ResourceScenarioUser
+                .Where(rsu => rsu.UserId == user.Id)
+                .Select(rsu => rsu.ResourceScenario).ToListAsync();
         }
 
         public async Task<IEnumerable<ResourceScenario>> GetGroupSharedResourceScenariosForUserAsync(MerlinPlanUser user)
@@ -229,6 +224,40 @@ namespace MPWebAPI.Models
         {
             scenario.ShareAll = share;
             await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task ShareResourceScenarioWithUserAsync(ResourceScenario scenario, MerlinPlanUser user)
+        {
+            
+            var r = await _dbcontext.ResourceScenarioUser
+                .FirstOrDefaultAsync(rsu => rsu.ResourceScenarioId == scenario.Id && rsu.UserId == user.Id);
+            
+            if (r == null)
+            {
+                var rsu = new ResourceScenarioUser {
+                    UserId = user.Id,
+                    ResourceScenarioId = scenario.Id
+                };
+                _dbcontext.Add(rsu);
+                await _dbcontext.SaveChangesAsync();
+            }
+        }
+
+        public async Task UnshareResourceScenarioWithUserAsync(ResourceScenario scenario, MerlinPlanUser user)
+        {
+            var r = await _dbcontext.ResourceScenarioUser
+                .FirstOrDefaultAsync(rsu => rsu.ResourceScenarioId == scenario.Id && rsu.UserId == user.Id);
+            
+            if (r != null)
+            {
+                _dbcontext.ResourceScenarioUser.Remove(r);
+                await _dbcontext.SaveChangesAsync();
+            }
+        }
+
+        public async Task<MerlinPlanUser> FindUserByUserNameAsync(string userName)
+        {
+            return await _userManager.FindByNameAsync(userName);
         }
     }    
 }

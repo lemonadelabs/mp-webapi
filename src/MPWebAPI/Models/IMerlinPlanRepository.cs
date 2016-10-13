@@ -18,6 +18,7 @@ namespace MPWebAPI.Models
 
         // Users
         IEnumerable<MerlinPlanUser> Users { get; }
+        Task<MerlinPlanUser> FindUserByUserNameAsync(string userName);
         Task<IEnumerable<string>> GetUserRolesAsync(MerlinPlanUser user);
         Task<IdentityResult> UpdateUserAsync(MerlinPlanUser user);
         Task<IdentityResult> RemoveUserFromRolesAsync(MerlinPlanUser userm, IEnumerable<string> rolesToDelete);
@@ -43,5 +44,7 @@ namespace MPWebAPI.Models
         Task<IEnumerable<ResourceScenario>> GetOrganisationSharedResourceScenariosAsync(Organisation org);
         Task ShareResourceScenarioWithGroupAsync(ResourceScenario scenario, bool share);
         Task ShareResourceScenarioWithOrgAsync(ResourceScenario scenario, bool share);
+        Task ShareResourceScenarioWithUserAsync(ResourceScenario scenario, MerlinPlanUser user);
+        Task UnshareResourceScenarioWithUserAsync(ResourceScenario scenario, MerlinPlanUser user);
     }    
 }
