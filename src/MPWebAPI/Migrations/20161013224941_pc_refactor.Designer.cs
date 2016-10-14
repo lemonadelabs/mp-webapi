@@ -8,9 +8,10 @@ using MPWebAPI.Models;
 namespace MPWebAPI.Migrations
 {
     [DbContext(typeof(PostgresDBContext))]
-    partial class PostgresDBContextModelSnapshot : ModelSnapshot
+    [Migration("20161013224941_pc_refactor")]
+    partial class pc_refactor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1");
@@ -1345,8 +1346,7 @@ namespace MPWebAPI.Migrations
                 {
                     b.HasOne("MPWebAPI.Models.StaffResource", "Owner")
                         .WithMany("ProjectsOwned")
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("OwnerId");
 
                     b.HasOne("MPWebAPI.Models.Portfolio", "Portfolio")
                         .WithMany("Projects")

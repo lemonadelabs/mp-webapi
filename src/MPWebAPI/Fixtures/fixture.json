@@ -434,10 +434,6 @@
         "Summary": "A site hilighting just how goddam shit the world is",
         "Creator": "sam@lemonadelabs.io",
         "Group": "EPMO",
-        "Owner": "Mr Knowitall",
-        "Managers": [
-            "Misc Managers"
-        ],
         "OwningBusinessUnit": "Entropy Innovation Services",
         "ImpactedBusinessUnit": "Entropy Innovation Services",
         "Options": [{
@@ -702,10 +698,7 @@
         "Summary": "Increased performance and storage.",
         "Creator": "sam@lemonadelabs.io",
         "Group": "EPMO",
-        "Owner": "Mr Knowitall",
-        "Managers": [
-            "Misc Managers"
-        ],
+        
         "OwningBusinessUnit": "CPI",
         "ImpactedBusinessUnit": "Entropy Innovation Services",
         "Options": [{
@@ -901,7 +894,11 @@
             {   
                 "Phases": [],
                 "Project": "Web Server Upgrade",
-                "Option": "Recommended Option"
+                "Option": "Recommended Option",
+                "Owner": "Mr Knowitall",
+                "Managers": [
+                    "Misc Managers"
+                ]
             },
             {
                 "StartDate": "2017-02-01",
@@ -913,7 +910,11 @@
                     }
                 ],
                 "Project": "Depressing Reality Web Portal",
-                "Option": "Recommended Option"
+                "Option": "Recommended Option",
+                "Owner": "Mr Knowitall",
+                "Managers": [
+                    "Misc Managers"
+                ]
             }
         ]
     }]

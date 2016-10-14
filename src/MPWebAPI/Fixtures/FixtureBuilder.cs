@@ -39,6 +39,8 @@ namespace MPWebAPI.Fixtures
                     public DateTime StartDate { get; set; }
                     public string Project { get; set; }
                     public string Option { get; set; }
+                    public string Owner { get; set; }
+                    public List<string> Managers { get; set; }
                     public List<PhaseConfigFixture> Phases { get; set; }                   
                 }
                 
@@ -233,8 +235,7 @@ namespace MPWebAPI.Fixtures
                 public string Summary { get; set; }
                 public string Creator { get; set; }
                 public string Group { get; set; }
-                public string Owner { get; set; }
-                public List<string> Managers { get; set; }
+               
                 public string OwningBusinessUnit { get; set; }
                 public string ImpactedBusinessUnit { get; set; }
                 public List<OptionsFixture> Options { get; set; }
@@ -385,17 +386,13 @@ namespace MPWebAPI.Fixtures
                         Summary = p.Summary,
                         Creator = _dbcontext.Users.First(u => u.UserName == p.Creator), 
                         Group = _dbcontext.Group.First(g => g.Name == p.Group),
-                        Owner = _dbcontext.StaffResource.FirstOrDefault(sr => sr.Name == p.Owner),
+                        
                         OwningBusinessUnit = _dbcontext.BusinessUnit.FirstOrDefault(bu => bu.Name == p.OwningBusinessUnit),
                         ImpactedBusinessUnit = _dbcontext.BusinessUnit.FirstOrDefault(ibu => ibu.Name == p.ImpactedBusinessUnit),
                     };
                     _dbcontext.Project.Add(newProject);
                     _dbcontext.SaveChanges();
-                    _dbcontext.AddRange(p.Managers.Select(m => new StaffResourceProject() {
-                                StaffResource = _dbcontext.StaffResource.FirstOrDefault(sr => sr.Name == m),
-                                Project = newProject         
-                          }));
-                    _dbcontext.SaveChanges();
+                    
                     
                     foreach (var o in p.Options)
                     {
@@ -574,9 +571,16 @@ namespace MPWebAPI.Fixtures
                         var newProjectConfig = new ProjectConfig() {
                             StartDate = pc.StartDate,
                             ProjectOption = _dbcontext.ProjectOption.First(po => po.Description == pc.Option && po.Project.Name == pc.Project),
-                            Portfolio = newPortfolio
+                            Portfolio = newPortfolio,
+                            Owner = _dbcontext.StaffResource.FirstOrDefault(sr => sr.Name == pc.Owner),
+                            
                         };
                         _dbcontext.ProjectConfig.Add(newProjectConfig);
+                        _dbcontext.SaveChanges();
+                        _dbcontext.AddRange(pc.Managers.Select(m => new StaffResourceProjectConfig() {
+                                StaffResource = _dbcontext.StaffResource.FirstOrDefault(sr => sr.Name == m),
+                                ProjectConfig = newProjectConfig         
+                          }));
                         _dbcontext.SaveChanges();
 
                         foreach (var ppc in pc.Phases)

@@ -316,11 +316,6 @@ namespace MPWebAPI.Models
                 .WithMany(g => g.Projects);
             
             builder.Entity<Project>()
-                .HasOne(p => p.Owner)
-                .WithMany(o => o.ProjectsOwned)
-                .HasForeignKey(p => p.OwnerId);
-            
-            builder.Entity<Project>()
                 .HasOne(p => p.OwningBusinessUnit)
                 .WithMany(bu => bu.ProjectsOwned)
                 .HasForeignKey(p => p.OwningBusinessUnitId);
@@ -344,18 +339,18 @@ namespace MPWebAPI.Models
                 .ValueGeneratedOnAddOrUpdate()
                 .HasDefaultValueSql("now()");
             
-            builder.Entity<StaffResourceProject>()
-                .HasKey(srp => new {srp.StaffResourceId, srp.ProjectId});
+            builder.Entity<StaffResourceProjectConfig>()
+                .HasKey(srp => new {srp.StaffResourceId, srp.ProjectConfigId});
             
-            builder.Entity<StaffResourceProject>()
+            builder.Entity<StaffResourceProjectConfig>()
                 .HasOne(srp => srp.StaffResource)
                 .WithMany(sr => sr.ProjectsManaged)
                 .HasForeignKey(srp => srp.StaffResourceId);
             
-            builder.Entity<StaffResourceProject>()
-                .HasOne(srp => srp.Project)
+            builder.Entity<StaffResourceProjectConfig>()
+                .HasOne(srpc => srpc.ProjectConfig)
                 .WithMany(p => p.Managers)
-                .HasForeignKey(srp => srp.ProjectId);
+                .HasForeignKey(srp => srp.ProjectConfigId);
             
             builder.Entity<ProjectFinancialResourceCategory>()
                 .HasKey(pfrc => new {pfrc.ProjectId, pfrc.FinancialResourceCategoryId});
@@ -416,6 +411,11 @@ namespace MPWebAPI.Models
                 .Property(pc => pc.StartDate)
                 .IsRequired();
             
+            builder.Entity<ProjectConfig>()
+                .HasOne(p => p.Owner)
+                .WithMany(o => o.ProjectsOwned)
+                .HasForeignKey(p => p.OwnerId)
+                .OnDelete(DeleteBehavior.SetNull);
             
             // ProjectOption
             builder.Entity<ProjectOption>()

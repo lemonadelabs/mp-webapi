@@ -16,8 +16,8 @@ namespace MPWebAPI.Models
         public int ResourceScenarioId { get; set; }
         public ResourceScenario ResourceScenario { get; set; }
 
-        public List<Project> ProjectsOwned { get; set; }
-        public List<StaffResourceProject> ProjectsManaged { get; set; }
+        public List<ProjectConfig> ProjectsOwned { get; set; }
+        public List<StaffResourceProjectConfig> ProjectsManaged { get; set; }
         public MerlinPlanUser UserData { get; set; }
     }
 
