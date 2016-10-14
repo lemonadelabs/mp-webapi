@@ -11,11 +11,18 @@
         "FinancialYearStart": 4
     }],
 
-    "Groups": [{
-        "Name": "EPMO",
-        "Description": "The Investment Project Management Office.",
-        "Organisation": "Department of Nilism"
-    }],
+    "Groups": [
+        {
+            "Name": "EPMO",
+            "Description": "The Investment Project Management Office.",
+            "Organisation": "Department of Nilism"
+        },
+        {
+            "Name": "OSP",
+            "Description": "Office of Sad People.",
+            "Organisation": "Department of Nilism"
+        }
+        ],
 
     "BusinessUnits": [{
         "Name": "Department of Disestablishment",

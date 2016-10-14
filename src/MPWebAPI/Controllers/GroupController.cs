@@ -65,7 +65,7 @@ namespace MPWebAPI.Controllers
             public IEnumerable<string> Users { get; set; }
         } 
 
-        [HttpPost("{id}/user")]
+        [HttpPut("{id}/adduser")]
         [ValidateModel]
         [ValidateGroupExists]
         public async Task<IActionResult> AddUser(int id, [FromBody] UserRequest r)
@@ -78,7 +78,7 @@ namespace MPWebAPI.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id}/user")]
+        [HttpPut("{id}/removeuser")]
         [ValidateModel]
         [ValidateGroupExists]
         public async Task<IActionResult> RemoveUser(int id, [FromBody] UserRequest r)
@@ -92,7 +92,7 @@ namespace MPWebAPI.Controllers
         }
         
 
-        [HttpDelete("{id}/group")]
+        [HttpPut("{id}/group")]
         [ValidateGroupExists]
         public async Task<IActionResult> UnparentGroup(int id)
         {
@@ -101,7 +101,7 @@ namespace MPWebAPI.Controllers
         }    
 
 
-        [HttpPost("{childId}/group/{parentId}")]
+        [HttpPut("{childId}/group/{parentId}")]
         [ValidateModel]
         public async Task<IActionResult> ParentGroup(int childId, int parentId)
         {

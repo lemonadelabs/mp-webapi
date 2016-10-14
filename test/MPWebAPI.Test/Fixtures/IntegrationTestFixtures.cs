@@ -50,7 +50,7 @@ namespace MPWebAPI.Test.Fixtures
 
         public Task DisposeAsync()
         {
-            return null;
+            return Task.CompletedTask;
         }
     }    
 }
