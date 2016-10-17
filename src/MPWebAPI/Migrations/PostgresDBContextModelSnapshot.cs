@@ -7,7 +7,7 @@ using MPWebAPI.Models;
 
 namespace MPWebAPI.Migrations
 {
-    [DbContext(typeof(PostgresDBContext))]
+    [DbContext(typeof(DBContext))]
     partial class PostgresDBContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

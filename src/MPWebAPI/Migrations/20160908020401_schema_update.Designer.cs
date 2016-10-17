@@ -7,7 +7,7 @@ using MPWebAPI.Models;
 
 namespace MPWebAPI.Migrations
 {
-    [DbContext(typeof(PostgresDBContext))]
+    [DbContext(typeof(DBContext))]
     [Migration("20160908020401_schema_update")]
     partial class schema_update
     {

@@ -7,7 +7,7 @@ using MPWebAPI.Models;
 
 namespace MPWebAPI.Migrations
 {
-    [DbContext(typeof(PostgresDBContext))]
+    [DbContext(typeof(DBContext))]
     [Migration("20160907000354_group_name_add")]
     partial class group_name_add
     {

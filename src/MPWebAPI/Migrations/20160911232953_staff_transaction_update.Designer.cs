@@ -7,7 +7,7 @@ using MPWebAPI.Models;
 
 namespace MPWebAPI.Migrations
 {
-    [DbContext(typeof(PostgresDBContext))]
+    [DbContext(typeof(DBContext))]
     [Migration("20160911232953_staff_transaction_update")]
     partial class staff_transaction_update
     {

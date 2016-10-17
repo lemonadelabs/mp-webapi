@@ -16,11 +16,11 @@ namespace MPWebAPI.Test.Fixtures
 
         public HttpClient Client { get; set; }
         public TestServer Server { get; set; }
-        public PostgresDBContext DBContext { 
+        public DBContext DBContext { 
             get
             {
                 var serviceScope = Server.Host.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-                var context = serviceScope.ServiceProvider.GetService<PostgresDBContext>();
+                var context = serviceScope.ServiceProvider.GetService<DBContext>();
                 return context;
             }
         }

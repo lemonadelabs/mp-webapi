@@ -10,12 +10,12 @@ namespace MPWebAPI.Models
 {
     public class MerlinPlanRepository : IMerlinPlanRepository
     {
-        private readonly PostgresDBContext _dbcontext;
+        private readonly DBContext _dbcontext;
         private readonly UserManager<MerlinPlanUser> _userManager;
         private readonly ILogger _logger;
         
         public MerlinPlanRepository(
-            PostgresDBContext dbcontext,
+            DBContext dbcontext,
             UserManager<MerlinPlanUser> userManager,
             ILoggerFactory loggerFactory
             )

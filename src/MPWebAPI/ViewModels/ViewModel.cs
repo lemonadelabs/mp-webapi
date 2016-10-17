@@ -10,7 +10,7 @@ namespace MPWebAPI.ViewModels
             MapProperties(this, model);
         }
         
-        protected void MapToViewModel(object model, PostgresDBContext dbcontext = null)
+        protected void MapToViewModel(object model, DBContext dbcontext = null)
         {
             MapProperties(model, this);
         }

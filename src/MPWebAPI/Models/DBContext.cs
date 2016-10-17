@@ -5,9 +5,9 @@ using OpenIddict;
 
 namespace MPWebAPI.Models
 {
-    public class PostgresDBContext : OpenIddictDbContext<MerlinPlanUser>
+    public class DBContext : OpenIddictDbContext<MerlinPlanUser>
     {
-        public PostgresDBContext(DbContextOptions<PostgresDBContext> options) :base(options)
+        public DBContext(DbContextOptions<DBContext> options) :base(options)
         {
         }
 

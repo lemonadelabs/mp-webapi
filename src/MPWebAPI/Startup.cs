@@ -54,7 +54,7 @@ namespace MPWebAPI
                 } 
             );
 
-            services.AddDbContext<PostgresDBContext>(options => options.UseNpgsql(sqlConnectionString));
+            services.AddDbContext<DBContext>(options => options.UseNpgsql(sqlConnectionString));
             
             services.AddIdentity<MerlinPlanUser, IdentityRole>(options => 
                 {
@@ -66,13 +66,13 @@ namespace MPWebAPI
                     options.Lockout.AllowedForNewUsers = true;
                 }
             )
-                .AddEntityFrameworkStores<PostgresDBContext>()
+                .AddEntityFrameworkStores<DBContext>()
                 .AddDefaultTokenProviders();
 
             
             services.AddMvc();
 
-            services.AddOpenIddict<MerlinPlanUser, PostgresDBContext>()
+            services.AddOpenIddict<MerlinPlanUser, DBContext>()
                 .EnableTokenEndpoint("/api/auth/token")
                 .UseJsonWebTokens()
                 .AllowPasswordFlow()

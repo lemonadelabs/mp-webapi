@@ -261,14 +261,14 @@ namespace MPWebAPI.Fixtures
             public List<ResourceScenarioFixture> ResourceScenarios { get; set; }
         }
 
-        private readonly PostgresDBContext _dbcontext;
+        private readonly DBContext _dbcontext;
         private readonly ILogger<FixtureBuilder> _logger;
         private readonly UserManager<MerlinPlanUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private FixtureData _fixtureData;
 
         public FixtureBuilder(
-            PostgresDBContext dbcontext, 
+            DBContext dbcontext, 
             ILoggerFactory loggerFactory,
             UserManager<MerlinPlanUser> userManager,
             RoleManager<IdentityRole> roleManager
