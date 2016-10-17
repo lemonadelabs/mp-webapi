@@ -277,6 +277,58 @@ namespace MPWebAPI.Controllers
             );
         }
 
+        [HttpPost("{id}/financialresource")]
+        [ValidateResourceScenarioExists]
+        [ValidateModel]
+        public async Task<IActionResult> AddFinancialResource(int id, [FromBody] FinancialResourceViewModel viewModel)
+        {
+            var fr = new FinancialResource();
+            viewModel.ResourceScenarioId = id;
+            viewModel.MapToModel(fr);
+
+            await _repository.AddFinancialResourceAsync(fr);
+            
+            return Ok();
+        }
+
+        [HttpGet("{id}/financialresource")]
+        [ValidateResourceScenarioExists]
+        public IActionResult GetFinancialResources(int id)
+        {
+            return new JsonResult(_repository.FinancialResources
+                .Where(fr => fr.ResourceScenarioId == id)
+                .Select(fr => new FinancialResourceViewModel(fr)));
+        }
+
+        [HttpGet("{id}/staffresource")]
+        [ValidateResourceScenarioExists]
+        public IActionResult GetStaffResources(int id)
+        {
+            return new JsonResult(_repository.StaffResources
+                .Where(sr => sr.ResourceScenarioId == id)
+                .Select(sr => new StaffResourceViewModel(sr)));
+        }
+
+        [HttpGet("{id}/resources")]
+        [ValidateResourceScenarioExists]
+        public IActionResult GetAllResources(int id)
+        {
+            var staffResources = _repository.StaffResources
+                .Where(sr => sr.ResourceScenarioId == id)
+                .Select(sr => new StaffResourceViewModel(sr));
+
+            var financialResources = _repository.FinancialResources
+                .Where(fr => fr.ResourceScenarioId == id)
+                .Select(fr => new FinancialResourceViewModel(fr));
+            
+            return new JsonResult(
+                new { 
+                    StaffResources = staffResources, 
+                    FinancialResources = financialResources 
+                    }
+                );
+        }
+
         private List<GroupSharedScenario> ResourceScenariosByGroup(List<ResourceScenario> scenarios)
         {
             var groupedScenarios = new List<GroupSharedScenario>();

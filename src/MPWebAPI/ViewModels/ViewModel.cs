@@ -1,4 +1,5 @@
 using System.Reflection;
+using MPWebAPI.Models;
 
 namespace MPWebAPI.ViewModels
 {
@@ -9,7 +10,7 @@ namespace MPWebAPI.ViewModels
             MapProperties(this, model);
         }
         
-        protected void MapToViewModel(object model)
+        protected void MapToViewModel(object model, PostgresDBContext dbcontext = null)
         {
             MapProperties(model, this);
         }

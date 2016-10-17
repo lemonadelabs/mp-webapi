@@ -271,5 +271,45 @@ namespace MPWebAPI.Models
             _dbcontext.ResourceScenario.Remove(scenario);
             await _dbcontext.SaveChangesAsync();
         }
+
+        public async Task AddFinancialResourceAsync(FinancialResource resource)
+        {
+            _dbcontext.FinancialResource.Add(resource);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveFinancialResourceAsync(FinancialResource resource)
+        {
+            _dbcontext.FinancialResource.Remove(resource);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task AddStaffResourceAsync(StaffResource resource)
+        {
+            _dbcontext.StaffResource.Add(resource);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveStaffResourceAsync(StaffResource resource)
+        {
+            _dbcontext.StaffResource.Remove(resource);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public IEnumerable<FinancialResource> FinancialResources
+        {
+            get 
+            {
+                return _dbcontext.FinancialResource.ToList();
+            }
+        }
+
+        public IEnumerable<StaffResource> StaffResources
+        {
+            get
+            {
+                return _dbcontext.StaffResource.ToList();
+            }
+        }
     }    
 }

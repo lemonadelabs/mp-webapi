@@ -48,5 +48,15 @@ namespace MPWebAPI.Models
         Task UnshareResourceScenarioWithUserAsync(ResourceScenario scenario, MerlinPlanUser user);
         Task AddResourceScenarioAsync(ResourceScenario scenario);
         Task RemoveResourceScenarioAsync(ResourceScenario scenario);
+
+        // Financial Resources
+        Task AddFinancialResourceAsync(FinancialResource resource);
+        Task RemoveFinancialResourceAsync(FinancialResource resource);
+        IEnumerable<FinancialResource> FinancialResources { get; }
+
+        // Staff Resources
+        Task AddStaffResourceAsync(StaffResource resource);
+        Task RemoveStaffResourceAsync(StaffResource resource);
+        IEnumerable<StaffResource> StaffResources { get; }
     }    
 }
