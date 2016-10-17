@@ -97,7 +97,15 @@ namespace MPWebAPI.Controllers
         public async Task<IActionResult> UnparentGroup(int id)
         {
             var result = await _businessLogic.UnparentGroupAsync(_repository.Groups.Single(g => g.Id == id));
-            return Ok();
+            if (result.Succeeded)
+            {
+                return Ok();    
+            }
+            else
+            {
+                return BadRequest(result.Errors);
+            }
+            
         }    
 
 

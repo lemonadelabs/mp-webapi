@@ -1,8 +1,8 @@
-using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 using MPWebAPI.Fixtures;
 using MPWebAPI.Models;
 using Newtonsoft.Json;
@@ -16,7 +16,14 @@ namespace MPWebAPI.Test.Fixtures
 
         public HttpClient Client { get; set; }
         public TestServer Server { get; set; }
-        public PostgresDBContext DBContext { get; set; }
+        public PostgresDBContext DBContext { 
+            get
+            {
+                var serviceScope = Server.Host.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+                var context = serviceScope.ServiceProvider.GetService<PostgresDBContext>();
+                return context;
+            }
+        }
         
         public struct JSONResult<T>
         {
@@ -45,7 +52,6 @@ namespace MPWebAPI.Test.Fixtures
             // Add fixures
             var fb = Server.Host.Services.GetService(typeof(IFixtureBuilder)) as IFixtureBuilder;
             await fb.AddFixture(FixtureFile, true);
-            DBContext = Server.Host.Services.GetService(typeof(PostgresDBContext)) as PostgresDBContext;
         }
 
         public Task DisposeAsync()

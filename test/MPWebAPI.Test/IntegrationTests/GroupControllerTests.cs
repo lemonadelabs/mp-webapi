@@ -123,7 +123,7 @@ namespace MPWebAPI.Test.IntegrationTests
         }
 
         [Fact]
-        public async Task RemnoveUserFromGroup()
+        public async Task RemoveUserFromGroup()
         {
             var user = await fixture.DBContext.Users.FirstOrDefaultAsync(u => u.UserName == "sam@lemonadelabs.io");
             Assert.NotNull(user);
@@ -135,5 +135,72 @@ namespace MPWebAPI.Test.IntegrationTests
             Assert.False(await fixture.DBContext.UserGroup.AnyAsync(ug => ug.UserId == user.Id && ug.GroupId == 1));
         }
 
+        [Fact]
+        public async Task ParentGroup()
+        {
+            
+            var dbcontext = fixture.DBContext;
+            
+            var childGroup = dbcontext.Group
+                .Include(g => g.Parent)
+                .FirstOrDefault(g => g.Id == 1);
+            
+            var parentGroup = dbcontext.Group
+                .Include(g => g.Children)
+                .FirstOrDefault(g => g.Id == 2);
+            
+            Assert.NotNull(childGroup);
+            Assert.NotNull(parentGroup);
+            Assert.Null(childGroup.Parent);
+            Assert.Equal(0, parentGroup.Children.Count);
+            
+            var putResponse = await fixture.Client.PutAsJsonAsync("/api/group/1/group/2", "");
+
+            dbcontext = fixture.DBContext;
+
+            childGroup = dbcontext.Group
+                .Include(g => g.Parent)
+                .FirstOrDefault(g => g.Id == 1);
+            
+            parentGroup = dbcontext.Group
+                .Include(g => g.Children)
+                .FirstOrDefault(g => g.Id == 2);
+            
+            Assert.Equal(HttpStatusCode.OK, putResponse.StatusCode);
+            Assert.Equal(parentGroup, childGroup.Parent);
+            Assert.True(parentGroup.Children.Contains(childGroup));
+        }
+
+        [Fact]
+        public async Task UnparentGroup()
+        {
+            var putResponse = await fixture.Client.PutAsJsonAsync("/api/group/1/group/2", "");
+
+            var dbcontext = fixture.DBContext;
+            
+            var childGroup = dbcontext.Group
+                .Include(g => g.Parent)
+                .FirstOrDefault(g => g.Id == 1);
+            
+            var parentGroup = dbcontext.Group
+                .Include(g => g.Children)
+                .FirstOrDefault(g => g.Id == 2);
+            
+            Assert.Equal(HttpStatusCode.OK, putResponse.StatusCode);
+            Assert.NotNull(childGroup);
+            Assert.NotNull(parentGroup);
+            Assert.Equal(parentGroup, childGroup.Parent);
+            Assert.True(parentGroup.Children.Contains(childGroup));
+
+            putResponse = await fixture.Client.PutAsJsonAsync("/api/group/1/group", "");
+            
+            childGroup = fixture.DBContext.Group
+                .Include(g => g.Parent)
+                .FirstOrDefault(g => g.Id == 1);
+            
+            Assert.Equal(HttpStatusCode.OK, putResponse.StatusCode);
+            Assert.NotNull(childGroup);
+            Assert.Null(childGroup.Parent);
+        }
     }
 }
