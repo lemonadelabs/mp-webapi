@@ -68,5 +68,55 @@ namespace MPWebAPI.Controllers
             await _repository.SaveChangesAsync();
             return Ok(new FinancialResourceViewModel(financialResource));
         }
+
+
+        // public class NewPartitionRequest
+        // {
+        //     //public int MyProperty { get; set; }
+        // }
+
+        // [HttpPost("partition")]
+        // public async Task<IActionResult> CreatePartitions([FromBody] NewPartitionRequest[] request)
+        // {
+
+        // }
+
+        // public class DuplicateRequest
+        // {
+        //     public int FinancialResourceId { get; set; }
+        //     public int ResourceScenarioId { get; set; }
+        // }
+
+        
+
+        // [HttpPost("")]
+        // public async Task<IActionResult> Duplicate([FromBody] DuplicateRequest[] request)
+        // {
+        //     foreach (var r in request)
+        //     {
+        //         var resource = _repository.FinancialResources
+        //             .FirstOrDefault(f => f.Id == r.FinancialResourceId);
+                
+        //         if (resource == null)
+        //         {
+        //             return BadRequest(
+        //                 new { 
+        //                         FinancialResourceId = new [] {$"Financial resource not found with id {r.FinancialResourceId}"} 
+        //                     }
+        //                 ); 
+        //         }
+
+        //         var scenario = _repository.ResourceScenarios.FirstOrDefault(rs => rs.Id == r.ResourceScenarioId);
+
+        //         if (scenario == null)
+        //         {
+        //             return BadRequest(
+        //                 new { 
+        //                         ResourceScenarioId = new [] {$"Resource Scenario not found with id {r.ResourceScenarioId}"} 
+        //                     }
+        //                 ); 
+        //         }
+        //     }
+        // }
     }
 }

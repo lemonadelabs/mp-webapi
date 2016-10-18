@@ -301,7 +301,6 @@ namespace MPWebAPI.Controllers
             var sr = new StaffResource();
             viewModel.ResourceScenarioId = id;
             viewModel.MapToModel(sr);
-
             await _repository.AddStaffResourceAsync(sr);
             
             return Ok(sr);

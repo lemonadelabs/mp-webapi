@@ -144,5 +144,15 @@ namespace MPWebAPI.Controllers
             await _repository.GroupSetActive(_repository.Groups.Single(g => g.Id == id), false);
             return Ok();
         }
+
+        [HttpGet("{id}/category/financialresource")]
+        [ValidateGroupExists]
+        public IActionResult GetFinancialResourceCategories(int id)
+        {
+            return new JsonResult(_repository.FinancialResourceCategories
+                .Where(frc => frc.GroupId == id)
+                .Select(frc => new FinancialResourceCategoryViewModel(frc))
+                .ToList());
+        }
     }
 }

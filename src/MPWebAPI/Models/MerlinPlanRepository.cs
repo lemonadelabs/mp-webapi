@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
+using System;
 
 namespace MPWebAPI.Models
 {
@@ -295,6 +296,18 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+        public async Task AddFinancialResourceCategoryAsync(FinancialResourceCategory category)
+        {
+            _dbcontext.FinancialResourceCategory.Add(category);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveFinancialResourceCategoryAsync(FinancialResourceCategory category)
+        {
+            _dbcontext.Remove(category);
+            await _dbcontext.SaveChangesAsync();
+        }
+
         public IEnumerable<FinancialResource> FinancialResources
         {
             get 
@@ -310,6 +323,16 @@ namespace MPWebAPI.Models
                 return _dbcontext.StaffResource
                     .Include(sr => sr.Categories)
                     .ThenInclude(src => src.StaffResourceCategory)
+                    .ToList();
+            }
+        }
+
+        public IEnumerable<FinancialResourceCategory> FinancialResourceCategories
+        {
+            get
+            {
+                return _dbcontext.FinancialResourceCategory
+                    .Include(frc => frc.Group)
                     .ToList();
             }
         }

@@ -58,5 +58,10 @@ namespace MPWebAPI.Models
         Task AddStaffResourceAsync(StaffResource resource);
         Task RemoveStaffResourceAsync(StaffResource resource);
         IEnumerable<StaffResource> StaffResources { get; }
+
+        // Categories
+        IEnumerable<FinancialResourceCategory> FinancialResourceCategories { get; }
+        Task AddFinancialResourceCategoryAsync(FinancialResourceCategory category);
+        Task RemoveFinancialResourceCategoryAsync(FinancialResourceCategory category);
     }    
 }
