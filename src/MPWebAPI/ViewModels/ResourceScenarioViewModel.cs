@@ -8,7 +8,7 @@ namespace MPWebAPI.ViewModels
     {
         public ResourceScenarioViewModel(ResourceScenario model)
         {
-            MapToViewModel(model);
+            MapToViewModelAsync(model);
             Creator = model.Creator.UserName;
             ApprovedBy = model.ApprovedBy?.UserName;
             Group = model.Group.Id;

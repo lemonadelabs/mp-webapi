@@ -256,9 +256,11 @@ namespace MPWebAPI.Controllers
                 }
                 else
                 {
+                    var uvm = new UserViewModel();
+                    await uvm.MapToViewModelAsync(rs.Creator, _repository);
                     var newuss = new UserSharedScenario
                     {
-                        User = new UserViewModel(rs.Creator),
+                        User = uvm,
                         Scenarios = new List<ResourceScenarioViewModel>(
                             new ResourceScenarioViewModel[] { new ResourceScenarioViewModel(rs) })
                     };
@@ -291,6 +293,20 @@ namespace MPWebAPI.Controllers
             return Ok();
         }
 
+        [HttpPost("{id}/staffresource")]
+        [ValidateResourceScenarioExists]
+        [ValidateModel]
+        public async Task<IActionResult> AddStaffResource(int id, [FromBody] StaffResourceViewModel viewModel)
+        {
+            var sr = new StaffResource();
+            viewModel.ResourceScenarioId = id;
+            viewModel.MapToModel(sr);
+
+            await _repository.AddStaffResourceAsync(sr);
+            
+            return Ok();
+        }
+
         [HttpGet("{id}/financialresource")]
         [ValidateResourceScenarioExists]
         public IActionResult GetFinancialResources(int id)
@@ -306,7 +322,12 @@ namespace MPWebAPI.Controllers
         {
             return new JsonResult(_repository.StaffResources
                 .Where(sr => sr.ResourceScenarioId == id)
-                .Select(sr => new StaffResourceViewModel(sr)));
+                .Select(async sr => 
+                {
+                    var srvm = new StaffResourceViewModel();
+                    await srvm.MapToViewModelAsync(sr, _repository);
+                    return srvm;
+                }).Select(srvm => srvm.Result));
         }
 
         [HttpGet("{id}/resources")]
@@ -315,7 +336,12 @@ namespace MPWebAPI.Controllers
         {
             var staffResources = _repository.StaffResources
                 .Where(sr => sr.ResourceScenarioId == id)
-                .Select(sr => new StaffResourceViewModel(sr));
+                .Select(async sr => 
+                {
+                    var srvm = new StaffResourceViewModel();
+                    await srvm.MapToViewModelAsync(sr, _repository);
+                    return srvm;
+                }).Select(srvm => srvm.Result);
 
             var financialResources = _repository.FinancialResources
                 .Where(fr => fr.ResourceScenarioId == id)

@@ -54,7 +54,13 @@ namespace MPWebAPI.Controllers
         public async Task<IActionResult> GroupUser(int id)
         {
             var users = await _repository.GetGroupMembersAsync(_repository.Groups.Single(g => g.Id == id));
-            var userViews = await ConvertToUserViewModelAsync(users, _repository); 
+            var userViews = users
+                .Select(async u => {
+                    var vm = new UserViewModel();
+                    await vm.MapToViewModelAsync(u, _repository);
+                    return vm;
+                })
+                .Select(uvm => uvm.Result); 
             return new JsonResult(
                     userViews  
                 );

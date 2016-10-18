@@ -1,18 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using MPWebAPI.Models;
 
 namespace MPWebAPI.ViewModels
 {
     public class StaffResourceViewModel : ViewModel, IValidatableObject
     {
-        public StaffResourceViewModel(StaffResource model)
-        {
-            MapToViewModel(model);
-        }
-
         public StaffResourceViewModel() {}
+
+        public async override Task MapToViewModelAsync(object model, IMerlinPlanRepository repo)
+        {
+            var sr = (StaffResource) model;
+            await base.MapToViewModelAsync(sr);
+            
+            // add categories
+            Categories = sr.Categories
+                .Select(src => src.StaffResourceCategory.Name)
+                .ToList();
+        }
 
         public int Id { get; set; }
         public int ResourceScenarioId { get; set; }

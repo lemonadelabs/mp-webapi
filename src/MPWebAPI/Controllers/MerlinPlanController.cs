@@ -12,21 +12,5 @@ namespace MPWebAPI.Controllers
     /// </summary>
     public class MerlinPlanController : Controller
     {
-        protected async Task<IEnumerable<UserViewModel>> ConvertToUserViewModelAsync (
-            IEnumerable<MerlinPlanUser> users, 
-            IMerlinPlanRepository repo
-            )
-        {
-            var viewModels = new List<UserViewModel>();
-            foreach (var u in users)
-            {
-                var uvm = new UserViewModel(u);
-                uvm.Roles = await repo.GetUserRolesAsync(u);
-                var gs = await repo.GetUserGroupsAsync(u);
-                uvm.Groups = gs.Select(g => new UserViewModel.GroupData { Id = g.Id, Name = g.Name});
-                viewModels.Add(uvm);
-            }
-            return viewModels;
-        }
     }
 }

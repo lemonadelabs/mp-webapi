@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Threading.Tasks;
 using MPWebAPI.Models;
 
 namespace MPWebAPI.ViewModels
@@ -10,9 +11,10 @@ namespace MPWebAPI.ViewModels
             MapProperties(this, model);
         }
         
-        protected void MapToViewModel(object model, DBContext dbcontext = null)
+        public virtual Task MapToViewModelAsync(object model, IMerlinPlanRepository repo = null)
         {
             MapProperties(model, this);
+            return Task.CompletedTask;
         }
         
         private void MapProperties(object from, object to)

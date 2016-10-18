@@ -73,7 +73,15 @@ namespace MPWebAPI.Controllers
         [HttpGet]
         public async Task<IEnumerable<UserViewModel>> Get()
         {
-            return await ConvertToUserViewModelAsync(_repository.Users, _repository);
+            var result = new List<UserViewModel>();
+            var users = _userManager.Users.ToList();
+            foreach (var u in users)
+            {
+                var uvm = new UserViewModel();
+                await uvm.MapToViewModelAsync(u, _repository);
+                result.Add(uvm);
+            }
+            return result;
         }
 
         [HttpGet("{id}")]
@@ -81,8 +89,17 @@ namespace MPWebAPI.Controllers
         public IActionResult Get(string id)
         {
             return new JsonResult(
-                ConvertToUserViewModelAsync(
-                    new List<MerlinPlanUser> { _repository.Users.Single(u => u.Id == id) }, _repository).Result.First());
+                _repository.Users
+                    .Where(u => u.Id == id)
+                    .Select(async u => 
+                    { 
+                        var vm = new UserViewModel();
+                        await vm.MapToViewModelAsync(u, _repository);
+                        return vm; 
+                    })
+                    .Select(uvm => uvm.Result)
+                    .Single()
+                );
         }
 
         [HttpPost("password")]
@@ -207,7 +224,10 @@ namespace MPWebAPI.Controllers
                     "Confirm your Merlin: Plan account", 
                     $"Please confirm your Merlin: Plan account by clicking this <a href=\"{callbackUrl}\">link</a>"
                 );
-                return new JsonResult(ConvertToUserViewModelAsync(new List<MerlinPlanUser> {user}, _repository).Result.Single()) ;
+
+                var uvm = new UserViewModel();
+                await uvm.MapToViewModelAsync(user, _repository);
+                return new JsonResult(uvm);
             }
             else
             {

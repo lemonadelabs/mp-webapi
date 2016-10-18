@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using MPWebAPI.Models;
 
 namespace MPWebAPI.ViewModels
@@ -7,15 +9,19 @@ namespace MPWebAPI.ViewModels
 
     public class UserViewModel : ViewModel
     {
-        public UserViewModel(MerlinPlanUser u)
-        {
-            MapToViewModel(u);
-            UserEmailConfirmed = u.EmailConfirmed;
-        }
-
         public UserViewModel() 
         {
             Active = true;
+        }
+
+        public async override Task MapToViewModelAsync(object user, IMerlinPlanRepository repo)
+        {
+            var u = (MerlinPlanUser)user;
+            await base.MapToViewModelAsync(u);
+            UserEmailConfirmed = u.EmailConfirmed;
+            this.Roles = await repo.GetUserRolesAsync(u);
+            var gs = await repo.GetUserGroupsAsync(u);
+            this.Groups = gs.Select(g => new UserViewModel.GroupData { Id = g.Id, Name = g.Name});
         }
 
         public string Id { get; set; }

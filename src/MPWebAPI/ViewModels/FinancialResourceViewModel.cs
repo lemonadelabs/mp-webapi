@@ -9,12 +9,13 @@ namespace MPWebAPI.ViewModels
     {
         public FinancialResourceViewModel(FinancialResource model)
         {
-            MapToViewModel(model);
+            MapToViewModelAsync(model);
         }
 
         public FinancialResourceViewModel() {}
 
         public int Id { get; set; }
+
         public int ResourceScenarioId { get; set; }
 
         [Required]

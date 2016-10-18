@@ -7,7 +7,7 @@ namespace MPWebAPI.ViewModels
     {
         public OrganisationViewModel(Organisation org)
         {
-            MapToViewModel(org);
+            MapToViewModelAsync(org);
         }
 
         public OrganisationViewModel() {}

@@ -36,8 +36,15 @@ namespace MPWebAPI.Controllers
         {
             var users = _mprepo.Users.ToList()
                 .Where(u => u.OrganisationId == id);
-            var viewModels = ConvertToUserViewModelAsync(users, _mprepo);
-            return new JsonResult(viewModels.Result);
+            var viewModels = users
+                .Select(async u => 
+                    { 
+                        var vm = new UserViewModel();
+                        await vm.MapToViewModelAsync(u, _mprepo);
+                        return vm;
+                    })
+                .Select(uvm => uvm.Result);
+            return new JsonResult(viewModels);
         }
 
         [HttpGet]

@@ -7,7 +7,7 @@ namespace MPWebAPI.ViewModels
     {
         public GroupViewModel(Group g)
         {
-            MapToViewModel(g);
+            MapToViewModelAsync(g);
         }
 
         public GroupViewModel() 
