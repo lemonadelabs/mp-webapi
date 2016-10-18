@@ -237,17 +237,12 @@ namespace MPWebAPI.Controllers
 
         [HttpPut("{id}")]
         [ValidateModel]
-        [ValidateUserExists]
-        public async Task<IActionResult> Put(string id, [FromBody] UserViewModel user)
+        public async Task<IActionResult> Put([FromBody] UserViewModel user)
         {
-            var userm = _repository.Users.Single(u => u.Id == id);
-            if (user.Id != id)
+            var userm = _repository.Users.SingleOrDefault(u => u.Id == user.Id);
+            if (userm == null)
             {
-                return BadRequest(
-                    new {
-                            Id = new List<string> {"User id in the url request must match the Id in the JSON body"}
-                        }
-                    );
+                return NotFound(user.Id);
             }
             
             // Update the user details
