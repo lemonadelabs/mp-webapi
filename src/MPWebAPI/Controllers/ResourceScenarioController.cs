@@ -290,7 +290,7 @@ namespace MPWebAPI.Controllers
 
             await _repository.AddFinancialResourceAsync(fr);
             
-            return Ok();
+            return Ok(fr);
         }
 
         [HttpPost("{id}/staffresource")]
@@ -304,7 +304,7 @@ namespace MPWebAPI.Controllers
 
             await _repository.AddStaffResourceAsync(sr);
             
-            return Ok();
+            return Ok(sr);
         }
 
         [HttpGet("{id}/financialresource")]

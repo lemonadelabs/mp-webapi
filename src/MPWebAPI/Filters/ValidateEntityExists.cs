@@ -129,6 +129,46 @@ namespace MPWebAPI.Filters
         }
     }
 
+    public class ValidateFinancialResourceExistsAttribute : TypeFilterAttribute
+    {
+        public ValidateFinancialResourceExistsAttribute() : base(typeof(ValidateFinancialResourceExists)) {}
+        
+        private class ValidateFinancialResourceExists : IAsyncActionFilter
+        {
+            private readonly IMerlinPlanRepository _repository;
+            
+            public ValidateFinancialResourceExists(IMerlinPlanRepository mprepo)
+            {
+                _repository = mprepo;
+            }
+            
+            public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+            {
+                if (context.ActionArguments.ContainsKey("id"))
+                {
+                    var id = context.ActionArguments["id"] as int?;
+                    if (id.HasValue)
+                    {
+                        if (await _repository.FinancialResources.ToAsyncEnumerable().All(o => o.Id != id.Value))
+                        {
+                            context.Result = new NotFoundObjectResult(id.Value);
+                            return;
+                        }
+                        else
+                        {
+                            await next();            
+                        }
+                    }
+                }
+                else
+                {
+                    context.Result = new NotFoundResult();
+                    return;
+                }
+            }
+        }
+    }
+
 
     public class ValidateUserExistsAttribute : TypeFilterAttribute
     {
