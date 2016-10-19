@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -115,6 +116,67 @@ namespace MPWebAPI.Models
             await _respository.UnparentGroupAsync(group);
             return result;
         }
+
+        /// <summary>
+        /// Only deletes a FRC if there are currently no Transactions or Partitions using it.
+        /// </summary>
+        /// <param name="frc"></param>
+        /// <returns></returns>
+        public async Task<MerlinPlanBLResult> DeleteFinancialResourceCategoryAsync(FinancialResourceCategory frc)
+        {
+            var result = new MerlinPlanBLResult();
+            if (frc.FinancialPartitions.Count == 0 && frc.Transactions.Count == 0)
+            {
+                await _respository.RemoveFinancialResourceCategoryAsync(frc);
+                return result;
+            }
+            else
+            {
+                if (frc.FinancialPartitions.Count > 0)
+                {
+                    result.AddError(
+                        "FinancialPartitions", 
+                        $"Cannot delete {frc.Name} there are Financial Resource Partitions using this category.");    
+                }
+
+                if (frc.Transactions.Count > 0)
+                {
+                    result.AddError(
+                        "Transactions", 
+                        $"Cannot delete {frc.Name} there are Financial Transactions using this category.");    
+                }
+                return result;                
+            }            
+        }
+
+        /// <summary>
+        /// We need to check that the name of the category is unique for the group.
+        /// </summary>
+        /// <param name="group"></param>
+        /// <param name="categories"></param>
+        /// <returns></returns>
+        public async Task<MerlinPlanBLResult> AddFinancialResourceCategoriesAsync(
+            Group group, 
+            IEnumerable<FinancialResourceCategory> categories)
+        {
+            var result = new MerlinPlanBLResult();
+            foreach (var category in categories)
+            {
+                if (group.FinancialResourceCategories.Any(frc => frc.Name == category.Name))
+                {
+                    result.AddError("Name", $"The Financial Resource Category Name {category.Name} is already used in this group");
+                }
+            }
+
+            if (result.Succeeded)
+            {
+                foreach (var category in categories)
+                {
+                    await _respository.AddFinancialResourceCategoryAsync(category);
+                }
+            }
+            return result;
+        }
     }
 
     
@@ -132,7 +194,7 @@ namespace MPWebAPI.Models
             Succeeded = false;
             if (!Errors.ContainsKey(key))
             {
-                Errors.Add(key, new List<string> {error});
+                Errors.Add(key, new List<string>());
             }
             Errors[key].Add(error);
         }

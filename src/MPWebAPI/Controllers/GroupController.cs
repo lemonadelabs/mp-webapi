@@ -154,5 +154,28 @@ namespace MPWebAPI.Controllers
                 .Select(frc => new FinancialResourceCategoryViewModel(frc))
                 .ToList());
         }
+
+        [HttpPost("{id}/category/financialresource")]
+        [ValidateGroupExists]
+        [ValidateModel]
+        public async Task<IActionResult> CreateFinancialResourceCategories(int id, [FromBody] FinancialResourceCategoryViewModel[] request)
+        {
+            var group = _repository.Groups.First(g => g.Id == id);
+            var frcs = new List<FinancialResourceCategory>();
+            foreach (var frc in request)
+            {
+                var newFRC = new FinancialResourceCategory();
+                frc.MapToModel(newFRC);
+                newFRC.GroupId = id;
+                frcs.Add(newFRC);
+            }
+
+            var result = await _businessLogic.AddFinancialResourceCategoriesAsync(group, frcs);
+            if (result.Succeeded)
+            {
+                return Ok(frcs.Select(frc => new FinancialResourceCategoryViewModel(frc)));
+            }
+            return BadRequest(result.Errors);
+        }
     }
 }

@@ -54,7 +54,9 @@ namespace MPWebAPI.Models
             get
             {
                 return _dbcontext.Group
-                    .Include(g => g.ResourceScenarios);
+                    .Include(g => g.ResourceScenarios)
+                    .Include(g => g.FinancialResourceCategories)
+                    .ToList();
             }
         }
 
@@ -333,6 +335,8 @@ namespace MPWebAPI.Models
             {
                 return _dbcontext.FinancialResourceCategory
                     .Include(frc => frc.Group)
+                    .Include(frc => frc.FinancialPartitions)
+                    .Include(frc => frc.Transactions)
                     .ToList();
             }
         }

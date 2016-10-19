@@ -18,6 +18,8 @@ namespace MPWebAPI.Models
         
         Task<MerlinPlanBLResult> ParentGroupAsync(Group child, Group parent);
         Task<MerlinPlanBLResult> UnparentGroupAsync(Group group);
+        Task<MerlinPlanBLResult> DeleteFinancialResourceCategoryAsync(FinancialResourceCategory frc);
+        Task<MerlinPlanBLResult> AddFinancialResourceCategoriesAsync(Group group, IEnumerable<FinancialResourceCategory> categories);
     }    
 }
 
