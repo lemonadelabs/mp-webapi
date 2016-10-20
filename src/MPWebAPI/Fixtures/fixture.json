@@ -418,7 +418,7 @@
         }, {
             "Name": "EPMO Slush Fund",
             "Partitions": [{
-                "Categories": [],
+                "Categories": ["Staff"],
                 "Adjustments": [{
                     "Value": 1000000,
                     "Additive": true,

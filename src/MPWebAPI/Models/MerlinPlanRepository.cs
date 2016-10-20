@@ -310,6 +310,18 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+        public async Task AddFinancialResourcePartitionAsync(FinancialResourcePartition partition)
+        {
+            _dbcontext.FinancialResourcePartition.Add(partition);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveFinancialResourcePartitionAsync(FinancialResourcePartition partition)
+        {
+            _dbcontext.FinancialResourcePartition.Remove(partition);
+            await _dbcontext.SaveChangesAsync();
+        }
+
         public IEnumerable<FinancialResource> FinancialResources
         {
             get 
@@ -337,6 +349,19 @@ namespace MPWebAPI.Models
                     .Include(frc => frc.Group)
                     .Include(frc => frc.FinancialPartitions)
                     .Include(frc => frc.Transactions)
+                    .ToList();
+            }
+        }
+
+        public IEnumerable<FinancialResourcePartition> FinancialResourcePartitions
+        {
+            get
+            {
+                return _dbcontext.FinancialResourcePartition
+                    .Include(frp => frp.Adjustments)
+                    .Include(frp => frp.FinancialResource)
+                    .Include(frp => frp.Categories)
+                    .ThenInclude(prc => prc.FinancialResourceCategory)
                     .ToList();
             }
         }

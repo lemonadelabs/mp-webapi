@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -70,53 +71,28 @@ namespace MPWebAPI.Controllers
         }
 
 
-        // public class NewPartitionRequest
-        // {
-        //     //public int MyProperty { get; set; }
-        // }
+        public class NewPartitionRequest : INewPartitionRequest
+        {
+            public string[] Categories { get; set; }
+            public decimal StartingAjdustment { get; set; }
+        }
 
-        // [HttpPost("partition")]
-        // public async Task<IActionResult> CreatePartitions([FromBody] NewPartitionRequest[] request)
-        // {
-
-        // }
-
-        // public class DuplicateRequest
-        // {
-        //     public int FinancialResourceId { get; set; }
-        //     public int ResourceScenarioId { get; set; }
-        // }
-
-        
-
-        // [HttpPost("")]
-        // public async Task<IActionResult> Duplicate([FromBody] DuplicateRequest[] request)
-        // {
-        //     foreach (var r in request)
-        //     {
-        //         var resource = _repository.FinancialResources
-        //             .FirstOrDefault(f => f.Id == r.FinancialResourceId);
-                
-        //         if (resource == null)
-        //         {
-        //             return BadRequest(
-        //                 new { 
-        //                         FinancialResourceId = new [] {$"Financial resource not found with id {r.FinancialResourceId}"} 
-        //                     }
-        //                 ); 
-        //         }
-
-        //         var scenario = _repository.ResourceScenarios.FirstOrDefault(rs => rs.Id == r.ResourceScenarioId);
-
-        //         if (scenario == null)
-        //         {
-        //             return BadRequest(
-        //                 new { 
-        //                         ResourceScenarioId = new [] {$"Resource Scenario not found with id {r.ResourceScenarioId}"} 
-        //                     }
-        //                 ); 
-        //         }
-        //     }
-        // }
+        [HttpPost("{id}/partition")]
+        [ValidateFinancialResourceExists]
+        [ValidateModel]
+        public async Task<IActionResult> CreatePartitions(int id, [FromBody] NewPartitionRequest[] request)
+        {
+            var resource = _repository.FinancialResources.First(rs => rs.Id == id);
+            var result = await _businessLogic.AddFinancialResourcePartitionsAsync(resource, request);
+            
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest(result.Errors);
+            }
+        }
     }
 }

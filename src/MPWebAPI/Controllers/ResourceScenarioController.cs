@@ -287,10 +287,14 @@ namespace MPWebAPI.Controllers
             var fr = new FinancialResource();
             viewModel.ResourceScenarioId = id;
             viewModel.MapToModel(fr);
-
-            await _repository.AddFinancialResourceAsync(fr);
             
-            return Ok(fr);
+            var result = await _businessLogic.AddFinancialResourceAsync(fr);
+            
+            if (result.Succeeded)
+            {
+                return Ok(new FinancialResourceViewModel(fr));    
+            }
+            return BadRequest(result.Errors);
         }
 
         [HttpPost("{id}/staffresource")]
@@ -302,8 +306,7 @@ namespace MPWebAPI.Controllers
             viewModel.ResourceScenarioId = id;
             viewModel.MapToModel(sr);
             await _repository.AddStaffResourceAsync(sr);
-            
-            return Ok(sr);
+            return Ok(new StaffResourceViewModel(sr));
         }
 
         [HttpGet("{id}/financialresource")]

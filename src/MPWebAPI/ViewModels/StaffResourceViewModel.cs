@@ -11,15 +11,22 @@ namespace MPWebAPI.ViewModels
     {
         public StaffResourceViewModel() {}
 
-        public async override Task MapToViewModelAsync(object model, IMerlinPlanRepository repo)
+        public StaffResourceViewModel(StaffResource model)
+        {
+            MapToViewModelAsync(model, null);
+        }
+
+        public override Task MapToViewModelAsync(object model, IMerlinPlanRepository repo)
         {
             var sr = (StaffResource) model;
-            await base.MapToViewModelAsync(sr);
+            base.MapToViewModelAsync(sr);
             
             // add categories
             Categories = sr.Categories
                 .Select(src => src.StaffResourceCategory.Name)
                 .ToList();
+            
+            return Task.CompletedTask;
         }
 
         public int Id { get; set; }

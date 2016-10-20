@@ -19,7 +19,15 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> ParentGroupAsync(Group child, Group parent);
         Task<MerlinPlanBLResult> UnparentGroupAsync(Group group);
         Task<MerlinPlanBLResult> DeleteFinancialResourceCategoryAsync(FinancialResourceCategory frc);
+        Task<MerlinPlanBLResult> AddFinancialResourceAsync(FinancialResource resource);
         Task<MerlinPlanBLResult> AddFinancialResourceCategoriesAsync(Group group, IEnumerable<FinancialResourceCategory> categories);
-    }    
+        Task<MerlinPlanBLResult> AddFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<INewPartitionRequest> partitions);
+    }
+
+    public interface INewPartitionRequest
+    {
+        string[] Categories { get; set; }
+        decimal StartingAjdustment { get; set; }
+    }
 }
 

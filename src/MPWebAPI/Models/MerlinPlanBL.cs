@@ -177,8 +177,41 @@ namespace MPWebAPI.Models
             }
             return result;
         }
-    }
+        
+        
+        /// <summary>
+        /// Adds a new Financial Resource to the specified Resource Scenario and
+        /// creates a default partition for it.
+        /// </summary>
+        /// <param name="resource"></param>
+        /// <returns></returns>
+        public async Task<MerlinPlanBLResult> AddFinancialResourceAsync(FinancialResource resource)
+        {
+            await _respository.AddFinancialResourceAsync(resource);
+            // Add default partition
+            
+            var fp = new FinancialResourcePartition();
+            fp.FinancialResource = resource;
+            await _respository.AddFinancialResourcePartitionAsync(fp);
+            return new MerlinPlanBLResult();
+        }
 
+        // public bool DoesPartitionExist(FinancialResource resource, IEnumerable<FinancialResourceCategory> categories)
+        // {
+        //     // Get all partitions for this resource
+        //     var partitions = _respository.FinancialResourcePartitions
+        //         .Where(frp => frp.FinancialResourceId == resource.Id).ToList();
+            
+        //     // return yes if there is a partition that has exactly the same categories as categories
+        //     return partitions
+        //         .Exists(p => p.Categories.All(pc => categories.Contains(pc.FinancialResourceCategory)));
+        // }
+
+        public Task<MerlinPlanBLResult> AddFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<INewPartitionRequest> partitions)
+        {
+            throw new NotImplementedException();
+        }
+    }
     
 
     public class MerlinPlanBLResult
