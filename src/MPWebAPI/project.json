@@ -30,6 +30,7 @@
     },
     "Npgsql.EntityFrameworkCore.PostgreSQL": "1.0.2",
     "OpenIddict": "1.0.0-*",
+    "OpenIddict.Mvc": "1.0.0-*", 
     "SendGrid.NetCore": "1.0.0-*"
   },
 

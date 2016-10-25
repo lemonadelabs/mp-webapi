@@ -72,7 +72,8 @@ namespace MPWebAPI
             
             services.AddMvc();
 
-            services.AddOpenIddict<MerlinPlanUser, DBContext>()
+            services.AddOpenIddict<DBContext>()
+                .AddMvcBinders()
                 .EnableTokenEndpoint("/api/auth/token")
                 .UseJsonWebTokens()
                 .AllowPasswordFlow()

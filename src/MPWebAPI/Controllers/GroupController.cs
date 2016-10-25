@@ -17,7 +17,7 @@ namespace MPWebAPI.Controllers
         public GroupController(IMerlinPlanRepository mprepo, IMerlinPlanBL mpbl)
         {
             _repository = mprepo;
-            _businessLogic = mpbl;
+            _businessLogic = mpbl;         
         }
 
         [HttpPost]

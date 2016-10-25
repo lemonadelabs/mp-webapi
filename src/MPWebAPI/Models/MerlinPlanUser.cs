@@ -1,12 +1,12 @@
 using System.Collections.Generic;
-using OpenIddict;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace MPWebAPI.Models
 {
     /// <summary>
     /// A user of Merlin: Plan software.
     /// </summary>
-    public class MerlinPlanUser : OpenIddictUser
+    public class MerlinPlanUser : IdentityUser
     {
         public MerlinPlanUser()
         {

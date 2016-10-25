@@ -19,12 +19,12 @@ namespace MPWebAPI.Controllers
     [Produces("application/json")]
     public class AuthController : MerlinPlanController
     {
-        private readonly OpenIddictUserManager<MerlinPlanUser> _userManager;
+        private readonly UserManager<MerlinPlanUser> _userManager;
         private readonly SignInManager<MerlinPlanUser> _signInManager;
         private readonly ILogger _logger;
         
         public AuthController(
-            OpenIddictUserManager<MerlinPlanUser> userManager, 
+            UserManager<MerlinPlanUser> userManager, 
             SignInManager<MerlinPlanUser> signInManager,
             ILoggerFactory loggerFactory
             )
@@ -35,9 +35,11 @@ namespace MPWebAPI.Controllers
         }
         
         [HttpPost("token")]
-        public async Task<IActionResult> Token()
+        [Produces("application/json")]
+        public async Task<IActionResult> Token(OpenIdConnectRequest request)
         {
-            var request = HttpContext.GetOpenIdConnectRequest();
+            
+            //var request = HttpContext.GetOpenIdConnectRequest();
             if (request.IsPasswordGrantType())
             {
                 // Check username and password validity
@@ -87,16 +89,8 @@ namespace MPWebAPI.Controllers
                     await _userManager.ResetAccessFailedCountAsync(user);
                 }
 
-                var identity = await _userManager.CreateIdentityAsync(user, request.GetScopes());
-
                 // Create a new authentication ticket holding the user identity.
-                var ticket = new AuthenticationTicket(
-                    new ClaimsPrincipal(identity),
-                    new AuthenticationProperties(),
-                    OpenIdConnectServerDefaults.AuthenticationScheme);
-                
-                ticket.SetResources(request.GetResources());
-                ticket.SetScopes(request.GetScopes());
+                var ticket = await CreateTicketAsync(request, user);
 
                 return SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme);
             }
@@ -104,6 +98,32 @@ namespace MPWebAPI.Controllers
                 Error = OpenIdConnectConstants.Errors.UnsupportedGrantType,
                 ErrorDescription = "The specified grant type is not supported."
             });
+        }
+
+        private async Task<AuthenticationTicket> CreateTicketAsync(OpenIdConnectRequest request, MerlinPlanUser user)
+        {
+            var principal = await _signInManager.CreateUserPrincipalAsync(user);
+
+            foreach (var principalClaim in principal.Claims)
+            {
+                principalClaim.SetDestinations(OpenIdConnectConstants.Destinations.AccessToken,
+                    OpenIdConnectConstants.Destinations.IdentityToken);
+            }
+
+            var ticket = new AuthenticationTicket(
+                    principal, new AuthenticationProperties(),
+                    OpenIdConnectServerDefaults.AuthenticationScheme 
+                );
+
+            ticket.SetScopes(
+                OpenIdConnectConstants.Scopes.OpenId,
+                OpenIdConnectConstants.Scopes.Email,
+                OpenIdConnectConstants.Scopes.Profile,
+                OpenIdConnectConstants.Scopes.OfflineAccess,
+                "roles"
+            );
+
+            return ticket;
         }
     }
 }

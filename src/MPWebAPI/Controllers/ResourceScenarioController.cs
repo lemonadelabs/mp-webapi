@@ -8,7 +8,7 @@ using MPWebAPI.ViewModels;
 using MPWebAPI.Filters;
 using UserSharedScenario = MPWebAPI.Controllers.ResourceScenarioController.UserAccessResponse.UserSharedScenario;
 using GroupSharedScenario = MPWebAPI.Controllers.ResourceScenarioController.UserAccessResponse.GroupSharedScenario;
-using Microsoft.AspNetCore.Authorization;
+
 
 namespace MPWebAPI.Controllers
 {
@@ -77,10 +77,10 @@ namespace MPWebAPI.Controllers
         [ValidateModel]
         public async Task<IActionResult> Post([FromBody] ResourceScenarioViewModel scenario)
         {
-            var newRS = new ResourceScenario();
+            var newRs = new ResourceScenario();
             
             // Do basic mapping
-            scenario.MapToModel(newRS);
+            scenario.MapToModel(newRs);
 
             // Add creator object
             // check creator is valid user            
@@ -89,7 +89,7 @@ namespace MPWebAPI.Controllers
             {
                 return BadRequest(new {Creator = $"Creator {scenario.Creator} can't be found"});
             }
-            newRS.Creator = creator;
+            newRs.Creator = creator;
 
             // Add group object
             // check that group is valid
@@ -105,7 +105,7 @@ namespace MPWebAPI.Controllers
             {
                 return BadRequest(new { Group = $"Creator doesnt belong to group"});
             }
-            newRS.Group = group;
+            newRs.Group = group;
 
             // Add approved by
             // check that user is valid
@@ -116,11 +116,11 @@ namespace MPWebAPI.Controllers
                 {
                     return BadRequest(new { ApprovedBy = $"Approver {scenario.ApprovedBy} can't be found" });
                 }
-                newRS.ApprovedBy = approvedBy;    
+                newRs.ApprovedBy = approvedBy;    
             }
 
-            await _repository.AddResourceScenarioAsync(newRS);
-            return new JsonResult(new ResourceScenarioViewModel(newRS));
+            await _repository.AddResourceScenarioAsync(newRs);
+            return new JsonResult(new ResourceScenarioViewModel(newRs));
         }
 
         [HttpGet("group/{id}")]
@@ -149,7 +149,7 @@ namespace MPWebAPI.Controllers
         [ValidateResourceScenarioExists]
         public async Task<IActionResult> ShareWithGroup(int id)
         {
-            var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
+            var rs = _repository.ResourceScenarios.Single(r => r.Id == id);
             await _repository.ShareResourceScenarioWithGroupAsync(rs, true);
             return Ok();
         }
@@ -158,7 +158,7 @@ namespace MPWebAPI.Controllers
         [ValidateResourceScenarioExists]
         public async Task<IActionResult> UnshareWithGroup(int id)
         {
-            var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
+            var rs = _repository.ResourceScenarios.Single(r => r.Id == id);
             await _repository.ShareResourceScenarioWithGroupAsync(rs, false);
             return Ok();
         }
@@ -167,7 +167,7 @@ namespace MPWebAPI.Controllers
         [ValidateResourceScenarioExists]
         public async Task<IActionResult> ShareWithOrg(int id)
         {
-            var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
+            var rs = _repository.ResourceScenarios.Single(r => r.Id == id);
             await _repository.ShareResourceScenarioWithOrgAsync(rs, true);
             return Ok();
         }
@@ -176,7 +176,7 @@ namespace MPWebAPI.Controllers
         [ValidateResourceScenarioExists]
         public async Task<IActionResult> UnshareWithOrg(int id)
         {
-            var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
+            var rs = _repository.ResourceScenarios.Single(r => r.Id == id);
             await _repository.ShareResourceScenarioWithOrgAsync(rs, false);
             return Ok();
         }
@@ -185,7 +185,7 @@ namespace MPWebAPI.Controllers
         [ValidateResourceScenarioExists]
         public async Task<IActionResult> ShareWithUser(int id, [FromBody] UserList userNameList)
         {
-            var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
+            var rs = _repository.ResourceScenarios.Single(r => r.Id == id);
             var users = new List<MerlinPlanUser>();
             foreach (var userName in userNameList.Users)
             {
@@ -237,7 +237,7 @@ namespace MPWebAPI.Controllers
         [ValidateUserExists]
         public async Task<IActionResult> GetAllForUser(string id)
         {
-            var user = _repository.Users.Where(u => u.Id == id).Single();
+            var user = _repository.Users.Single(u => u.Id == id);
             var userShare = await _repository.GetUserSharedResourceScenariosForUserAsync(user);
             var groupShare = await _repository.GetGroupSharedResourceScenariosForUserAsync(user);
             var allShare = await _repository.GetOrganisationSharedResourceScenariosAsync(user.Organisation);
@@ -262,7 +262,7 @@ namespace MPWebAPI.Controllers
                     {
                         User = uvm,
                         Scenarios = new List<ResourceScenarioViewModel>(
-                            new ResourceScenarioViewModel[] { new ResourceScenarioViewModel(rs) })
+                            new[] { new ResourceScenarioViewModel(rs) })
                     };
                     userSharedScenarios.Add(newuss);
                 }
@@ -373,7 +373,7 @@ namespace MPWebAPI.Controllers
                     {
                         Group = new GroupViewModel(rs.Group),
                         Scenarios = new List<ResourceScenarioViewModel>(
-                            new ResourceScenarioViewModel[] {new ResourceScenarioViewModel(rs)})
+                            new[] {new ResourceScenarioViewModel(rs)})
                     };
                     groupedScenarios.Add(newass);
                 }
