@@ -21,6 +21,7 @@ namespace MPWebAPI.Models
         public DbSet<FinancialAdjustment> FinancialAdjustment { get; set; }
         public DbSet<FinancialResource> FinancialResource { get; set; }
         public DbSet<FinancialResourcePartition> FinancialResourcePartition { get; set; }
+        public DbSet<PartitionResourceCategory> PartitionResourceCategory { get; set; }
         public DbSet<FinancialTransaction> FinancialTransaction { get; set; }
         public DbSet<Group> Group { get; set; }
         public DbSet<UserGroup> UserGroup { get; set; }

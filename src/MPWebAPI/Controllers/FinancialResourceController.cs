@@ -89,10 +89,8 @@ namespace MPWebAPI.Controllers
             {
                 return Ok();
             }
-            else
-            {
-                return BadRequest(result.Errors);
-            }
+          
+            return BadRequest(result.Errors);
         }
     }
 }

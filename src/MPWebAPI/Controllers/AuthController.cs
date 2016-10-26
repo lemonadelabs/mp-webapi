@@ -3,13 +3,10 @@ using AspNet.Security.OpenIdConnect.Extensions;
 using Microsoft.AspNetCore.Identity;
 using MPWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using OpenIddict;
 using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Http.Authentication;
 using AspNet.Security.OpenIdConnect.Server;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Builder;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -40,64 +37,63 @@ namespace MPWebAPI.Controllers
         {
             
             //var request = HttpContext.GetOpenIdConnectRequest();
-            if (request.IsPasswordGrantType())
+            if (!request.IsPasswordGrantType())
+                return BadRequest(new OpenIdConnectResponse
+                {
+                    Error = OpenIdConnectConstants.Errors.UnsupportedGrantType,
+                    ErrorDescription = "The specified grant type is not supported."
+                });
+            // Check username and password validity
+            var user = await _userManager.FindByNameAsync(request.Username);
+            if (user == null)
             {
-                // Check username and password validity
-                var user = await _userManager.FindByNameAsync(request.Username);
-                if (user == null)
-                {
-                    return BadRequest(new OpenIdConnectResponse {
-                        Error = OpenIdConnectConstants.Errors.InvalidGrant,
-                        ErrorDescription = "Username or password is incorrect."
-                    } );
-                }
-
-                if (! await _userManager.CheckPasswordAsync(user, request.Password))
-                {
-                    return BadRequest(new OpenIdConnectResponse {
-                        Error = OpenIdConnectConstants.Errors.InvalidGrant,
-                        ErrorDescription = "Username or password is incorrect."
-                    });
-                }
-
-                // If the user's email is not confirmed then they can't log in
-                if (!await _userManager.IsEmailConfirmedAsync(user))
-                {
-                    return BadRequest(new OpenIdConnectResponse {
-                        Error = OpenIdConnectConstants.Errors.InvalidGrant,
-                        ErrorDescription = "The user's email has not been confirmed."
-                    });
-                }
-
-                // Check if the user can sign in
-                if (!await _signInManager.CanSignInAsync(user)) {
-                    return BadRequest(new OpenIdConnectResponse {
-                        Error = OpenIdConnectConstants.Errors.InvalidGrant,
-                        ErrorDescription = "The specified user is not allowed to sign in."
-                    });
-                }
-
-                // Ensure the user is not already locked out.
-                if (_userManager.SupportsUserLockout && await _userManager.IsLockedOutAsync(user)) {
-                    return BadRequest(new OpenIdConnectResponse {
-                        Error = OpenIdConnectConstants.Errors.InvalidGrant,
-                        ErrorDescription = "Username or password is incorrect."
-                    });
-                }
-
-                if (_userManager.SupportsUserLockout) {
-                    await _userManager.ResetAccessFailedCountAsync(user);
-                }
-
-                // Create a new authentication ticket holding the user identity.
-                var ticket = await CreateTicketAsync(request, user);
-
-                return SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme);
+                return BadRequest(new OpenIdConnectResponse {
+                    Error = OpenIdConnectConstants.Errors.InvalidGrant,
+                    ErrorDescription = "Username or password is incorrect."
+                } );
             }
-            return BadRequest(new OpenIdConnectResponse {
-                Error = OpenIdConnectConstants.Errors.UnsupportedGrantType,
-                ErrorDescription = "The specified grant type is not supported."
-            });
+
+            if (! await _userManager.CheckPasswordAsync(user, request.Password))
+            {
+                return BadRequest(new OpenIdConnectResponse {
+                    Error = OpenIdConnectConstants.Errors.InvalidGrant,
+                    ErrorDescription = "Username or password is incorrect."
+                });
+            }
+
+            // If the user's email is not confirmed then they can't log in
+            if (!await _userManager.IsEmailConfirmedAsync(user))
+            {
+                return BadRequest(new OpenIdConnectResponse {
+                    Error = OpenIdConnectConstants.Errors.InvalidGrant,
+                    ErrorDescription = "The user's email has not been confirmed."
+                });
+            }
+
+            // Check if the user can sign in
+            if (!await _signInManager.CanSignInAsync(user)) {
+                return BadRequest(new OpenIdConnectResponse {
+                    Error = OpenIdConnectConstants.Errors.InvalidGrant,
+                    ErrorDescription = "The specified user is not allowed to sign in."
+                });
+            }
+
+            // Ensure the user is not already locked out.
+            if (_userManager.SupportsUserLockout && await _userManager.IsLockedOutAsync(user)) {
+                return BadRequest(new OpenIdConnectResponse {
+                    Error = OpenIdConnectConstants.Errors.InvalidGrant,
+                    ErrorDescription = "Username or password is incorrect."
+                });
+            }
+
+            if (_userManager.SupportsUserLockout) {
+                await _userManager.ResetAccessFailedCountAsync(user);
+            }
+
+            // Create a new authentication ticket holding the user identity.
+            var ticket = await CreateTicketAsync(request, user);
+
+            return SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme);
         }
 
         private async Task<AuthenticationTicket> CreateTicketAsync(OpenIdConnectRequest request, MerlinPlanUser user)

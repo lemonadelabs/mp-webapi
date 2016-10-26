@@ -57,6 +57,12 @@ namespace MPWebAPI.Models
         Task AddFinancialResourcePartitionAsync(FinancialResourcePartition partition);
         Task RemoveFinancialResourcePartitionAsync(FinancialResourcePartition partition);
 
+        Task AddCategoriesToFinancialPartitionAsync(FinancialResourcePartition partition,
+            IEnumerable<FinancialResourceCategory> categories);
+
+        Task RemoveCategoriesFromFinancialPartitionAsync(FinancialResourcePartition partition,
+            IEnumerable<FinancialResourceCategory> categories);
+
         // Staff Resources
         Task AddStaffResourceAsync(StaffResource resource);
         Task RemoveStaffResourceAsync(StaffResource resource);

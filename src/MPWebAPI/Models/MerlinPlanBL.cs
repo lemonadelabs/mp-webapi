@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -53,17 +52,19 @@ namespace MPWebAPI.Models
         /// </summary>
         /// <param name="newUser">the new user to add</param>
         /// <param name="password">the user's password</param>
+        /// <param name="roles"></param>
         /// <returns></returns>
         public async Task<IdentityResult> CreateUser(MerlinPlanUser newUser, string password, IEnumerable<string> roles)
         {
+            var roleList = roles.ToList();
             var org = _respository.Organisations.First(o => o.Id == newUser.OrganisationId);
             newUser.Organisation = org;
             var result = await _respository.CreateUserAsync(newUser, password);
             if (result.Succeeded)
             {
                 // Add default role if none provided.
-                var rolesToAdd = (roles == null || roles.Count() == 0) ? 
-                    new List<string> {_options.Value.DefaultRole} : roles;
+                var rolesToAdd = (roleList == null || !roleList.Any()) ? 
+                    new List<string> {_options.Value.DefaultRole} : roleList;
                 
                 // Add user to roles
                 var roleAddResult = await _respository.AddUserToRolesAsync(newUser, rolesToAdd);
@@ -159,8 +160,9 @@ namespace MPWebAPI.Models
             Group group, 
             IEnumerable<FinancialResourceCategory> categories)
         {
+            var categoryList = categories.ToList();
             var result = new MerlinPlanBLResult();
-            foreach (var category in categories)
+            foreach (var category in categoryList)
             {
                 if (group.FinancialResourceCategories.Any(frc => frc.Name == category.Name))
                 {
@@ -170,7 +172,7 @@ namespace MPWebAPI.Models
 
             if (result.Succeeded)
             {
-                foreach (var category in categories)
+                foreach (var category in categoryList)
                 {
                     await _respository.AddFinancialResourceCategoryAsync(category);
                 }
@@ -189,28 +191,73 @@ namespace MPWebAPI.Models
         {
             await _respository.AddFinancialResourceAsync(resource);
             // Add default partition
-            
-            var fp = new FinancialResourcePartition();
-            fp.FinancialResource = resource;
+
+            var fp = new FinancialResourcePartition {FinancialResource = resource};
             await _respository.AddFinancialResourcePartitionAsync(fp);
             return new MerlinPlanBLResult();
         }
 
-        // public bool DoesPartitionExist(FinancialResource resource, IEnumerable<FinancialResourceCategory> categories)
-        // {
-        //     // Get all partitions for this resource
-        //     var partitions = _respository.FinancialResourcePartitions
-        //         .Where(frp => frp.FinancialResourceId == resource.Id).ToList();
-            
-        //     // return yes if there is a partition that has exactly the same categories as categories
-        //     return partitions
-        //         .Exists(p => p.Categories.All(pc => categories.Contains(pc.FinancialResourceCategory)));
-        // }
-
-        public Task<MerlinPlanBLResult> AddFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<INewPartitionRequest> partitions)
+        public async Task<MerlinPlanBLResult> AddFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<INewPartitionRequest> partitions)
         {
-            throw new NotImplementedException();
+            var result = new MerlinPlanBLResult();
+            
+            // We need to check that partition does not already exist
+            foreach (var newPartitionRequest in partitions)
+            {
+                // check for the default category
+                if (newPartitionRequest.Categories == null || newPartitionRequest.Categories.Length == 0)
+                {
+                    result.AddError("Categories", "The defualt category already exists.");
+                    return result;
+                }
+
+                var categoriesExist =
+                    newPartitionRequest.Categories.All(
+                        c => _respository.FinancialResourceCategories.Any(frc => frc.Name == c));
+
+                if (!categoriesExist) continue;
+                
+                // for each partition in this resource:
+                // check that partition does not exist with those categories
+                foreach (var frp in resource.Partitions)
+                {
+                    var pCatNames = frp.Categories.Select(frc => frc.FinancialResourceCategory.Name).ToList();
+                    var hasAllCats = newPartitionRequest.Categories.All(c => pCatNames.Contains(c));
+                    if (hasAllCats && (pCatNames.Count == newPartitionRequest.Categories.Length))
+                    {
+                        // we already have a partition with these categories, return a bad request
+                        result.AddError("Categories", $"A partition already exists with the categories {string.Join(", ", pCatNames)}");
+                    }
+                    return result;
+                }
+
+                // we can now safely add some new partitions
+                var newPartition = new FinancialResourcePartition {FinancialResource = resource};
+                await _respository.AddFinancialResourcePartitionAsync(newPartition);
+                
+                // Add the categories, create if nessesary
+                var npCategories = newPartitionRequest.Categories
+                    .Select(category => _respository.FinancialResourceCategories.FirstOrDefault(frc => frc.Name == category) ?? 
+                    new FinancialResourceCategory
+                    {
+                        Name = category,
+                        Group = resource.ResourceScenario.Group
+                    })
+                    .ToList();
+
+                npCategories.ForEach(async npc =>
+                {
+                    if (!_respository.FinancialResourceCategories.Contains(npc))
+                    {
+                        await _respository.AddFinancialResourceCategoryAsync(npc);
+                    }
+                });
+                await _respository.AddCategoriesToFinancialPartitionAsync(newPartition, npCategories);
+            }
+            return result;
         }
+
+        
     }
     
 

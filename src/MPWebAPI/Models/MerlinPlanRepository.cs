@@ -24,30 +24,13 @@ namespace MPWebAPI.Models
             _logger = loggerFactory.CreateLogger("MerlinPlanRepository");
             _userManager = userManager;
         }
-       
-        public IEnumerable<ResourceScenario> ResourceScenarios
+
+        public async Task SaveChangesAsync()
         {
-            get
-            {
-                return _dbcontext.ResourceScenario
-                    .Include(rs => rs.Creator)
-                    .Include(rs => rs.ApprovedBy)
-                    .Include(rs => rs.Group);
-            }
+            await _dbcontext.SaveChangesAsync();
         }
 
-        public IEnumerable<Organisation> Organisations
-        {
-            get
-            {
-                return _dbcontext.Organisation;
-            }
-        }
-
-        public IEnumerable<Group> GetOrganisationGroups(Organisation org)
-        {
-            return _dbcontext.Group.Where(g => g.OrganisationId == org.Id);
-        }
+        #region Group
 
         public IEnumerable<Group> Groups
         {
@@ -60,17 +43,6 @@ namespace MPWebAPI.Models
             }
         }
 
-        public IEnumerable<MerlinPlanUser> Users
-        {
-            get
-            {
-                return _userManager.Users
-                    .Include(u => u.Organisation)
-                    .ToList();
-            }
-        }
-
-
         public async Task AddGroupAsync(Group g)
         {
             _dbcontext.Group.Add(g);
@@ -80,23 +52,6 @@ namespace MPWebAPI.Models
         public async Task RemoveGroupAsync(Group g)
         {
             _dbcontext.Group.Remove(g);
-            await _dbcontext.SaveChangesAsync();
-        }
-
-        public async Task AddOrganisationAsync(Organisation org)
-        {
-            _dbcontext.Organisation.Add(org);
-            await _dbcontext.SaveChangesAsync();
-        }
-
-        public async Task RemoveOrganisationAsync(Organisation org)
-        {
-            _dbcontext.Organisation.Remove(org);
-            await _dbcontext.SaveChangesAsync();
-        }
-
-        public async Task SaveChangesAsync()
-        {
             await _dbcontext.SaveChangesAsync();
         }
 
@@ -111,12 +66,12 @@ namespace MPWebAPI.Models
         {
             // Check to see that user is not already in the group
             var exists = await _dbcontext.UserGroup
-                .AnyAsync(ug => ug.GroupId == group.Id && ug.UserId == user.Id);
+                .AnyAsync(ug => ug.GroupId == @group.Id && ug.UserId == user.Id);
 
             if (!exists)
             {
                 var userGroup = new UserGroup();
-                userGroup.Group = group;
+                userGroup.Group = @group;
                 userGroup.User = user;
                 _dbcontext.UserGroup.Add(userGroup);
                 await _dbcontext.SaveChangesAsync();
@@ -126,7 +81,7 @@ namespace MPWebAPI.Models
         public async Task RemoveUserFromGroupAsync(MerlinPlanUser user, Group group)
         {
             var exists = await _dbcontext.UserGroup
-                .Where(ug => ug.GroupId == group.Id && ug.UserId == user.Id)
+                .Where(ug => ug.GroupId == @group.Id && ug.UserId == user.Id)
                 .FirstOrDefaultAsync();
             
             if (exists != null)
@@ -144,7 +99,7 @@ namespace MPWebAPI.Models
 
         public async Task UnparentGroupAsync(Group group)
         {
-            group.Parent = null;
+            @group.Parent = null;
             await _dbcontext.SaveChangesAsync();
         }
 
@@ -152,6 +107,49 @@ namespace MPWebAPI.Models
         {
             g.Active = active;
             await _dbcontext.SaveChangesAsync();
+        }
+
+        #endregion
+
+        #region Organisation
+
+        public IEnumerable<Organisation> Organisations
+        {
+            get
+            {
+                return _dbcontext.Organisation;
+            }
+        }
+
+        public async Task AddOrganisationAsync(Organisation org)
+        {
+            _dbcontext.Organisation.Add(org);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public IEnumerable<Group> GetOrganisationGroups(Organisation org)
+        {
+            return _dbcontext.Group.Where(g => g.OrganisationId == org.Id);
+        }
+
+        public async Task RemoveOrganisationAsync(Organisation org)
+        {
+            _dbcontext.Organisation.Remove(org);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        #endregion
+
+        #region User
+
+        public IEnumerable<MerlinPlanUser> Users
+        {
+            get
+            {
+                return _userManager.Users
+                    .Include(u => u.Organisation)
+                    .ToList();
+            }
         }
 
         public async Task<IEnumerable<string>> GetUserRolesAsync(MerlinPlanUser user)
@@ -185,6 +183,26 @@ namespace MPWebAPI.Models
         public async Task<IdentityResult> CreateUserAsync(MerlinPlanUser user, string password)
         {
             return await _userManager.CreateAsync(user, password);
+        }
+
+        public async Task<MerlinPlanUser> FindUserByUserNameAsync(string userName)
+        {
+            return await _userManager.FindByNameAsync(userName);
+        }
+
+        #endregion
+
+        #region Resource Scenario
+
+        public IEnumerable<ResourceScenario> ResourceScenarios
+        {
+            get
+            {
+                return _dbcontext.ResourceScenario
+                    .Include(rs => rs.Creator)
+                    .Include(rs => rs.ApprovedBy)
+                    .Include(rs => rs.Group);
+            }
         }
 
         public async Task<IEnumerable<ResourceScenario>> GetUserSharedResourceScenariosForUserAsync(MerlinPlanUser user)
@@ -257,9 +275,10 @@ namespace MPWebAPI.Models
             }
         }
 
-        public async Task<MerlinPlanUser> FindUserByUserNameAsync(string userName)
+        public async Task RemoveResourceScenarioAsync(ResourceScenario scenario)
         {
-            return await _userManager.FindByNameAsync(userName);
+            _dbcontext.ResourceScenario.Remove(scenario);
+            await _dbcontext.SaveChangesAsync();
         }
 
         public async Task AddResourceScenarioAsync(ResourceScenario scenario)
@@ -268,75 +287,17 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
-        public async Task RemoveResourceScenarioAsync(ResourceScenario scenario)
-        {
-            _dbcontext.ResourceScenario.Remove(scenario);
-            await _dbcontext.SaveChangesAsync();
-        }
+        #endregion
 
-        public async Task AddFinancialResourceAsync(FinancialResource resource)
-        {
-            _dbcontext.FinancialResource.Add(resource);
-            await _dbcontext.SaveChangesAsync();
-        }
-
-        public async Task RemoveFinancialResourceAsync(FinancialResource resource)
-        {
-            _dbcontext.FinancialResource.Remove(resource);
-            await _dbcontext.SaveChangesAsync();
-        }
-
-        public async Task AddStaffResourceAsync(StaffResource resource)
-        {
-            _dbcontext.StaffResource.Add(resource);
-            await _dbcontext.SaveChangesAsync();
-        }
-
-        public async Task RemoveStaffResourceAsync(StaffResource resource)
-        {
-            _dbcontext.StaffResource.Remove(resource);
-            await _dbcontext.SaveChangesAsync();
-        }
-
-        public async Task AddFinancialResourceCategoryAsync(FinancialResourceCategory category)
-        {
-            _dbcontext.FinancialResourceCategory.Add(category);
-            await _dbcontext.SaveChangesAsync();
-        }
-
-        public async Task RemoveFinancialResourceCategoryAsync(FinancialResourceCategory category)
-        {
-            _dbcontext.Remove(category);
-            await _dbcontext.SaveChangesAsync();
-        }
-
-        public async Task AddFinancialResourcePartitionAsync(FinancialResourcePartition partition)
-        {
-            _dbcontext.FinancialResourcePartition.Add(partition);
-            await _dbcontext.SaveChangesAsync();
-        }
-
-        public async Task RemoveFinancialResourcePartitionAsync(FinancialResourcePartition partition)
-        {
-            _dbcontext.FinancialResourcePartition.Remove(partition);
-            await _dbcontext.SaveChangesAsync();
-        }
+        #region Financial Resource
 
         public IEnumerable<FinancialResource> FinancialResources
         {
             get 
             {
-                return _dbcontext.FinancialResource.ToList();
-            }
-        }
-
-        public IEnumerable<StaffResource> StaffResources
-        {
-            get
-            {
-                return _dbcontext.StaffResource
-                    .Include(sr => sr.Categories)
-                    .ThenInclude(src => src.StaffResourceCategory)
+                return _dbcontext.FinancialResource
+                    .Include(fr => fr.ResourceScenario)
+                    .ThenInclude(rs => rs.Group)
                     .ToList();
             }
         }
@@ -365,5 +326,96 @@ namespace MPWebAPI.Models
                     .ToList();
             }
         }
+
+        public async Task AddFinancialResourceAsync(FinancialResource resource)
+        {
+            _dbcontext.FinancialResource.Add(resource);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveFinancialResourceAsync(FinancialResource resource)
+        {
+            _dbcontext.FinancialResource.Remove(resource);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task AddFinancialResourceCategoryAsync(FinancialResourceCategory category)
+        {
+            _dbcontext.FinancialResourceCategory.Add(category);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveFinancialResourceCategoryAsync(FinancialResourceCategory category)
+        {
+            _dbcontext.Remove(category);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task AddFinancialResourcePartitionAsync(FinancialResourcePartition partition)
+        {
+            _dbcontext.FinancialResourcePartition.Add(partition);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveFinancialResourcePartitionAsync(FinancialResourcePartition partition)
+        {
+            _dbcontext.FinancialResourcePartition.Remove(partition);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task AddCategoriesToFinancialPartitionAsync(FinancialResourcePartition partition,
+            IEnumerable<FinancialResourceCategory> categories)
+        {
+            var partitionCategories =
+                categories.Select(
+                    c =>
+                        new PartitionResourceCategory
+                        {
+                            FinancialResourceCategory = c,
+                            FinancialResourcePartition = partition
+                        });
+
+            _dbcontext.PartitionResourceCategory.AddRange(partitionCategories);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveCategoriesFromFinancialPartitionAsync(FinancialResourcePartition partition,
+            IEnumerable<FinancialResourceCategory> categories)
+        {
+            var prcs = _dbcontext.PartitionResourceCategory
+                .Where(p => p.FinancialResourcePartitionId == partition.Id && categories.Contains(p.FinancialResourceCategory));
+            
+            _dbcontext.PartitionResourceCategory.RemoveRange(prcs);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        #endregion
+
+        #region Staff Resource
+
+        public IEnumerable<StaffResource> StaffResources
+        {
+            get
+            {
+                return _dbcontext.StaffResource
+                    .Include(sr => sr.Categories)
+                    .ThenInclude(src => src.StaffResourceCategory)
+                    .ToList();
+            }
+        }
+
+        public async Task AddStaffResourceAsync(StaffResource resource)
+        {
+            _dbcontext.StaffResource.Add(resource);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveStaffResourceAsync(StaffResource resource)
+        {
+            _dbcontext.StaffResource.Remove(resource);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        #endregion
     }    
 }

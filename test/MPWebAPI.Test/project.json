@@ -2,19 +2,15 @@
   "testRunner": "xunit",
   
   "dependencies": {
-    
     "MPWebAPI": {
       "version": "0.1.0",
       "target": "project"
     },
-    "Microsoft.NETCore.App": {
-      "version": "1.0.0",
-      "type": "platform"
-    },
     "xunit": "2.2.0-beta3-build3402",
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "Microsoft.AspNetCore.TestHost": "1.0.0",
-    "Moq": "4.6.38-alpha"
+    "Moq": "4.6.38-alpha",
+    "Microsoft.NETCore.App": "1.0.1"
   },
 
   "frameworks": {
