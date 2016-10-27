@@ -1,5 +1,4 @@
-using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -73,8 +72,11 @@ namespace MPWebAPI.Controllers
 
         public class NewPartitionRequest : INewPartitionRequest
         {
+            [Required]
             public string[] Categories { get; set; }
-            public decimal StartingAjdustment { get; set; }
+
+            [Required]
+            public decimal StartingAdjustment { get; set; }
         }
 
         [HttpPost("{id}/partition")]
@@ -83,6 +85,7 @@ namespace MPWebAPI.Controllers
         public async Task<IActionResult> CreatePartitions(int id, [FromBody] NewPartitionRequest[] request)
         {
             var resource = _repository.FinancialResources.First(rs => rs.Id == id);
+            //_logger.LogDebug($"resquests: {request.Length}");
             var result = await _businessLogic.AddFinancialResourcePartitionsAsync(resource, request);
             
             if (result.Succeeded)
@@ -91,6 +94,14 @@ namespace MPWebAPI.Controllers
             }
           
             return BadRequest(result.Errors);
+        }
+
+        [HttpGet("{id}/partition")]
+        [ValidateFinancialResourceExists]
+        public IActionResult GetPartitions(int id)
+        {
+            var resource = _repository.FinancialResources.First(fr => fr.Id == id);
+            return new JsonResult( resource.Partitions.Select(p => new FinancialResourcePartitionViewModel(p)));
         }
     }
 }

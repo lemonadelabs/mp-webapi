@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace MPWebAPI.Models
@@ -20,14 +22,17 @@ namespace MPWebAPI.Models
     {
         private readonly IMerlinPlanRepository _respository;
         private readonly IOptions<MerlinPlanBLOptions> _options;
+        private readonly ILogger _logger;
         
         public MerlinPlanBL(
             IOptions<MerlinPlanBLOptions> options, 
-            IMerlinPlanRepository mprepo
+            IMerlinPlanRepository mprepo,
+            ILoggerFactory loggerFactory
             )
         {
             _respository = mprepo;
             _options = options;
+            _logger = loggerFactory.CreateLogger<MerlinPlanBL>();
         }
         
         /// <summary>
@@ -125,29 +130,27 @@ namespace MPWebAPI.Models
         /// <returns></returns>
         public async Task<MerlinPlanBLResult> DeleteFinancialResourceCategoryAsync(FinancialResourceCategory frc)
         {
+            
             var result = new MerlinPlanBLResult();
             if (frc.FinancialPartitions.Count == 0 && frc.Transactions.Count == 0)
             {
                 await _respository.RemoveFinancialResourceCategoryAsync(frc);
                 return result;
             }
-            else
+            if (frc.FinancialPartitions.Count > 0)
             {
-                if (frc.FinancialPartitions.Count > 0)
-                {
-                    result.AddError(
-                        "FinancialPartitions", 
-                        $"Cannot delete {frc.Name} there are Financial Resource Partitions using this category.");    
-                }
+                result.AddError(
+                    "FinancialPartitions", 
+                    $"Cannot delete {frc.Name} there are Financial Resource Partitions using this category.");    
+            }
 
-                if (frc.Transactions.Count > 0)
-                {
-                    result.AddError(
-                        "Transactions", 
-                        $"Cannot delete {frc.Name} there are Financial Transactions using this category.");    
-                }
-                return result;                
-            }            
+            if (frc.Transactions.Count > 0)
+            {
+                result.AddError(
+                    "Transactions", 
+                    $"Cannot delete {frc.Name} there are Financial Transactions using this category.");    
+            }
+            return result;
         }
 
         /// <summary>
@@ -215,25 +218,28 @@ namespace MPWebAPI.Models
                     newPartitionRequest.Categories.All(
                         c => _respository.FinancialResourceCategories.Any(frc => frc.Name == c));
 
-                if (!categoriesExist) continue;
-                
-                // for each partition in this resource:
-                // check that partition does not exist with those categories
-                foreach (var frp in resource.Partitions)
+                if (categoriesExist)
                 {
-                    var pCatNames = frp.Categories.Select(frc => frc.FinancialResourceCategory.Name).ToList();
-                    var hasAllCats = newPartitionRequest.Categories.All(c => pCatNames.Contains(c));
-                    if (hasAllCats && (pCatNames.Count == newPartitionRequest.Categories.Length))
+                    // for each partition in this resource:
+                    // check that partition does not exist with those categories
+                    foreach (var frp in resource.Partitions)
                     {
-                        // we already have a partition with these categories, return a bad request
-                        result.AddError("Categories", $"A partition already exists with the categories {string.Join(", ", pCatNames)}");
+                        var pCatNames = frp.Categories.Select(frc => frc.FinancialResourceCategory.Name).ToList();
+                        var hasAllCats = newPartitionRequest.Categories.All(c => pCatNames.Contains(c));
+                        if (hasAllCats && (pCatNames.Count == newPartitionRequest.Categories.Length))
+                        {
+                            // we already have a partition with these categories, return a bad request
+                            result.AddError("Categories",
+                                $"A partition already exists with the categories {string.Join(", ", pCatNames)}");
+                            return result;
+                        }
                     }
-                    return result;
                 }
 
                 // we can now safely add some new partitions
                 var newPartition = new FinancialResourcePartition {FinancialResource = resource};
                 await _respository.AddFinancialResourcePartitionAsync(newPartition);
+                //_logger.LogDebug($"Created new partition with Id = {newPartition.Id}");
                 
                 // Add the categories, create if nessesary
                 var npCategories = newPartitionRequest.Categories
@@ -253,6 +259,20 @@ namespace MPWebAPI.Models
                     }
                 });
                 await _respository.AddCategoriesToFinancialPartitionAsync(newPartition, npCategories);
+
+                // Add starting adjustment
+                if (newPartitionRequest.StartingAdjustment == 0) continue;
+
+                var newAdjustment = new FinancialAdjustment()
+                {
+                    Actual = false,
+                    Additive = false,
+                    Date = resource.StartDate,
+                    FinancialResourcePartition = newPartition,
+                    Value = newPartitionRequest.StartingAdjustment
+                };
+
+                await _respository.AddAdjustmentToFinancialResourceAsync(newAdjustment);
             }
             return result;
         }

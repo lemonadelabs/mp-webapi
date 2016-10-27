@@ -24,6 +24,7 @@ namespace MPWebAPI
             if (env.IsDevelopment())
             {
                 builder = builder.AddUserSecrets("io.lemonadelabs.mp-webapi");
+                builder.AddApplicationInsightsSettings(developerMode: true);
             }
 
             builder = builder.AddEnvironmentVariables();
@@ -40,7 +41,8 @@ namespace MPWebAPI
             var sqlConnectionString = Configuration["DevDBConnectionString"];
             
             services.AddOptions();
-            
+            services.AddApplicationInsightsTelemetry(Configuration);
+
             services.Configure<MerlinPlanBLOptions>(
                 Configuration.GetSection("BusinessRules"));
 
@@ -90,8 +92,12 @@ namespace MPWebAPI
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            app.UseApplicationInsightsRequestTelemetry();
+            app.UseApplicationInsightsExceptionTelemetry();
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
             app.UseIdentity();
             app.UseOAuthValidation();
             app.UseOpenIddict();
@@ -108,14 +114,12 @@ namespace MPWebAPI
             app.UseMvc();
            
             var fixtureConfig = Configuration.GetSection("Fixtures");
-            if(fixtureConfig.GetValue<bool>("Enabled"))
-            {
-                var fixtureBuilder =  app.ApplicationServices.GetService<IFixtureBuilder>();
-                fixtureBuilder.AddFixture(
-                    fixtureConfig.GetValue<string>("Fixture"),
-                    fixtureConfig.GetValue<bool>("FlushDB")
-                );
-            }
+            if (!fixtureConfig.GetValue<bool>("Enabled")) return;
+            var fixtureBuilder =  app.ApplicationServices.GetService<IFixtureBuilder>();
+            fixtureBuilder.AddFixture(
+                fixtureConfig.GetValue<string>("Fixture"),
+                fixtureConfig.GetValue<bool>("FlushDB")
+            );
         }
     }
 }

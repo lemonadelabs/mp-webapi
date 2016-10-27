@@ -27,7 +27,7 @@ namespace MPWebAPI.Models
     public interface INewPartitionRequest
     {
         string[] Categories { get; set; }
-        decimal StartingAjdustment { get; set; }
+        decimal StartingAdjustment { get; set; }
     }
 }
 
