@@ -7,7 +7,7 @@ using MPWebAPI.Models;
 
 namespace MPWebAPI.ViewModels
 {
-    public class StaffResourceViewModel : ViewModel, IValidatableObject
+    public sealed class StaffResourceViewModel : ViewModel, IValidatableObject
     {
         public StaffResourceViewModel() {}
 
@@ -38,8 +38,7 @@ namespace MPWebAPI.ViewModels
         [Required]
         public DateTime StartDate { get; set; }
 
-        [Required]
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         public List<string> Categories { get; set; }
         public UserViewModel UserData { get; set; }
@@ -47,7 +46,7 @@ namespace MPWebAPI.ViewModels
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             // EndDate cant be before StartDate
-            if (EndDate <= StartDate)
+            if (EndDate.HasValue && EndDate <= StartDate)
             {
                 yield return new ValidationResult(
                     "EndDate should not be before StartDate",

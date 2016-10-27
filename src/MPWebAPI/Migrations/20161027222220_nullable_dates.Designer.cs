@@ -8,9 +8,10 @@ using MPWebAPI.Models;
 namespace MPWebAPI.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class PostgresDBContextModelSnapshot : ModelSnapshot
+    [Migration("20161027222220_nullable_dates")]
+    partial class nullable_dates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1");

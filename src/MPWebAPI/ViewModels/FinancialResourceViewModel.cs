@@ -5,7 +5,7 @@ using MPWebAPI.Models;
 
 namespace MPWebAPI.ViewModels
 {
-    public class FinancialResourceViewModel : ViewModel, IValidatableObject
+    public sealed class FinancialResourceViewModel : ViewModel, IValidatableObject
     {
         public FinancialResourceViewModel(FinancialResource model)
         {
@@ -24,13 +24,12 @@ namespace MPWebAPI.ViewModels
         [Required]
         public DateTime StartDate { get; set; }
         
-        [Required]
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             // Check EndDate is not before StartDate
-            if (EndDate <= StartDate)
+            if (EndDate.HasValue && EndDate <= StartDate)
             {
                 yield return new ValidationResult(
                     "EndDate is before StartDate",

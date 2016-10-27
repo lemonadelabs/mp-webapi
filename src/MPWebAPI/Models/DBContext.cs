@@ -143,10 +143,6 @@ namespace MPWebAPI.Models
                 .Property(fr => fr.StartDate)
                 .IsRequired();
             
-            builder.Entity<FinancialResource>()
-                .Property(fr => fr.EndDate)
-                .IsRequired();
-            
             // FinancialResourcePartition
             builder.Entity<FinancialResourcePartition>()
                 .HasOne(frp => frp.FinancialResource)
@@ -536,10 +532,6 @@ namespace MPWebAPI.Models
             
             builder.Entity<StaffResource>()
                 .Property(sr => sr.StartDate)
-                .IsRequired();
-            
-            builder.Entity<StaffResource>()
-                .Property(sr => sr.EndDate)
                 .IsRequired();
             
             builder.Entity<StaffResource>()
