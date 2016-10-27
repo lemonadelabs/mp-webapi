@@ -13,7 +13,7 @@ namespace MPWebAPI.Models
         public string Name { get; set; }
         public List<FinancialResourcePartition> Partitions { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         public int ResourceScenarioId { get; set; }
         public ResourceScenario ResourceScenario { get; set; }
