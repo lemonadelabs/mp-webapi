@@ -200,7 +200,7 @@ namespace MPWebAPI.Models
             return new MerlinPlanBLResult();
         }
 
-        public async Task<MerlinPlanBLResult> AddFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<INewPartitionRequest> partitions)
+        public async Task<MerlinPlanBLResult>  AddFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<INewPartitionRequest> partitions)
         {
             var result = new MerlinPlanBLResult();
             
@@ -263,16 +263,30 @@ namespace MPWebAPI.Models
                 // Add starting adjustment
                 if (newPartitionRequest.StartingAdjustment == 0) continue;
 
-                var newAdjustment = new FinancialAdjustment()
+                var newStartAdjustment = new FinancialAdjustment()
                 {
-                    Actual = false,
+                    Actual = newPartitionRequest.Actual,
                     Additive = false,
                     Date = resource.StartDate,
                     FinancialResourcePartition = newPartition,
                     Value = newPartitionRequest.StartingAdjustment
                 };
 
-                await _respository.AddAdjustmentToFinancialResourceAsync(newAdjustment);
+                await _respository.AddAdjustmentToFinancialResourceAsync(newStartAdjustment);
+
+                // Add ending adjustment if the financial resource has an end date
+                if (resource.EndDate == null) continue;
+
+                var newEndAdjustment = new FinancialAdjustment()
+                {
+                    Actual = newPartitionRequest.Actual,
+                    Additive = false,
+                    Date = (DateTime) resource.EndDate,
+                    FinancialResourcePartition = newPartition,
+                    Value = 0
+                };
+
+                await _respository.AddAdjustmentToFinancialResourceAsync(newEndAdjustment);
             }
             return result;
         }

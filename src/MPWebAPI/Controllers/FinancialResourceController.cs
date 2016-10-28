@@ -77,6 +77,7 @@ namespace MPWebAPI.Controllers
 
             [Required]
             public decimal StartingAdjustment { get; set; }
+            public bool Actual { get; set; }
         }
 
         [HttpPost("{id}/partition")]

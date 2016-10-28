@@ -28,6 +28,7 @@ namespace MPWebAPI.Models
     {
         string[] Categories { get; set; }
         decimal StartingAdjustment { get; set; }
+        bool Actual { get; set; }
     }
 }
 
