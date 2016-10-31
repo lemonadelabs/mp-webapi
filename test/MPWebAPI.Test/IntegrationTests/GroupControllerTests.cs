@@ -14,17 +14,17 @@ namespace MPWebAPI.Test.IntegrationTests
 {
     public class GroupControllerTests : IClassFixture<IntegrationFixture>
     {
-        IntegrationFixture fixture;
+        private readonly IntegrationFixture _fixture;
 
         public GroupControllerTests(IntegrationFixture fixture)
         {
-            this.fixture = fixture;
+            _fixture = fixture;
         }
 
         [Fact]
         public async Task GetGroups()
         {
-            var response = await fixture.GetJSONResult<List<GroupViewModel>>("/api/group");
+            var response = await _fixture.GetJSONResult<List<GroupViewModel>>("/api/group");
             var gr = response.JSONData.FirstOrDefault();
             Assert.NotNull(gr);
             Assert.Equal("EPMO", gr.Name);
@@ -34,7 +34,7 @@ namespace MPWebAPI.Test.IntegrationTests
         [Fact]
         public async Task GetExistingGroup()
         {
-             var response = await fixture.GetJSONResult<GroupViewModel>("/api/group/1");
+             var response = await _fixture.GetJSONResult<GroupViewModel>("/api/group/1");
              Assert.NotNull(response.JSONData);
              Assert.Equal("EPMO", response.JSONData.Name);
              Assert.Equal(HttpStatusCode.OK, response.response.StatusCode);
@@ -47,7 +47,7 @@ namespace MPWebAPI.Test.IntegrationTests
         [InlineData("foo")]
         public async Task GetInvalidGroup(string id)
         {
-            var response = await fixture.GetJSONResult<GroupViewModel>($"/api/group/{id}");
+            var response = await _fixture.GetJSONResult<GroupViewModel>($"/api/group/{id}");
             Assert.Null(response.JSONData);
             Assert.Equal(HttpStatusCode.NotFound, response.response.StatusCode);
         }
@@ -55,7 +55,7 @@ namespace MPWebAPI.Test.IntegrationTests
         [Fact]
         public async Task GetGroupUsers()
         {
-            var response = await fixture.GetJSONResult<List<UserViewModel>>("/api/group/1/user");
+            var response = await _fixture.GetJSONResult<List<UserViewModel>>("/api/group/1/user");
             Assert.NotNull(response.JSONData);
             var u = response.JSONData.FirstOrDefault(us => us.UserName == "friedrich@don.govt.nz");
             Assert.Equal("EPMO", u.Groups.First().Name);
@@ -69,7 +69,7 @@ namespace MPWebAPI.Test.IntegrationTests
         [InlineData("foo")]
         public async Task GetUsersOfInvalidGroup(string id)
         {
-            var response = await fixture.GetJSONResult<List<UserViewModel>>($"/api/group/{id}/user");
+            var response = await _fixture.GetJSONResult<List<UserViewModel>>($"/api/group/{id}/user");
             Assert.Null(response.JSONData);
             Assert.Equal(HttpStatusCode.NotFound, response.response.StatusCode);
         }
@@ -81,9 +81,9 @@ namespace MPWebAPI.Test.IntegrationTests
                 Name = "New Group",
                 OrganisationId = 1
             };
-            var postResponse = await fixture.Client.PostAsJsonAsync("/api/group", newGroup);
+            var postResponse = await _fixture.Client.PostAsJsonAsync("/api/group", newGroup);
             Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
-            var getResponse = await fixture.GetJSONResult<GroupViewModel>("/api/group/3");
+            var getResponse = await _fixture.GetJSONResult<GroupViewModel>("/api/group/3");
             Assert.NotNull(getResponse.JSONData);
             Assert.Equal(HttpStatusCode.OK, getResponse.response.StatusCode);
             Assert.Equal("New Group", getResponse.JSONData.Name);
@@ -105,41 +105,41 @@ namespace MPWebAPI.Test.IntegrationTests
             
             var g = groups[index];
 
-            var postResponse = await fixture.Client.PostAsJsonAsync("/api/group", g);
+            var postResponse = await _fixture.Client.PostAsJsonAsync("/api/group", g);
             Assert.Equal(HttpStatusCode.BadRequest, postResponse.StatusCode);
         }
 
         [Fact]
         public async Task AddUserToGroup()
         {
-            var user = await fixture.DBContext.Users.FirstOrDefaultAsync(u => u.UserName == "sam@lemonadelabs.io");
+            var user = await _fixture.DBContext.Users.FirstOrDefaultAsync(u => u.UserName == "sam@lemonadelabs.io");
             Assert.NotNull(user);
-            Assert.False(await fixture.DBContext.UserGroup.AnyAsync(ug => ug.GroupId == 2 && ug.UserId == user.Id));
+            Assert.False(await _fixture.DBContext.UserGroup.AnyAsync(ug => ug.GroupId == 2 && ug.UserId == user.Id));
             var ur = new GroupController.UserRequest();
             ur.Users = new List<string> {user.Id};
-            var postResponse = await fixture.Client.PutAsJsonAsync("/api/group/2/adduser", ur);
+            var postResponse = await _fixture.Client.PutAsJsonAsync("/api/group/2/adduser", ur);
             Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
-            Assert.True(await fixture.DBContext.UserGroup.AnyAsync(ug => ug.UserId == user.Id && ug.GroupId == 2));
+            Assert.True(await _fixture.DBContext.UserGroup.AnyAsync(ug => ug.UserId == user.Id && ug.GroupId == 2));
         }
 
         [Fact]
         public async Task RemoveUserFromGroup()
         {
-            var user = await fixture.DBContext.Users.FirstOrDefaultAsync(u => u.UserName == "sam@lemonadelabs.io");
+            var user = await _fixture.DBContext.Users.FirstOrDefaultAsync(u => u.UserName == "sam@lemonadelabs.io");
             Assert.NotNull(user);
-            Assert.True(await fixture.DBContext.UserGroup.AnyAsync(ug => ug.GroupId == 1 && ug.UserId == user.Id));
+            Assert.True(await _fixture.DBContext.UserGroup.AnyAsync(ug => ug.GroupId == 1 && ug.UserId == user.Id));
             var ur = new GroupController.UserRequest();
             ur.Users = new List<string> {user.Id};
-            var postResponse = await fixture.Client.PutAsJsonAsync("/api/group/1/removeuser", ur);
+            var postResponse = await _fixture.Client.PutAsJsonAsync("/api/group/1/removeuser", ur);
             Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
-            Assert.False(await fixture.DBContext.UserGroup.AnyAsync(ug => ug.UserId == user.Id && ug.GroupId == 1));
+            Assert.False(await _fixture.DBContext.UserGroup.AnyAsync(ug => ug.UserId == user.Id && ug.GroupId == 1));
         }
 
         [Fact]
         public async Task ParentGroup()
         {
             
-            var dbcontext = fixture.DBContext;
+            var dbcontext = _fixture.DBContext;
             
             var childGroup = dbcontext.Group
                 .Include(g => g.Parent)
@@ -154,9 +154,9 @@ namespace MPWebAPI.Test.IntegrationTests
             Assert.Null(childGroup.Parent);
             Assert.Equal(0, parentGroup.Children.Count);
             
-            var putResponse = await fixture.Client.PutAsJsonAsync("/api/group/1/group/2", "");
+            var putResponse = await _fixture.Client.PutAsJsonAsync("/api/group/1/group/2", "");
 
-            dbcontext = fixture.DBContext;
+            dbcontext = _fixture.DBContext;
 
             childGroup = dbcontext.Group
                 .Include(g => g.Parent)
@@ -174,9 +174,9 @@ namespace MPWebAPI.Test.IntegrationTests
         [Fact]
         public async Task UnparentGroup()
         {
-            var putResponse = await fixture.Client.PutAsJsonAsync("/api/group/1/group/2", "");
+            var putResponse = await _fixture.Client.PutAsJsonAsync("/api/group/1/group/2", "");
 
-            var dbcontext = fixture.DBContext;
+            var dbcontext = _fixture.DBContext;
             
             var childGroup = dbcontext.Group
                 .Include(g => g.Parent)
@@ -192,9 +192,9 @@ namespace MPWebAPI.Test.IntegrationTests
             Assert.Equal(parentGroup, childGroup.Parent);
             Assert.True(parentGroup.Children.Contains(childGroup));
 
-            putResponse = await fixture.Client.PutAsJsonAsync("/api/group/1/group", "");
+            putResponse = await _fixture.Client.PutAsJsonAsync("/api/group/1/group", "");
             
-            childGroup = fixture.DBContext.Group
+            childGroup = _fixture.DBContext.Group
                 .Include(g => g.Parent)
                 .FirstOrDefault(g => g.Id == 1);
             

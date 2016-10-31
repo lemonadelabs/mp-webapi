@@ -22,8 +22,10 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> AddFinancialResourceAsync(FinancialResource resource);
         Task<MerlinPlanBLResult> AddFinancialResourceCategoriesAsync(Group group, IEnumerable<FinancialResourceCategory> categories);
         Task<MerlinPlanBLResult> AddFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<INewPartitionRequest> partitions);
+        Task<MerlinPlanBLResult> UpdateFinancialResourceAsync(FinancialResource resource);
     }
 
+    // Data object interfaces
     public interface INewPartitionRequest
     {
         string[] Categories { get; set; }

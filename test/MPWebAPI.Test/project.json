@@ -1,6 +1,8 @@
 {
   "testRunner": "xunit",
-  
+
+  "userSecretsId": "io.lemonadelabs.mp-webapi",
+
   "dependencies": {
     "MPWebAPI": {
       "version": "0.1.0",
@@ -13,11 +15,24 @@
     "Microsoft.NETCore.App": "1.0.1"
   },
 
+
+  "runtimes": {
+    "win10-x64": {}
+  },
+
+
+  "publishOptions": {
+    "include": [
+      "Fixtures"
+    ]
+  },
+
+
   "frameworks": {
     "netcoreapp1.0": {
       "imports": [
         "dotnet54",
-        "portable-net45+win8" 
+        "portable-net45+win8"
       ]
     }
   }

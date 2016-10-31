@@ -197,6 +197,35 @@ namespace MPWebAPI.Models
 
             var fp = new FinancialResourcePartition {FinancialResource = resource};
             await _respository.AddFinancialResourcePartitionAsync(fp);
+
+            var partition = _respository.FinancialResourcePartitions.Single(p => p.Id == fp.Id);
+
+            // Add the start and end adjustments for the default partition
+            var startAjustment = new FinancialAdjustment()
+            {
+                FinancialResourcePartition = fp,
+                Date = resource.StartDate,
+                Value = 0,
+                Actual = false,
+                Additive = false,
+            };
+
+            partition.Adjustments.Add(startAjustment);
+
+            if (resource.EndDate.HasValue)
+            {
+                var endAdjustment = new FinancialAdjustment()
+                {
+                    FinancialResourcePartition = fp,
+                    Date = resource.EndDate.Value,
+                    Value = 0,
+                    Actual = false,
+                    Additive = false
+                };
+                partition.Adjustments.Add(endAdjustment);
+            }
+
+            await _respository.SaveChangesAsync();
             return new MerlinPlanBLResult();
         }
 
@@ -251,13 +280,12 @@ namespace MPWebAPI.Models
                     })
                     .ToList();
 
-                npCategories.ForEach(async npc =>
+                foreach (var category in npCategories)
                 {
-                    if (!_respository.FinancialResourceCategories.Contains(npc))
-                    {
-                        await _respository.AddFinancialResourceCategoryAsync(npc);
-                    }
-                });
+                    if (_respository.FinancialResourceCategories.Contains(category)) continue;
+                    await _respository.AddFinancialResourceCategoryAsync(category);
+                }
+
                 await _respository.AddCategoriesToFinancialPartitionAsync(newPartition, npCategories);
 
                 // Add starting adjustment
@@ -291,7 +319,66 @@ namespace MPWebAPI.Models
             return result;
         }
 
-        
+        public async Task<MerlinPlanBLResult> UpdateFinancialResourceAsync(FinancialResource resource)
+        {
+            var result = new MerlinPlanBLResult();
+            
+            // we need to check and see if the resource scenario is locked.
+            // If it's locked, then we cant edit the financial resource.
+            if (resource.ResourceScenario.Approved)
+            {
+                result.AddError("Approved", "The resource belongs to an approved scenario and cannot be edited.");
+                return result;
+            }
+
+            foreach (var partition in resource.Partitions.ToList())
+            {
+                // Handle updating the start date
+                var first = partition.Adjustments.OrderBy(a => a.Date).FirstOrDefault();
+                if (first != null && first.Date != resource.StartDate)
+                {
+                    first.Date = resource.StartDate;
+                }
+
+                // Handle adding or nulling the enddate
+                if (
+                    resource.EndDate.HasValue &&
+                    resource.EndDate != resource.StartDate && 
+                    partition.Adjustments.Count <= 1
+                    )
+                {
+                    var newAdjustment = new FinancialAdjustment()
+                    {
+                        FinancialResourcePartition = partition,
+                        Date = resource.EndDate.Value,
+                        Actual = false,
+                        Additive = false,
+                        Value = 0,
+                    };
+                    partition.Adjustments.Add(newAdjustment);
+                }
+                else if (!resource.EndDate.HasValue && partition.Adjustments.Count >= 2)
+                {
+                    // We need to remove the end transaction as the enddate has been nullified.
+                    var last = partition.Adjustments.OrderByDescending(a => a.Date).FirstOrDefault();
+                    if (last != null)
+                    {
+                        partition.Adjustments.Remove(last);
+                    }
+                }
+                else if(resource.EndDate.HasValue && partition.Adjustments.Count >= 2)
+                {
+                    var last = partition.Adjustments.OrderByDescending(a => a.Date).FirstOrDefault();
+                    if (last != null && last.Date != resource.EndDate.Value)
+                    {
+                        last.Date = resource.EndDate.Value;
+                    }
+                }
+            }
+
+            await _respository.SaveChangesAsync();
+            return result;
+        }
     }
     
 

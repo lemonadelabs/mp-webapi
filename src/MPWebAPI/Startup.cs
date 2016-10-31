@@ -18,9 +18,8 @@ namespace MPWebAPI
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
-
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            
             if (env.IsDevelopment())
             {
                 builder = builder.AddUserSecrets("io.lemonadelabs.mp-webapi");
@@ -112,6 +111,7 @@ namespace MPWebAPI
                 }
             );
             app.UseMvc();
+            
            
             var fixtureConfig = Configuration.GetSection("Fixtures");
             if (!fixtureConfig.GetValue<bool>("Enabled")) return;

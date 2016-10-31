@@ -24,7 +24,7 @@ namespace MPWebAPI.Fixtures
         protected class FixtureData
         {
             public List<Organisation> Organisations { get; set; }
-            
+
             public class PortfolioFixture
             {
                 public class ProjectConfigFixture
@@ -35,15 +35,15 @@ namespace MPWebAPI.Fixtures
                         public DateTime EndDate { get; set; }
                         public string ProjectPhase { get; set; }
                     }
-                    
+
                     public DateTime StartDate { get; set; }
                     public string Project { get; set; }
                     public string Option { get; set; }
                     public string Owner { get; set; }
                     public List<string> Managers { get; set; }
-                    public List<PhaseConfigFixture> Phases { get; set; }                   
+                    public List<PhaseConfigFixture> Phases { get; set; }
                 }
-                
+
                 public string Creator { get; set; }
                 public string Group { get; set; }
                 public string Name { get; set; }
@@ -66,10 +66,10 @@ namespace MPWebAPI.Fixtures
                         public DateTime Date { get; set; }
                         public bool Actual { get; set; }
                     }
-                    
+
                     public string Name { get; set; }
                     public DateTime StartDate { get; set; }
-                    public DateTime EndDate { get; set; }
+                    public DateTime? EndDate { get; set; }
                     public List<string> Categories { get; set; }
                     public List<StaffAdjustmentFixture> Adjustments { get; set; }
                 }
@@ -85,17 +85,17 @@ namespace MPWebAPI.Fixtures
                             public DateTime Date { get; set; }
                             public bool Actual { get; set; }
                         }
-                        
+
                         public List<string> Categories { get; set; }
                         public List<FinancialResourceAdjustmentFixture> Adjustments { get; set; }
                     }
-                    
+
                     public string Name { get; set; }
                     public List<FinancialResourcePartitionFixture> Partitions { get; set; }
                     public DateTime StartDate { get; set; }
-                    public DateTime EndDate { get; set; }
+                    public DateTime? EndDate { get; set; }
                 }
-                
+
                 public string Name { get; set; }
                 public string Creator { get; set; }
                 public string Group { get; set; }
@@ -121,7 +121,7 @@ namespace MPWebAPI.Fixtures
                 public List<string> Roles { get; set; }
                 public List<string> Groups { get; set; }
             }
-            
+
             public class BusinessUnitFixture
             {
                 public string Name { get; set; }
@@ -160,7 +160,7 @@ namespace MPWebAPI.Fixtures
             {
                 public class OptionsFixture
                 {
-                    
+
                     public class RiskProfileFixture
                     {
                         public string Category { get; set; }
@@ -180,14 +180,14 @@ namespace MPWebAPI.Fixtures
                             public DateTime Date { get; set; }
                             public string AlignmentCategory { get; set; }
                         }
-                        
+
                         public string Name { get; set; }
                         public string Description { get; set; }
                         public bool Achieved { get; set; }
                         public List<AlignmentFixture> Alignments { get; set; }
                         public List<string> Categories { get; set; }
                     }
-                    
+
                     public class PhaseFixture
                     {
                         public class FinancialTransactionFixture
@@ -206,14 +206,14 @@ namespace MPWebAPI.Fixtures
                             public string Category { get; set; }
                             public string StaffResource { get; set; }
                         }
-                        
+
                         public string Name { get; set; }
                         public string BusinessCase { get; set; }
                         public DateTime StartDate { get; set; }
                         public DateTime EndDate { get; set; }
                         public List<FinancialTransactionFixture> FinancialResources { get; set; }
                         public List<StaffTransactionFixture> StaffResources { get; set; }
-                       
+
                     }
 
                     public class DependencyFixture
@@ -221,7 +221,7 @@ namespace MPWebAPI.Fixtures
                         public string Project { get; set; }
                         public string Option { get; set; }
                     }
-                    
+
                     public string Description { get; set; }
                     public float Priority { get; set; }
                     public float Complexity { get; set; }
@@ -230,12 +230,12 @@ namespace MPWebAPI.Fixtures
                     public List<ProjectBenefitFixture> Benefits { get; set; }
                     public List<DependencyFixture> Dependencies { get; set; }
                 }
-                
+
                 public string Name { get; set; }
                 public string Summary { get; set; }
                 public string Creator { get; set; }
                 public string Group { get; set; }
-               
+
                 public string OwningBusinessUnit { get; set; }
                 public string ImpactedBusinessUnit { get; set; }
                 public List<OptionsFixture> Options { get; set; }
@@ -247,7 +247,7 @@ namespace MPWebAPI.Fixtures
                 public string Description { get; set; }
                 public string Group { get; set; }
             }
-            
+
             public List<GroupFixture> Groups { get; set; }
             public List<BusinessUnitFixture> BusinessUnits { get; set; }
             public List<RiskCategoryFixture> RiskCategories { get; set; }
@@ -268,40 +268,50 @@ namespace MPWebAPI.Fixtures
         private FixtureData _fixtureData;
 
         public FixtureBuilder(
-            DBContext dbcontext, 
+            DBContext dbcontext,
             ILoggerFactory loggerFactory,
             UserManager<MerlinPlanUser> userManager,
             RoleManager<IdentityRole> roleManager
-            )
+        )
         {
             _dbcontext = dbcontext;
             _logger = loggerFactory.AddDebug().CreateLogger<FixtureBuilder>();
             _userManager = userManager;
             _roleManager = roleManager;
         }
-        
+
         public async Task AddFixture(string fixtureFile, bool flushDb = false)
         {
             var fixturePath = Path.Combine(
                 Directory.GetCurrentDirectory(),
                 Path.Combine("Fixtures", fixtureFile));
-            
+
             string fixtureJSON = null;
-            
+
             try
             {
-                using(StreamReader sr = new StreamReader(File.OpenRead(fixturePath)))
+                using (StreamReader sr = new StreamReader(File.OpenRead(fixturePath)))
                 {
                     fixtureJSON = sr.ReadToEnd();
-                }    
+                }
             }
             catch (System.Exception)
             {
-                _logger.LogError(string.Format("The fixture file {0} could not be loaded, skipping fixture add.", fixturePath));
+                _logger.LogError(string.Format("The fixture file {0} could not be loaded, skipping fixture add.",
+                    fixturePath));
                 return;
             }
 
-            _fixtureData = JsonConvert.DeserializeObject<FixtureData>(fixtureJSON);
+            try
+            {
+                _fixtureData = JsonConvert.DeserializeObject<FixtureData>(fixtureJSON);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"The fixture data file was invalid: {e.Message}");
+                return;
+            }
+           
 
             if(flushDb)
             {

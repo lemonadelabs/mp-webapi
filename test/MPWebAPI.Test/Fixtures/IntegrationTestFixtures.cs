@@ -1,3 +1,4 @@
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -39,14 +40,17 @@ namespace MPWebAPI.Test.Fixtures
              {
                  data = JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
              }
-             catch (Newtonsoft.Json.JsonSerializationException) {}
+             catch (JsonSerializationException) {}
              return new JSONResult<T> {response = response, JSONData = data};
         }
 
         public async Task InitializeAsync()
         {
             Server = new TestServer(
-                new WebHostBuilder().UseStartup<MPWebAPI.Startup>());
+                new WebHostBuilder()
+                .UseEnvironment("development")
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseStartup<Startup>());
             Client = Server.CreateClient();
 
             // Add fixures

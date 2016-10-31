@@ -65,8 +65,12 @@ namespace MPWebAPI.Controllers
             }
 
             viewModel.MapToModel(financialResource);
-            await _repository.SaveChangesAsync();
-            return Ok(new FinancialResourceViewModel(financialResource));
+            var result = await _businessLogic.UpdateFinancialResourceAsync(financialResource);
+            if (result.Succeeded)
+            {
+                return Ok(new FinancialResourceViewModel(financialResource));
+            }
+            return BadRequest(result.Errors);
         }
 
 
