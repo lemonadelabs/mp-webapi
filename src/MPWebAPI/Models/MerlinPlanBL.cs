@@ -34,7 +34,9 @@ namespace MPWebAPI.Models
             _options = options;
             _logger = loggerFactory.CreateLogger<MerlinPlanBL>();
         }
-        
+
+        #region Organisations
+
         /// <summary>
         /// Business logic for creating a new Org. We need to create a default
         /// group and a default admin user.
@@ -50,6 +52,10 @@ namespace MPWebAPI.Models
             };
             await _respository.AddGroupAsync(orgGroup);
         }
+
+        #endregion
+
+        #region Users
 
         /// <summary>
         /// Business logic for creating a new user. Adds the user to the correct 
@@ -80,6 +86,10 @@ namespace MPWebAPI.Models
             }
             return result;
         }
+
+        #endregion
+
+        #region Groups
 
         public async Task<MerlinPlanBLResult> ParentGroupAsync(Group child, Group parent)
         {
@@ -122,6 +132,10 @@ namespace MPWebAPI.Models
             await _respository.UnparentGroupAsync(group);
             return result;
         }
+
+        #endregion
+
+        #region Financial Resources
 
         /// <summary>
         /// Only deletes a FRC if there are currently no Transactions or Partitions using it.
@@ -379,6 +393,22 @@ namespace MPWebAPI.Models
             await _respository.SaveChangesAsync();
             return result;
         }
+
+        public async Task<MerlinPlanBLResult> RemoveFinancialResourcePartitionAsync(FinancialResourcePartition partition)
+        {
+            var result = new MerlinPlanBLResult();
+            
+            // If the resource scenario is approved, we have to forbid this
+            if (partition.FinancialResource.ResourceScenario.Approved)
+            {
+                result.AddError("Approved", "The resource scenario is approved so this partition cannot be removed.");
+                return result;
+            }
+            await _respository.RemoveFinancialResourcePartitionAsync(partition);
+            return result;
+        }
+
+        #endregion
     }
     
 

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
-using System;
 
 namespace MPWebAPI.Models
 {
@@ -23,11 +22,6 @@ namespace MPWebAPI.Models
             _dbcontext = dbcontext;
             _logger = loggerFactory.CreateLogger("MerlinPlanRepository");
             _userManager = userManager;
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await _dbcontext.SaveChangesAsync();
         }
 
         #region Group
@@ -70,9 +64,11 @@ namespace MPWebAPI.Models
 
             if (!exists)
             {
-                var userGroup = new UserGroup();
-                userGroup.Group = @group;
-                userGroup.User = user;
+                var userGroup = new UserGroup
+                {
+                    Group = @group,
+                    User = user
+                };
                 _dbcontext.UserGroup.Add(userGroup);
                 await _dbcontext.SaveChangesAsync();
             }
@@ -94,7 +90,7 @@ namespace MPWebAPI.Models
         public async Task ParentGroupAsync(Group child, Group parent)
         {
             child.Parent = parent;
-            var result = await _dbcontext.SaveChangesAsync();
+            await _dbcontext.SaveChangesAsync();
         }
 
         public async Task UnparentGroupAsync(Group group)
@@ -113,13 +109,7 @@ namespace MPWebAPI.Models
 
         #region Organisation
 
-        public IEnumerable<Organisation> Organisations
-        {
-            get
-            {
-                return _dbcontext.Organisation;
-            }
-        }
+        public IEnumerable<Organisation> Organisations => _dbcontext.Organisation.ToList();
 
         public async Task AddOrganisationAsync(Organisation org)
         {
@@ -322,6 +312,7 @@ namespace MPWebAPI.Models
                 return _dbcontext.FinancialResourcePartition
                     .Include(frp => frp.Adjustments)
                     .Include(frp => frp.FinancialResource)
+                    .ThenInclude(fr => fr.ResourceScenario)
                     .Include(frp => frp.Categories)
                     .ThenInclude(prc => prc.FinancialResourceCategory)
                     .ToList();
@@ -424,5 +415,10 @@ namespace MPWebAPI.Models
         }
 
         #endregion
+
+        public async Task SaveChangesAsync()
+        {
+            await _dbcontext.SaveChangesAsync();
+        }
     }    
 }

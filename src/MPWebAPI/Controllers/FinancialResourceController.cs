@@ -108,5 +108,22 @@ namespace MPWebAPI.Controllers
             var resource = _repository.FinancialResources.First(fr => fr.Id == id);
             return new JsonResult( resource.Partitions.Select(p => new FinancialResourcePartitionViewModel(p)));
         }
+
+        [HttpDelete("{id}/partition/{partitionId}")]
+        [ValidateFinancialResourceExists]
+        public async Task<IActionResult> DeletePartition(int id, int partitionId)
+        {
+            var partition = _repository.FinancialResourcePartitions.FirstOrDefault(p => p.Id == partitionId);
+            if (partition != null)
+            {
+                var result = await _businessLogic.RemoveFinancialResourcePartitionAsync(partition);
+                if (result.Succeeded)
+                {
+                    return Ok(partitionId);
+                }
+                return BadRequest(result.Errors);
+            }
+            return NotFound(partitionId);
+        }
     }
 }

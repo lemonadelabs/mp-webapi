@@ -10,13 +10,18 @@ namespace MPWebAPI.Models
     public interface IMerlinPlanRepository
     {
         // Organisations
+        #region Organisations
+
         IEnumerable<Organisation> Organisations { get; }
         Task AddOrganisationAsync(Organisation org);
         Task RemoveOrganisationAsync(Organisation org);
         IEnumerable<Group> GetOrganisationGroups(Organisation org);
-        Task SaveChangesAsync();
+
+        #endregion
 
         // Users
+        #region Users
+
         IEnumerable<MerlinPlanUser> Users { get; }
         Task<MerlinPlanUser> FindUserByUserNameAsync(string userName);
         Task<IEnumerable<string>> GetUserRolesAsync(MerlinPlanUser user);
@@ -26,7 +31,11 @@ namespace MPWebAPI.Models
         Task<IEnumerable<Group>> GetUserGroupsAsync(MerlinPlanUser user);
         Task<IdentityResult> CreateUserAsync(MerlinPlanUser user, string password);
 
+        #endregion
+
         // Groups
+        #region Groups
+
         IEnumerable<Group> Groups { get; }
         Task AddGroupAsync(Group group);
         Task RemoveGroupAsync(Group group);
@@ -37,7 +46,11 @@ namespace MPWebAPI.Models
         Task UnparentGroupAsync(Group group);
         Task GroupSetActive(Group g, bool active);
 
+        #endregion
+
         // Resource Scenarios
+        #region Resource Scenarios
+
         IEnumerable<ResourceScenario> ResourceScenarios { get; }
         Task<IEnumerable<ResourceScenario>> GetUserSharedResourceScenariosForUserAsync(MerlinPlanUser user);
         Task<IEnumerable<ResourceScenario>> GetGroupSharedResourceScenariosForUserAsync(MerlinPlanUser user);
@@ -49,10 +62,19 @@ namespace MPWebAPI.Models
         Task AddResourceScenarioAsync(ResourceScenario scenario);
         Task RemoveResourceScenarioAsync(ResourceScenario scenario);
 
+        #endregion
+
         // Financial Resources
+        #region Financial Resources
+
         Task AddFinancialResourceAsync(FinancialResource resource);
         Task RemoveFinancialResourceAsync(FinancialResource resource);
         IEnumerable<FinancialResource> FinancialResources { get; }
+
+        #endregion
+
+        #region Financial Resource Partition
+
         IEnumerable<FinancialResourcePartition> FinancialResourcePartitions { get; }
         Task AddFinancialResourcePartitionAsync(FinancialResourcePartition partition);
         Task RemoveFinancialResourcePartitionAsync(FinancialResourcePartition partition);
@@ -65,14 +87,27 @@ namespace MPWebAPI.Models
 
         Task AddAdjustmentToFinancialResourceAsync(FinancialAdjustment adjustment);
 
+
+        #endregion
+
         // Staff Resources
+        #region Staff Resource
+
         Task AddStaffResourceAsync(StaffResource resource);
         Task RemoveStaffResourceAsync(StaffResource resource);
         IEnumerable<StaffResource> StaffResources { get; }
 
+        #endregion
+
         // Categories
+        #region Financial Resource Categories
+
         IEnumerable<FinancialResourceCategory> FinancialResourceCategories { get; }
         Task AddFinancialResourceCategoryAsync(FinancialResourceCategory category);
         Task RemoveFinancialResourceCategoryAsync(FinancialResourceCategory category);
+
+        #endregion
+
+        Task SaveChangesAsync();
     }    
 }

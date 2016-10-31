@@ -9,20 +9,39 @@ namespace MPWebAPI.Models
     /// </summary>
     public interface IMerlinPlanBL
     {
+        #region Organisations
+
         Task CreateOrganisation(Organisation org);
+
+        #endregion
+
+        #region Users
+
         Task<IdentityResult> CreateUser(
             MerlinPlanUser newUser, 
             string password, 
             IEnumerable<string> roles
             );
-        
+
+        #endregion
+
+        #region Groups
+
         Task<MerlinPlanBLResult> ParentGroupAsync(Group child, Group parent);
         Task<MerlinPlanBLResult> UnparentGroupAsync(Group group);
+
+        #endregion
+
+        #region Financial Resources
+
         Task<MerlinPlanBLResult> DeleteFinancialResourceCategoryAsync(FinancialResourceCategory frc);
         Task<MerlinPlanBLResult> AddFinancialResourceAsync(FinancialResource resource);
         Task<MerlinPlanBLResult> AddFinancialResourceCategoriesAsync(Group group, IEnumerable<FinancialResourceCategory> categories);
         Task<MerlinPlanBLResult> AddFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<INewPartitionRequest> partitions);
         Task<MerlinPlanBLResult> UpdateFinancialResourceAsync(FinancialResource resource);
+        Task<MerlinPlanBLResult> RemoveFinancialResourcePartitionAsync(FinancialResourcePartition partition);
+
+        #endregion
     }
 
     // Data object interfaces
