@@ -243,7 +243,7 @@ namespace MPWebAPI.Models
             return new MerlinPlanBLResult();
         }
 
-        public async Task<MerlinPlanBLResult>  AddFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<INewPartitionRequest> partitions)
+        public async Task<MerlinPlanBLResult>  AddFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<IPartitionRequest> partitions)
         {
             var result = new MerlinPlanBLResult();
             
@@ -303,7 +303,7 @@ namespace MPWebAPI.Models
                 await _respository.AddCategoriesToFinancialPartitionAsync(newPartition, npCategories);
 
                 // Add starting adjustment
-                if (newPartitionRequest.StartingAdjustment == 0) continue;
+                if (newPartitionRequest.Adjustment == 0) continue;
 
                 var newStartAdjustment = new FinancialAdjustment()
                 {
@@ -311,7 +311,7 @@ namespace MPWebAPI.Models
                     Additive = false,
                     Date = resource.StartDate,
                     FinancialResourcePartition = newPartition,
-                    Value = newPartitionRequest.StartingAdjustment
+                    Value = newPartitionRequest.Adjustment
                 };
 
                 await _respository.AddAdjustmentToFinancialResourceAsync(newStartAdjustment);
@@ -405,6 +405,42 @@ namespace MPWebAPI.Models
                 return result;
             }
             await _respository.RemoveFinancialResourcePartitionAsync(partition);
+            return result;
+        }
+
+        public async Task<MerlinPlanBLResult> UpdateFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<IPartitionUpdate> partitions)
+        {
+            var result = new MerlinPlanBLResult();
+            var ps = partitions.ToList();
+           
+            foreach (var partition in ps)
+            {
+                // First validate that the partitions exist
+                
+                if (_respository.FinancialResourcePartitions.FirstOrDefault(frp => frp.Id == partition.Id) == null)
+                {
+                    result.AddError("Id", $"The a partition with id {partition.Id} could not be found");
+                }
+
+                // Check that we are allowed to add actuals
+                if (partition.Actual && !resource.ResourceScenario.Approved)
+                {
+                    result.AddError("Actual", $"Can't add actuals to a non approved project. Partition with id {partition.Id}");
+                }
+            }
+
+            if (!result.Succeeded) return result;
+            
+            // Do the updates
+            foreach (var partition in ps)
+            {
+                var p = _respository.FinancialResourcePartitions.First(frp => frp.Id == partition.Id);
+                var adjustment = p.Adjustments.OrderBy(a => a.Date).First();
+                adjustment.Value = partition.Adjustment;
+                adjustment.Actual = partition.Actual;
+            }
+
+            await _respository.SaveChangesAsync();
             return result;
         }
 

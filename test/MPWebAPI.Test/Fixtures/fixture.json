@@ -235,21 +235,29 @@
         "Group": "EPMO",
         "StaffResources": [{
             "Name": "Mr Knowitall",
-            "StartDate": "2016-01-01",
-            "EndDate": "2017-01-01",
+            "StartDate": "2016-03-01",
+            "EndDate": "2017-05-01",
             "Categories": [
                 "Management"
             ],
-            "Adjustments": [{
-                "Value": 1,
-                "Additive": false,
-                "Date": "2016-01-01",
-                "Actual": true
-            }]
+          "Adjustments": [
+            {
+              "Value": 1,
+              "Additive": false,
+              "Date": "2016-01-01",
+              "Actual": false
+            },
+            {
+              "Value": 0,
+              "Additive": false,
+              "Date": "2017-05-01",
+              "Actual": false
+            }
+          ]
         }, {
             "Name": "Misc Managers",
             "StartDate": "2016-01-01",
-            "EndDate": "2020-01-01",
+            "EndDate": null,
             "Categories": [
                 "Management"
             ],
@@ -257,12 +265,12 @@
                 "Value": 10,
                 "Additive": false,
                 "Date": "2016-01-01",
-                "Actual": true
+                "Actual": false
             }]
         }, {
             "Name": "Mr Bob Dobalina",
             "StartDate": "2016-01-01",
-            "EndDate": "2017-01-01",
+            "EndDate": null,
             "Categories": [
                 "Project Managers"
             ],
@@ -270,7 +278,7 @@
                 "Value": 1,
                 "Additive": false,
                 "Date": "2016-01-01",
-                "Actual": true
+                "Actual": false
             }]
         }, {
             "Name": "Mr Foo Bar",
@@ -279,16 +287,24 @@
             "Categories": [
                 "Project Managers"
             ],
-            "Adjustments": [{
-                "Value": 1,
-                "Additive": false,
-                "Date": "2016-01-01",
-                "Actual": true
-            }]
+          "Adjustments": [
+            {
+              "Value": 1,
+              "Additive": false,
+              "Date": "2016-01-01",
+              "Actual": false
+            },
+            {
+              "Value": 0,
+              "Additive": false,
+              "Date": "2017-01-01",
+              "Actual": false
+            }
+          ]
         }, {
             "Name": "Mrs Baz",
             "StartDate": "2016-01-01",
-            "EndDate": "2017-01-01",
+            "EndDate": null,
             "Categories": [
                 "Project Managers"
             ],
@@ -296,12 +312,12 @@
                 "Value": 1,
                 "Additive": false,
                 "Date": "2016-01-01",
-                "Actual": true
+                "Actual": false
             }]
         }, {
             "Name": "DON In-house IT Dev",
             "StartDate": "2016-01-01",
-            "EndDate": "2017-01-01",
+            "EndDate": null,
             "Categories": [
                 "Software Engineers"
             ],
@@ -309,12 +325,12 @@
                 "Value": 10,
                 "Additive": false,
                 "Date": "2016-01-01",
-                "Actual": true
+                "Actual": false
             }]
         }, {
             "Name": "DON In-House IT Test",
             "StartDate": "2016-01-01",
-            "EndDate": "2017-01-01",
+            "EndDate": null,
             "Categories": [
                 "Test Analysts"
             ],
@@ -322,12 +338,12 @@
                 "Value": 5,
                 "Additive": false,
                 "Date": "2016-01-01",
-                "Actual": true
+                "Actual": false
             }]
         }, {
             "Name": "CPI Line Staff",
             "StartDate": "2016-01-01",
-            "EndDate": "2017-01-01",
+            "EndDate": null,
             "Categories": [
                 "Line Staff"
             ],
@@ -335,25 +351,33 @@
                 "Value": 30,
                 "Additive": false,
                 "Date": "2016-01-01",
-                "Actual": true
+                "Actual": false
             }]
         }, {
             "Name": "Mr Blobby",
-            "StartDate": "2016-01-01",
+            "StartDate": "2016-06-01",
             "EndDate": "2017-01-01",
             "Categories": [
                 "Business Analysts"
             ],
-            "Adjustments": [{
-                "Value": 1,
-                "Additive": false,
-                "Date": "2016-01-01",
-                "Actual": true
-            }]
+          "Adjustments": [
+            {
+              "Value": 1,
+              "Additive": false,
+              "Date": "2016-06-01",
+              "Actual": false
+            },
+            {
+              "Value": 0,
+              "Additive": false,
+              "Date": "2017-01-01",
+              "Actual": false
+            }
+          ]
         }, {
             "Name": "Mr Blah",
             "StartDate": "2016-01-01",
-            "EndDate": "2017-01-01",
+            "EndDate": null,
             "Categories": [
                 "Business Analysts"
             ],
@@ -361,7 +385,7 @@
                 "Value": 30,
                 "Additive": false,
                 "Date": "2016-01-01",
-                "Actual": true
+                "Actual": false
             }]
         }],
         "FinancialResources": [{
@@ -374,19 +398,9 @@
                     "Date": "2016-01-01",
                     "Actual": false
                 }, {
-                    "Value": 40000000,
+                    "Value": 0,
                     "Additive": false,
-                    "Date": "2017-01-01",
-                    "Actual": false
-                }, {
-                    "Value": 40000000,
-                    "Additive": false,
-                    "Date": "2018-01-01",
-                    "Actual": false
-                }, {
-                    "Value": 40000000,
-                    "Additive": false,
-                    "Date": "2019-01-01",
+                    "Date": "2020-01-01",
                     "Actual": false
                 }]
             }, {
@@ -396,20 +410,10 @@
                     "Additive": false,
                     "Date": "2016-01-01",
                     "Actual": false
-                }, {
-                    "Value": 10000000,
+                },{
+                    "Value": 0,
                     "Additive": false,
-                    "Date": "2017-01-01",
-                    "Actual": false
-                }, {
-                    "Value": 10000000,
-                    "Additive": false,
-                    "Date": "2018-01-01",
-                    "Actual": false
-                }, {
-                    "Value": 10000000,
-                    "Additive": false,
-                    "Date": "2019-01-01",
+                    "Date": "2020-01-01",
                     "Actual": false
                 }]
             }],
@@ -421,13 +425,13 @@
                 "Categories": ["Staff"],
                 "Adjustments": [{
                     "Value": 1000000,
-                    "Additive": true,
-                    "Date": "2016-06-30",
+                    "Additive": false,
+                    "Date": "2016-01-01",
                     "Actual": false
                 }, {
-                    "Value": 1000000,
-                    "Additive": true,
-                    "Date": "2016-12-31",
+                    "Value": 0,
+                    "Additive": false,
+                    "Date": "2020-01-01",
                     "Actual": false
                 }]
             }],

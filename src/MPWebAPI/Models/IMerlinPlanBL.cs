@@ -37,19 +37,30 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> DeleteFinancialResourceCategoryAsync(FinancialResourceCategory frc);
         Task<MerlinPlanBLResult> AddFinancialResourceAsync(FinancialResource resource);
         Task<MerlinPlanBLResult> AddFinancialResourceCategoriesAsync(Group group, IEnumerable<FinancialResourceCategory> categories);
-        Task<MerlinPlanBLResult> AddFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<INewPartitionRequest> partitions);
+        Task<MerlinPlanBLResult> AddFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<IPartitionRequest> partitions);
         Task<MerlinPlanBLResult> UpdateFinancialResourceAsync(FinancialResource resource);
         Task<MerlinPlanBLResult> RemoveFinancialResourcePartitionAsync(FinancialResourcePartition partition);
+        Task<MerlinPlanBLResult> UpdateFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<IPartitionUpdate> partitions);
 
         #endregion
     }
 
-    // Data object interfaces
-    public interface INewPartitionRequest
+    #region Data Object Interfaces
+
+    public interface IPartitionUpdate
+    {
+        int Id { get; set; }
+        decimal Adjustment { get; set; }
+        bool Actual { get; set; }
+    } 
+
+    public interface IPartitionRequest
     {
         string[] Categories { get; set; }
-        decimal StartingAdjustment { get; set; }
+        decimal Adjustment { get; set; }
         bool Actual { get; set; }
     }
+
+    #endregion
 }
 

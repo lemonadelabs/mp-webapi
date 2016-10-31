@@ -74,13 +74,13 @@ namespace MPWebAPI.Controllers
         }
 
 
-        public class NewPartitionRequest : INewPartitionRequest
+        public class NewPartitionRequest : IPartitionRequest
         {
             [Required]
             public string[] Categories { get; set; }
 
             [Required]
-            public decimal StartingAdjustment { get; set; }
+            public decimal Adjustment { get; set; }
             public bool Actual { get; set; }
         }
 
@@ -124,6 +124,24 @@ namespace MPWebAPI.Controllers
                 return BadRequest(result.Errors);
             }
             return NotFound(partitionId);
+        }
+
+
+        public class PartitionUpdateRequest : IPartitionUpdate
+        {
+            public int Id { get; set; }
+            public decimal Adjustment { get; set; }
+            public bool Actual { get; set; }
+        }
+
+
+        [HttpPut("{id}/partition")]
+        [ValidateFinancialResourceExists]
+        public async Task<IActionResult> UpdatePartitions(int id, [FromBody] PartitionUpdateRequest[] request)
+        {
+            var resource = _repository.FinancialResources.First(fr => fr.Id == id);
+            var result = await _businessLogic.UpdateFinancialResourcePartitionsAsync(resource, request);
+            return result.Succeeded ? GetPartitions(id) : BadRequest(result.Errors);
         }
     }
 }
