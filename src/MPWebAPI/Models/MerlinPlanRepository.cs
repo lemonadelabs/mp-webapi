@@ -2,7 +2,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+//using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 
 namespace MPWebAPI.Models
@@ -11,16 +11,16 @@ namespace MPWebAPI.Models
     {
         private readonly DBContext _dbcontext;
         private readonly UserManager<MerlinPlanUser> _userManager;
-        private readonly ILogger _logger;
+        //private readonly ILogger _logger;
         
         public MerlinPlanRepository(
             DBContext dbcontext,
-            UserManager<MerlinPlanUser> userManager,
-            ILoggerFactory loggerFactory
+            UserManager<MerlinPlanUser> userManager/*,
+            ILoggerFactory loggerFactory*/
             )
         {
             _dbcontext = dbcontext;
-            _logger = loggerFactory.CreateLogger("MerlinPlanRepository");
+            //_logger = loggerFactory.CreateLogger("MerlinPlanRepository");
             _userManager = userManager;
         }
 

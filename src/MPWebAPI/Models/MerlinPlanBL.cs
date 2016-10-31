@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
+//using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace MPWebAPI.Models
@@ -22,17 +22,17 @@ namespace MPWebAPI.Models
     {
         private readonly IMerlinPlanRepository _respository;
         private readonly IOptions<MerlinPlanBLOptions> _options;
-        private readonly ILogger _logger;
+        //private readonly ILogger _logger;
         
         public MerlinPlanBL(
             IOptions<MerlinPlanBLOptions> options, 
-            IMerlinPlanRepository mprepo,
-            ILoggerFactory loggerFactory
+            IMerlinPlanRepository mprepo/*,
+            ILoggerFactory loggerFactory*/
             )
         {
             _respository = mprepo;
             _options = options;
-            _logger = loggerFactory.CreateLogger<MerlinPlanBL>();
+            //_logger = loggerFactory.CreateLogger<MerlinPlanBL>();
         }
 
         #region Organisations

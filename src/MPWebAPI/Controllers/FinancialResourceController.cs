@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+//using Microsoft.Extensions.Logging;
 using MPWebAPI.Filters;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
@@ -15,16 +15,16 @@ namespace MPWebAPI.Controllers
         
         private readonly IMerlinPlanRepository _repository;
         private readonly IMerlinPlanBL _businessLogic;
-        private readonly ILogger _logger;
+        //private readonly ILogger _logger;
 
         public FinancialResourceController(
             IMerlinPlanRepository repo, 
-            IMerlinPlanBL mpbl, 
-            ILoggerFactory loggerFactory)
+            IMerlinPlanBL mpbl/*, 
+            ILoggerFactory loggerFactory*/)
         {
             _repository = repo;
             _businessLogic = mpbl;
-            _logger = loggerFactory.CreateLogger<FinancialResourceCategory>();
+            //_logger = loggerFactory.CreateLogger<FinancialResourceCategory>();
         }
 
         [HttpGet]
