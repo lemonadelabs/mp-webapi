@@ -114,22 +114,20 @@ namespace MPWebAPI.Controllers
         public async Task<IActionResult> DeletePartition(int id, int partitionId)
         {
             var partition = _repository.FinancialResourcePartitions.FirstOrDefault(p => p.Id == partitionId);
-            if (partition != null)
+            if (partition == null) return NotFound(partitionId);
+            var result = await _businessLogic.RemoveFinancialResourcePartitionAsync(partition);
+            if (result.Succeeded)
             {
-                var result = await _businessLogic.RemoveFinancialResourcePartitionAsync(partition);
-                if (result.Succeeded)
-                {
-                    return Ok(partitionId);
-                }
-                return BadRequest(result.Errors);
+                return Ok(partitionId);
             }
-            return NotFound(partitionId);
+            return BadRequest(result.Errors);
         }
 
 
         public class PartitionUpdateRequest : IPartitionUpdate
         {
             public int Id { get; set; }
+            [Required]
             public decimal Adjustment { get; set; }
             public bool Actual { get; set; }
         }
@@ -137,6 +135,7 @@ namespace MPWebAPI.Controllers
 
         [HttpPut("{id}/partition")]
         [ValidateFinancialResourceExists]
+        [ValidateModel]
         public async Task<IActionResult> UpdatePartitions(int id, [FromBody] PartitionUpdateRequest[] request)
         {
             var resource = _repository.FinancialResources.First(fr => fr.Id == id);

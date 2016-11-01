@@ -434,12 +434,37 @@ namespace MPWebAPI.Models
             // Do the updates
             foreach (var partition in ps)
             {
+                // If no current adjustments
                 var p = _respository.FinancialResourcePartitions.First(frp => frp.Id == partition.Id);
-                var adjustment = p.Adjustments.OrderBy(a => a.Date).First();
-                adjustment.Value = partition.Adjustment;
-                adjustment.Actual = partition.Actual;
+                if (p.Adjustments.Count == 0)
+                {
+                    var start = new FinancialAdjustment()
+                    {
+                        Actual = partition.Actual,
+                        Additive = false,
+                        Date = p.FinancialResource.StartDate,
+                        FinancialResourcePartition = p,
+                        Value = partition.Adjustment
+                    };
+                    p.Adjustments.Add(start);
+                    if (!p.FinancialResource.EndDate.HasValue) continue;
+                    var end = new FinancialAdjustment()
+                    {
+                        FinancialResourcePartition = p,
+                        Date = p.FinancialResource.EndDate.Value,
+                        Actual = partition.Actual,
+                        Additive = false,
+                        Value = 0
+                    };
+                    p.Adjustments.Add(end);
+                }
+                else
+                {
+                    var adjustment = p.Adjustments.OrderBy(a => a.Date).First();
+                    adjustment.Value = partition.Adjustment;
+                    adjustment.Actual = partition.Actual;
+                }
             }
-
             await _respository.SaveChangesAsync();
             return result;
         }
