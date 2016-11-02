@@ -372,7 +372,7 @@ namespace MPWebAPI.Controllers
                 );
         }
 
-        [HttpPost]
+        [HttpPost("copy")]
         [ValidateModel]
         public async Task<IActionResult> CopyScenario([FromBody] ResourceScenarioCopyRequest[] requests)
         {

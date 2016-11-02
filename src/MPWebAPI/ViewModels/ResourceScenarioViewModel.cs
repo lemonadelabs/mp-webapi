@@ -4,12 +4,12 @@ using MPWebAPI.Models;
 
 namespace MPWebAPI.ViewModels
 {
-    public class ResourceScenarioViewModel : ViewModel
+    public sealed class ResourceScenarioViewModel : ViewModel
     {
         public ResourceScenarioViewModel(ResourceScenario model)
         {
             MapToViewModelAsync(model);
-            Creator = model.Creator.UserName;
+            Creator = model.Creator.Id;
             ApprovedBy = model.ApprovedBy?.UserName;
             Group = model.Group.Id;
         }

@@ -144,7 +144,7 @@ namespace MPWebAPI.Controllers
 
      
 
-        [HttpPost]
+        [HttpPost("copy")]
         [ValidateModel]
         public async Task<IActionResult> CopyResources([FromBody] CopyRequest[] request)
         {
