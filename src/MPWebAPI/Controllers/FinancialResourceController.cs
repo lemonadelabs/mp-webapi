@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -123,7 +124,6 @@ namespace MPWebAPI.Controllers
             return BadRequest(result.Errors);
         }
 
-
         public class PartitionUpdateRequest : IPartitionUpdate
         {
             public int Id { get; set; }
@@ -131,7 +131,6 @@ namespace MPWebAPI.Controllers
             public decimal Adjustment { get; set; }
             public bool Actual { get; set; }
         }
-
 
         [HttpPut("{id}/partition")]
         [ValidateFinancialResourceExists]
@@ -141,6 +140,27 @@ namespace MPWebAPI.Controllers
             var resource = _repository.FinancialResources.First(fr => fr.Id == id);
             var result = await _businessLogic.UpdateFinancialResourcePartitionsAsync(resource, request);
             return result.Succeeded ? GetPartitions(id) : BadRequest(result.Errors);
+        }
+
+        public class CopyRequest : IResourceCopyRequest
+        {
+            [Required]
+            public int Id { get; set; }
+            [Required]
+            public int ResourceScenario { get; set; }
+            public string Name { get; set; }
+        }
+
+        [HttpPost]
+        [ValidateModel]
+        public async Task<IActionResult> CopyResources([FromBody] CopyRequest[] request)
+        {
+            var result = await _businessLogic.CopyFinancialResourcesAsync(request);
+            if (result.Succeeded)
+            {
+                return Ok(result.GetData<List<FinancialResource>>().Select(fr => new FinancialResourceViewModel(fr)).ToList());
+            }
+            return BadRequest(result.Errors);
         }
     }
 }

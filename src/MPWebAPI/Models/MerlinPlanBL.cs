@@ -469,12 +469,94 @@ namespace MPWebAPI.Models
             return result;
         }
 
+        public async Task<MerlinPlanBLResult> CopyFinancialResourcesAsync(IEnumerable<IResourceCopyRequest> request)
+        {
+            var result = new MerlinPlanBLResult();
+
+            var copyRequests = request.ToArray();
+            
+            // Validate scenarios and copy targets exist
+            foreach (var rcr in copyRequests)
+            {
+                if (_respository.ResourceScenarios.All(rs => rs.Id != rcr.ResourceScenario))
+                {
+                    result.AddError("ResourceScenario", $"Resource Scenario not found with id {rcr.ResourceScenario}");
+                }
+
+                if (_respository.FinancialResources.All(fr => fr.Id != rcr.Id))
+                {
+                    result.AddError("Id", $"Financial Resource not found with id {rcr.Id}");
+                }
+            }
+
+            if (!result.Succeeded) return result;
+
+            var resultData = new List<FinancialResource>();
+            
+            // Now process the copys
+            foreach (var resourceCopyRequest in copyRequests)
+            {
+                var scenario = _respository.ResourceScenarios
+                    .First(rs => rs.Id == resourceCopyRequest.ResourceScenario);
+
+                var resource = _respository.FinancialResources
+                    .First(fr => fr.Id == resourceCopyRequest.Id);
+
+                // Duplicate resource
+                var newResource = new FinancialResource()
+                {
+                    StartDate = resource.StartDate,
+                    EndDate = resource.EndDate,
+                    Name = resourceCopyRequest.Name ?? $"{resource.Name} Copy",
+                    ResourceScenario = scenario,
+                    Partitions = new List<FinancialResourcePartition>()
+                };
+
+                await _respository.AddFinancialResourceAsync(newResource);
+
+
+                // Duplicate resource partitions
+                foreach (var partition in resource.Partitions.ToList())
+                {
+                    var newPartition = new FinancialResourcePartition()
+                    {
+                        Adjustments = new List<FinancialAdjustment>(),
+                        FinancialResource = newResource,
+                        Categories = new List<PartitionResourceCategory>()
+                    };
+                    await _respository.AddFinancialResourcePartitionAsync(newPartition);
+                    var categories = partition.Categories.Select(prc => prc.FinancialResourceCategory).ToList();
+                    await _respository.AddCategoriesToFinancialPartitionAsync(newPartition, categories);
+
+                    // Add adjustments
+                    foreach (var adjustment in partition.Adjustments.ToList())
+                    {
+                        var newAdjustment = new FinancialAdjustment()
+                        {
+                            FinancialResourcePartition = newPartition,
+                            Date = adjustment.Date,
+                            Actual = adjustment.Actual,
+                            Value = adjustment.Value,
+                            Additive = adjustment.Additive,
+                        };
+
+                        await _respository.AddAdjustmentToFinancialResourceAsync(newAdjustment);
+                    }
+                }
+                resultData.Add(newResource);
+            }
+
+            result.SetData(resultData);
+            return result;
+        }
         #endregion
     }
     
 
     public class MerlinPlanBLResult
     {
+        private object _data;
+
         public MerlinPlanBLResult()
         {
             Succeeded = true;
@@ -490,8 +572,19 @@ namespace MPWebAPI.Models
             }
             Errors[key].Add(error);
         }
+
+        public T GetData<T>() where T: class
+        {
+            return _data as T;
+        }
+
+        public void SetData(object data)
+        {
+            _data = data;
+        }
         
         public bool Succeeded { get; set; }
+        
         public Dictionary<string, List<string>> Errors { get; set; }
     }    
 }
