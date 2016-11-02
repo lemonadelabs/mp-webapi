@@ -41,7 +41,8 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> UpdateFinancialResourceAsync(FinancialResource resource);
         Task<MerlinPlanBLResult> RemoveFinancialResourcePartitionAsync(FinancialResourcePartition partition);
         Task<MerlinPlanBLResult> UpdateFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<IPartitionUpdate> partitions);
-        Task<MerlinPlanBLResult> CopyFinancialResourcesAsync(IEnumerable<IResourceCopyRequest> request);
+        Task<MerlinPlanBLResult> CopyFinancialResourcesAsync(IEnumerable<IResourceCopyRequest> requests);
+        Task<MerlinPlanBLResult> CopyResourceScenariosAsync(IEnumerable<IScenarioCopyRequest> requests);
 
         #endregion
     }
@@ -67,6 +68,14 @@ namespace MPWebAPI.Models
         int Id { get; set; }
         int ResourceScenario { get; set; }
         string Name { get; set; }
+    }
+
+    public interface IScenarioCopyRequest
+    {
+        int Id { get; set; }
+        int Group { get; set; }
+        string Name { get; set; }
+        string User { get; set; }
     }
 
     #endregion

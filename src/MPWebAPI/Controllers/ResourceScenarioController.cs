@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+//using Microsoft.Extensions.Logging;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
 using MPWebAPI.Filters;
@@ -39,20 +40,34 @@ namespace MPWebAPI.Controllers
         {
             public IEnumerable<string> Users { get; set; }
         }
+
+        public class ResourceScenarioCopyRequest : IScenarioCopyRequest
+        {
+            [Required]
+            public int Id { get; set; }
+
+            [Required]
+            public int Group { get; set; }
+
+            public string Name { get; set; }
+
+            [Required]
+            public string User { get; set; }
+        }
         
         private readonly IMerlinPlanRepository _repository;
         private readonly IMerlinPlanBL _businessLogic;
-        private readonly ILogger _logger;
+        //private readonly ILogger _logger;
         
         public ResourceScenarioController(
             IMerlinPlanRepository repository, 
-            IMerlinPlanBL businessLogic,
-            ILoggerFactory loggerFactory
+            IMerlinPlanBL businessLogic/*,
+            ILoggerFactory loggerFactory*/
             )
         {
             _repository = repository;
             _businessLogic = businessLogic;
-            _logger = loggerFactory.CreateLogger<ResourceScenarioController>();
+            //_logger = loggerFactory.CreateLogger<ResourceScenarioController>();
         }
         
         [HttpGet]
@@ -103,7 +118,7 @@ namespace MPWebAPI.Controllers
             var gMembers = await _repository.GetGroupMembersAsync(group);
             if (!gMembers.Contains(creator))
             {
-                return BadRequest(new { Group = $"Creator doesnt belong to group"});
+                return BadRequest(new { Group = "Creator doesnt belong to group"});
             }
             newRs.Group = group;
 
@@ -211,7 +226,7 @@ namespace MPWebAPI.Controllers
         [ValidateResourceScenarioExists]
         public async Task<IActionResult> UnshareWithUser(int id, [FromBody] UserList userNameList)
         {
-            var rs = _repository.ResourceScenarios.Where(r => r.Id == id).Single();
+            var rs = _repository.ResourceScenarios.Single(r => r.Id == id);
             var users = new List<MerlinPlanUser>();
             foreach (var userName in userNameList.Users)
             {
@@ -357,7 +372,23 @@ namespace MPWebAPI.Controllers
                 );
         }
 
-        private List<GroupSharedScenario> ResourceScenariosByGroup(List<ResourceScenario> scenarios)
+        [HttpPost]
+        [ValidateModel]
+        public async Task<IActionResult> CopyScenario([FromBody] ResourceScenarioCopyRequest[] requests)
+        {
+            var result = await _businessLogic.CopyResourceScenariosAsync(requests);
+            if (result.Succeeded)
+            {
+                return
+                    Ok(result
+                        .GetData<IEnumerable<ResourceScenario>>()
+                        .Select(rs => new ResourceScenarioViewModel(rs))
+                       );
+            }
+            return BadRequest(result.Errors);
+        }
+
+        private static List<GroupSharedScenario> ResourceScenariosByGroup(IEnumerable<ResourceScenario> scenarios)
         {
             var groupedScenarios = new List<GroupSharedScenario>();
             foreach (var rs in scenarios)

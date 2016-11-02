@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -14,7 +15,51 @@ namespace MPWebAPI.Models
     {
         public string DefaultRole { get; set; }
     }
-    
+
+    public class MerlinPlanBLResult
+    {
+        private object _data;
+
+        public MerlinPlanBLResult()
+        {
+            Succeeded = true;
+            Errors = new Dictionary<string, List<string>>();
+        }
+
+        public void AddError(string key, string error)
+        {
+            Succeeded = false;
+            if (!Errors.ContainsKey(key))
+            {
+                Errors.Add(key, new List<string>());
+            }
+            Errors[key].Add(error);
+        }
+
+        public T GetData<T>() where T: class
+        {
+            return _data as T;
+        }
+
+        public void SetData(object data)
+        {
+            _data = data;
+        }
+        
+        public bool Succeeded { get; set; }
+        
+        public Dictionary<string, List<string>> Errors { get; set; }
+    }
+
+    public class CopyRequest : IResourceCopyRequest
+    {
+        [Required]
+        public int Id { get; set; }
+        [Required]
+        public int ResourceScenario { get; set; }
+        public string Name { get; set; }
+    }
+
     /// <summary>
     /// Concrete implementation of the Merlin Plan business logic
     /// </summary>
@@ -535,7 +580,7 @@ namespace MPWebAPI.Models
                         {
                             FinancialResourcePartition = newPartition,
                             Date = adjustment.Date,
-                            Actual = adjustment.Actual,
+                            Actual = false,
                             Value = adjustment.Value,
                             Additive = adjustment.Additive,
                         };
@@ -549,42 +594,82 @@ namespace MPWebAPI.Models
             result.SetData(resultData);
             return result;
         }
+
+        #endregion
+
+        #region Resource Scenarios
+
+        public async Task<MerlinPlanBLResult> CopyResourceScenariosAsync(IEnumerable<IScenarioCopyRequest> requests)
+        {
+            var result = new MerlinPlanBLResult();
+            var copyRequests = requests.ToList();
+
+            // Validation that the groups, users and scenarios actually exist
+            foreach (var request in copyRequests)
+            {
+                if (_respository.ResourceScenarios.All(rs => rs.Id != request.Id))
+                {
+                    result.AddError("Id", $"The resource with id {request.Id} could not be found.");
+                }
+
+                if (_respository.Groups.All(g => g.Id != request.Group))
+                {
+                    result.AddError("Group", $"The group with id {request.Group} could not be found.");
+                }
+
+                if (_respository.Users.All(u => u.Id != request.User))
+                {
+                    result.AddError("User", $"The user with id {request.User} could not be found.");
+                }    
+            }
+            
+            if (!result.Succeeded) return result;
+
+            var resultData = new List<ResourceScenario>();
+
+            foreach (var request in copyRequests)
+            {
+                var scenario = _respository.ResourceScenarios.First(rs => rs.Id == request.Id);
+                var group = _respository.Groups.First(g => g.Id == request.Group);
+                var user = _respository.Users.First(u => u.Id == request.User);
+
+                var newScenario = new ResourceScenario()
+                {
+                    Name = request.Name ?? $"{scenario.Name} Copy",
+                    Approved = false,
+                    ApprovedBy = null,
+                    Created = DateTime.Now,
+                    Creator = user,
+                    Group = group,
+                    Modified = DateTime.Now,
+                    FinancialResources = new List<FinancialResource>(),
+                    StaffResources = new List<StaffResource>(),
+                    ShareAll = false,
+                    ShareGroup = false,
+                    ShareUser = new List<ResourceScenarioUser>()
+                };
+
+                await _respository.AddResourceScenarioAsync(newScenario);
+
+                // Add Financial and Staff resources
+                var frcrs = scenario.FinancialResources.Select(fr => new CopyRequest()
+                {
+                    ResourceScenario = newScenario.Id,
+                    Name = fr.Name,
+                    Id = fr.Id
+                   
+                }).ToList();
+
+                await CopyFinancialResourcesAsync(frcrs);
+
+                // TODO: Copy staff resources
+
+                resultData.Add(newScenario);
+            }
+            result.SetData(resultData);
+            return result;
+        }
+
         #endregion
     }
-    
-
-    public class MerlinPlanBLResult
-    {
-        private object _data;
-
-        public MerlinPlanBLResult()
-        {
-            Succeeded = true;
-            Errors = new Dictionary<string, List<string>>();
-        }
-
-        public void AddError(string key, string error)
-        {
-            Succeeded = false;
-            if (!Errors.ContainsKey(key))
-            {
-                Errors.Add(key, new List<string>());
-            }
-            Errors[key].Add(error);
-        }
-
-        public T GetData<T>() where T: class
-        {
-            return _data as T;
-        }
-
-        public void SetData(object data)
-        {
-            _data = data;
-        }
-        
-        public bool Succeeded { get; set; }
-        
-        public Dictionary<string, List<string>> Errors { get; set; }
-    }    
 }

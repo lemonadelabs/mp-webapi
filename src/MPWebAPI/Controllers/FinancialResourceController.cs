@@ -142,14 +142,7 @@ namespace MPWebAPI.Controllers
             return result.Succeeded ? GetPartitions(id) : BadRequest(result.Errors);
         }
 
-        public class CopyRequest : IResourceCopyRequest
-        {
-            [Required]
-            public int Id { get; set; }
-            [Required]
-            public int ResourceScenario { get; set; }
-            public string Name { get; set; }
-        }
+     
 
         [HttpPost]
         [ValidateModel]

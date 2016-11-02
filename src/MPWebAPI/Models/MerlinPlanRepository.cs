@@ -191,7 +191,11 @@ namespace MPWebAPI.Models
                 return _dbcontext.ResourceScenario
                     .Include(rs => rs.Creator)
                     .Include(rs => rs.ApprovedBy)
-                    .Include(rs => rs.Group);
+                    .Include(rs => rs.Group)
+                    .Include(rs => rs.FinancialResources)
+                    .Include(rs => rs.StaffResources)
+                    .ToList();
+
             }
         }
 
