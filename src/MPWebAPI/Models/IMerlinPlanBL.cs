@@ -45,6 +45,12 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> CopyResourceScenariosAsync(IEnumerable<IScenarioCopyRequest> requests);
 
         #endregion
+
+        #region Staff Resources
+
+        Task<MerlinPlanBLResult> UpdateStaffResourceAsync(StaffResource resource);
+
+        #endregion
     }
 
     #region Data Object Interfaces

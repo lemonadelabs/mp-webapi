@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Authentication;
 using AspNet.Security.OpenIdConnect.Server;
-using Microsoft.Extensions.Logging;
+//using Microsoft.Extensions.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,17 +18,17 @@ namespace MPWebAPI.Controllers
     {
         private readonly UserManager<MerlinPlanUser> _userManager;
         private readonly SignInManager<MerlinPlanUser> _signInManager;
-        private readonly ILogger _logger;
+        //private readonly ILogger _logger;
         
         public AuthController(
             UserManager<MerlinPlanUser> userManager, 
-            SignInManager<MerlinPlanUser> signInManager,
-            ILoggerFactory loggerFactory
+            SignInManager<MerlinPlanUser> signInManager/*,
+            ILoggerFactory loggerFactory*/
             )
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _logger = loggerFactory.CreateLogger("AuthController");
+            //_logger = loggerFactory.CreateLogger("AuthController");
         }
         
         [HttpPost("token")]
@@ -91,12 +91,12 @@ namespace MPWebAPI.Controllers
             }
 
             // Create a new authentication ticket holding the user identity.
-            var ticket = await CreateTicketAsync(request, user);
+            var ticket = await CreateTicketAsync(user);
 
             return SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme);
         }
 
-        private async Task<AuthenticationTicket> CreateTicketAsync(OpenIdConnectRequest request, MerlinPlanUser user)
+        private async Task<AuthenticationTicket> CreateTicketAsync(MerlinPlanUser user)
         {
             var principal = await _signInManager.CreateUserPrincipalAsync(user);
 

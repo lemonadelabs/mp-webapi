@@ -669,5 +669,79 @@ namespace MPWebAPI.Models
         }
 
         #endregion
+
+        #region Staff Resources
+
+        public async Task<MerlinPlanBLResult> UpdateStaffResourceAsync(StaffResource resource)
+        {
+            var result = new MerlinPlanBLResult();
+            
+            // Check that scenario isn't approved. If approved then we can't change
+            if (resource.ResourceScenario.Approved)
+            {
+                result.AddError("Approved", "The resource belongs to an approved scenario and cannot be edited.");
+            }
+
+            if (!result.Succeeded) return result;
+
+            if (resource.Adjustments.Count == 0)
+            {
+                var start = new StaffAdjustment()
+                {
+                    Date = resource.StartDate,
+                    Actual = false,
+                    Value = 0f,
+                    Additive = false,
+                    StaffResource = resource
+                };
+                resource.Adjustments.Add(start);
+            }
+
+            var startAdjustment = resource.Adjustments.OrderBy(a => a.Date).FirstOrDefault();
+            if (startAdjustment.Date != resource.StartDate)
+            {
+                startAdjustment.Date = resource.StartDate;
+            }
+
+            if (resource.EndDate.HasValue)
+            {
+                if (resource.Adjustments.Count != 1)
+                {
+                    if (resource.Adjustments.Count == 2)
+                    {
+                        var end = resource.Adjustments.OrderByDescending(a => a.Date).First();
+                        end.Date = resource.EndDate.Value;
+                    }
+                }
+                else
+                {
+                    // Add a new end adjustment
+                    var end = new StaffAdjustment()
+                    {
+                        Date = resource.EndDate.Value,
+                        Actual = false,
+                        Value = 0f,
+                        Additive = false,
+                        StaffResource = resource
+                    };
+                    resource.Adjustments.Add(end);
+                }
+            }
+            else
+            {
+                if (resource.Adjustments.Count == 2)
+                {
+                    var end = resource.Adjustments.OrderByDescending(a => a.Date).First();
+                    resource.Adjustments.Remove(end);
+                }
+            }
+
+            // update the start adjustment date
+
+            await _respository.SaveChangesAsync();
+            return result;
+        }
+
+        #endregion
     }
 }

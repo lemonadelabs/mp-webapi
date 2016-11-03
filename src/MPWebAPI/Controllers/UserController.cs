@@ -253,8 +253,11 @@ namespace MPWebAPI.Controllers
                 
                 // Update the user roles
                 var currentRoles = await _repository.GetUserRolesAsync(userm);
-                var rolesToDelete = currentRoles.Where(r => !user.Roles.Contains(r));
-                var rolesToAdd = user.Roles.Where(r => !currentRoles.Contains(r));
+
+                var currentRolesList = currentRoles.ToList();
+
+                var rolesToDelete = currentRolesList.Where(r => !user.Roles.Contains(r));
+                var rolesToAdd = user.Roles.Where(r => !currentRolesList.Contains(r));
                 var roleRemoveResult = await _repository.RemoveUserFromRolesAsync(userm, rolesToDelete);
 
                 if(roleRemoveResult.Succeeded)

@@ -403,6 +403,7 @@ namespace MPWebAPI.Models
                     .Include(sr => sr.Categories)
                     .ThenInclude(src => src.StaffResourceCategory)
                     .Include(sr => sr.Adjustments)
+                    .Include(sr => sr.ResourceScenario)
                     .ToList();
             }
         }

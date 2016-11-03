@@ -40,7 +40,7 @@ namespace MPWebAPI.Controllers
             return new JsonResult(resource.Adjustments.Select(a => new StaffAdjustmentViewModel(a)).ToList());
         }
 
-        [HttpDelete("{id")]
+        [HttpDelete("{id}")]
         [ValidateStaffResourceExists]
         public async Task<IActionResult> DeleteStaffResource(int id)
         {
@@ -49,7 +49,24 @@ namespace MPWebAPI.Controllers
             return Ok(id);
         }
 
+        [HttpPut]
+        [ValidateModel]
+        public async Task<IActionResult> UpdateStaffResource([FromBody] StaffResourceViewModel model)
+        {
+            var resource = _repository.StaffResources.SingleOrDefault(sr => sr.Id == model.Id);
+            if (resource == null) return NotFound(model.Id);
 
+            var scenario = _repository.ResourceScenarios.FirstOrDefault(rs => rs.Id == model.ResourceScenarioId);
+            if (scenario == null) return NotFound($"The resource scenario {model.ResourceScenarioId} can't be found");
 
+            model.MapToModel(resource);
+
+            var result = await _businessLogic.UpdateStaffResourceAsync(resource);
+            if (result.Succeeded)
+            {
+                return Ok(new StaffResourceViewModel(resource));
+            }
+            return BadRequest(result.Errors);
+        }
     }
 }
