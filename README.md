@@ -46,7 +46,7 @@ Run `dotnet ef database update` to apply the current migrations.
 Run `dotnet run` from inside the `/src/MPWebAPI` directory. If the project needs to compile it will do that before running. The Kestral server will start on `http://localhost:5000`
 
 ### View the api docs
-With the application running direct your browser to `http://localhost:5000/swagger/ui`
+Direct your browser to `https://documenter.getpostman.com/collection/view/788789-ff23004d-9eee-01d3-fa28-e5110f8b2490#intro` 
 
 ## Update procedure
 1. Pull from the repo

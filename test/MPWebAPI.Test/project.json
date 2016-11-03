@@ -15,13 +15,6 @@
     "Microsoft.NETCore.App": "1.0.1"
   },
 
-
-  "runtimes": {
-    "win10-x64": {},
-    "osx.10.12-x64": {}
-  },
-
-
   "publishOptions": {
     "include": [
       "Fixtures"
@@ -32,8 +25,8 @@
   "frameworks": {
     "netcoreapp1.0": {
       "imports": [
-        "dotnet54",
-        "portable-net45+win8"
+        "dnxcore50",
+        "portable-net451+win8"
       ]
     }
   }

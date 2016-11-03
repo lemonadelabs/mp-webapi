@@ -23,7 +23,6 @@ namespace MPWebAPI
             if (env.IsDevelopment())
             {
                 builder = builder.AddUserSecrets("io.lemonadelabs.mp-webapi");
-                builder.AddApplicationInsightsSettings(developerMode: true);
             }
 
             builder = builder.AddEnvironmentVariables();
@@ -40,7 +39,6 @@ namespace MPWebAPI
             var sqlConnectionString = Configuration["DevDBConnectionString"];
             
             services.AddOptions();
-            services.AddApplicationInsightsTelemetry(Configuration);
 
             services.Configure<MerlinPlanBLOptions>(
                 Configuration.GetSection("BusinessRules"));
@@ -91,8 +89,6 @@ namespace MPWebAPI
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            app.UseApplicationInsightsRequestTelemetry();
-            app.UseApplicationInsightsExceptionTelemetry();
 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
