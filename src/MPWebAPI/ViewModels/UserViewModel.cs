@@ -7,21 +7,22 @@ using MPWebAPI.Models;
 namespace MPWebAPI.ViewModels
 {
 
-    public class UserViewModel : ViewModel
+    public sealed class UserViewModel : ViewModel
     {
         public UserViewModel() 
         {
             Active = true;
         }
 
-        public async override Task MapToViewModelAsync(object user, IMerlinPlanRepository repo)
+        public override async Task MapToViewModelAsync(object user, IMerlinPlanRepository repo = null)
         {
             var u = (MerlinPlanUser)user;
-            await base.MapToViewModelAsync(u);
+            if (u == null || repo == null) return;
+            await base.MapToViewModelAsync(u, repo);
             UserEmailConfirmed = u.EmailConfirmed;
-            this.Roles = await repo.GetUserRolesAsync(u);
+            Roles = await repo.GetUserRolesAsync(u);
             var gs = await repo.GetUserGroupsAsync(u);
-            this.Groups = gs.Select(g => new UserViewModel.GroupData { Id = g.Id, Name = g.Name});
+            Groups = gs.Select(g => new GroupData { Id = g.Id, Name = g.Name});
         }
 
         public string Id { get; set; }

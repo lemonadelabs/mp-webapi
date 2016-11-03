@@ -13,13 +13,15 @@ namespace MPWebAPI.ViewModels
 
         public StaffResourceViewModel(StaffResource model)
         {
-            MapToViewModelAsync(model, null);
+            MapToViewModelAsync(model);
         }
 
-        public override Task MapToViewModelAsync(object model, IMerlinPlanRepository repo)
+        public override Task MapToViewModelAsync(object model, IMerlinPlanRepository repo = null)
         {
             var sr = (StaffResource) model;
-            base.MapToViewModelAsync(sr);
+            if (sr == null) return Task.CompletedTask;
+            
+            base.MapToViewModelAsync(sr, repo);
             
             // add categories
             Categories = sr.Categories

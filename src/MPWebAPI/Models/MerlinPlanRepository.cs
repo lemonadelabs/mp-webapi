@@ -402,6 +402,7 @@ namespace MPWebAPI.Models
                 return _dbcontext.StaffResource
                     .Include(sr => sr.Categories)
                     .ThenInclude(src => src.StaffResourceCategory)
+                    .Include(sr => sr.Adjustments)
                     .ToList();
             }
         }

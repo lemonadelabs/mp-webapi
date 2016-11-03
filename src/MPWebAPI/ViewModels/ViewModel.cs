@@ -17,7 +17,7 @@ namespace MPWebAPI.ViewModels
             return Task.CompletedTask;
         }
         
-        private void MapProperties(object from, object to)
+        private static void MapProperties(object from, object to)
         {
             foreach (var toPropInfo in to.GetType().GetProperties())
             {

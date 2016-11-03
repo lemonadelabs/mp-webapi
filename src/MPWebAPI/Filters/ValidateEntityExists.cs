@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -33,16 +32,12 @@ namespace MPWebAPI.Filters
                             context.Result = new NotFoundObjectResult(id.Value);
                             return;
                         }
-                        else
-                        {
-                             await next();
-                        }
+                        await next();
                     }
                 }
                 else
                 {
                     context.Result = new NotFoundResult();
-                    return;
                 }
             }
         }
@@ -74,16 +69,12 @@ namespace MPWebAPI.Filters
                             context.Result = new NotFoundObjectResult(id.Value);
                             return;
                         }
-                        else
-                        {
-                            await next();            
-                        }
+                        await next();            
                     }
                 }
                 else
                 {
                     context.Result = new NotFoundResult();
-                    return;
                 }
             }
         }
@@ -114,16 +105,13 @@ namespace MPWebAPI.Filters
                             context.Result = new NotFoundObjectResult(id.Value);
                             return;
                         }
-                        else
-                        {
-                            await next();            
-                        }
+                    
+                        await next();            
                     }
                 }
                 else
                 {
                     context.Result = new NotFoundResult();
-                    return;
                 }
             }
         }
@@ -154,16 +142,13 @@ namespace MPWebAPI.Filters
                             context.Result = new NotFoundObjectResult(id.Value);
                             return;
                         }
-                        else
-                        {
-                            await next();            
-                        }
+                        
+                        await next();            
                     }
                 }
                 else
                 {
                     context.Result = new NotFoundResult();
-                    return;
                 }
             }
         }
@@ -194,16 +179,48 @@ namespace MPWebAPI.Filters
                             context.Result = new NotFoundObjectResult(id.Value);
                             return;
                         }
-                        else
-                        {
-                            await next();            
-                        }
+                        await next();            
                     }
                 }
                 else
                 {
                     context.Result = new NotFoundResult();
-                    return;
+                }
+            }
+        }
+    }
+
+    public class ValidateStaffResourceExistsAttribute : TypeFilterAttribute
+    {
+        public ValidateStaffResourceExistsAttribute() : base(typeof(ValidateStaffResourceExists)) { }
+
+        private class ValidateStaffResourceExists : IAsyncActionFilter
+        {
+            private readonly IMerlinPlanRepository _repository;
+
+            public ValidateStaffResourceExists(IMerlinPlanRepository mprepo)
+            {
+                _repository = mprepo;
+            }
+
+            public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+            {
+                if (context.ActionArguments.ContainsKey("id"))
+                {
+                    var id = context.ActionArguments["id"] as int?;
+                    if (id.HasValue)
+                    {
+                        if (await _repository.StaffResources.ToAsyncEnumerable().All(o => o.Id != id.Value))
+                        {
+                            context.Result = new NotFoundObjectResult(id.Value);
+                            return;
+                        }
+                        await next();
+                    }
+                }
+                else
+                {
+                    context.Result = new NotFoundResult();
                 }
             }
         }
@@ -235,16 +252,12 @@ namespace MPWebAPI.Filters
                             context.Result = new NotFoundObjectResult(id);
                             return;
                         }
-                        else
-                        {
-                            await next();            
-                        }
+                        await next();            
                     }
                 }
                 else
                 {
                     context.Result = new NotFoundResult();
-                    return;                    
                 }
             }
         }
