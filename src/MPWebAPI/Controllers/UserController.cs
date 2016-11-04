@@ -211,7 +211,7 @@ namespace MPWebAPI.Controllers
         {
             var user = new MerlinPlanUser();
             r.UserDetails.Id = user.Id;
-            r.UserDetails.MapToModel(user);
+            await r.UserDetails.MapToModel(user);
             var result = await _businessLogic.CreateUser(user, r.Password, r.UserDetails.Roles);
             if (result.Succeeded)
             {
@@ -246,7 +246,7 @@ namespace MPWebAPI.Controllers
             }
             
             // Update the user details
-            user.MapToModel(userm);
+            await user.MapToModel(userm);
             var result = await _repository.UpdateUserAsync(userm);
             if (result.Succeeded)
             {

@@ -65,7 +65,7 @@ namespace MPWebAPI.Controllers
                 return BadRequest(new { ResourceScenarioId = new [] {$"Resource Scenario not found with id {viewModel.ResourceScenarioId}"}});
             }
 
-            viewModel.MapToModel(financialResource);
+            await viewModel.MapToModel(financialResource);
             var result = await _businessLogic.UpdateFinancialResourceAsync(financialResource);
             if (result.Succeeded)
             {

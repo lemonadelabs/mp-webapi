@@ -95,7 +95,7 @@ namespace MPWebAPI.Controllers
             var newRs = new ResourceScenario();
             
             // Do basic mapping
-            scenario.MapToModel(newRs);
+            await scenario.MapToModel(newRs);
 
             // Add creator object
             // check creator is valid user            
@@ -301,7 +301,7 @@ namespace MPWebAPI.Controllers
         {
             var fr = new FinancialResource();
             viewModel.ResourceScenarioId = id;
-            viewModel.MapToModel(fr);
+            await viewModel.MapToModel(fr);
             
             var result = await _businessLogic.AddFinancialResourceAsync(fr);
             
@@ -319,7 +319,7 @@ namespace MPWebAPI.Controllers
         {
             var sr = new StaffResource();
             viewModel.ResourceScenarioId = id;
-            viewModel.MapToModel(sr);
+            await viewModel.MapToModel(sr);
             await _repository.AddStaffResourceAsync(sr);
             return Ok(new StaffResourceViewModel(sr));
         }

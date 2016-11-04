@@ -65,7 +65,7 @@ namespace MPWebAPI.Controllers
         public async Task<IActionResult> Post([FromBody] OrganisationViewModel orgvm)
         {
             var newOrg = new Organisation();
-            orgvm.MapToModel(newOrg);
+            await orgvm.MapToModel(newOrg);
             await _mpbl.CreateOrganisation(newOrg);
             return Ok();    
         }
@@ -85,7 +85,7 @@ namespace MPWebAPI.Controllers
             var org = _mprepo.Organisations.FirstOrDefault(o => o.Id == orgvm.Id);
             if (org != null)
             {
-                orgvm.MapToModel(org);
+                await orgvm.MapToModel(org);
                 await _mprepo.SaveChangesAsync();
                 return Ok();
             }

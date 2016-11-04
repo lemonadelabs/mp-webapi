@@ -28,15 +28,19 @@ namespace MPWebAPI.ViewModels
                 .Select(src => src.StaffResourceCategory.Name)
                 .ToList();
             
+            // Add value from adjustment
+            var first = sr.Adjustments.OrderBy(a => a.Date).FirstOrDefault();
+            Value = first?.Value ?? 0f;
+
             return Task.CompletedTask;
         }
 
-        public override void MapToModel(object model, IMerlinPlanRepository repo = null)
+        public override Task MapToModel(object model, IMerlinPlanRepository repo = null)
         {
             base.MapToModel(model, repo);
             
             // Map categories
-            if (Categories == null || repo == null) return;
+            if (Categories == null || repo == null) return Task.CompletedTask;
             
             var resource = (StaffResource)model;
             
@@ -76,6 +80,7 @@ namespace MPWebAPI.ViewModels
 
                 resource.Categories.Add(srsrc);
             }
+            return Task.CompletedTask;
         }
 
         public int Id { get; set; }
@@ -92,6 +97,8 @@ namespace MPWebAPI.ViewModels
 
         public List<string> Categories { get; set; }
         public UserViewModel UserData { get; set; }
+
+        public float? Value { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

@@ -6,9 +6,10 @@ namespace MPWebAPI.ViewModels
 {
     public class ViewModel
     {
-        public virtual void MapToModel(object model, IMerlinPlanRepository repo = null)
+        public virtual Task MapToModel(object model, IMerlinPlanRepository repo = null)
         {
             MapProperties(this, model);
+            return Task.CompletedTask;
         }
         
         public virtual Task MapToViewModelAsync(object model, IMerlinPlanRepository repo = null)

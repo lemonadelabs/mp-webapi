@@ -31,7 +31,7 @@ namespace MPWebAPI.Controllers
             }
             
             var newGroup = new Group();
-            group.MapToModel(newGroup);
+            await group.MapToModel(newGroup);
             await _repository.AddGroupAsync(newGroup);
             return new JsonResult(new GroupViewModel(newGroup));
         }
@@ -165,7 +165,7 @@ namespace MPWebAPI.Controllers
             foreach (var frc in request)
             {
                 var newFRC = new FinancialResourceCategory();
-                frc.MapToModel(newFRC);
+                await frc.MapToModel(newFRC);
                 newFRC.GroupId = id;
                 frcs.Add(newFRC);
             }
