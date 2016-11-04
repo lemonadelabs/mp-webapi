@@ -347,6 +347,8 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+        
+
         public async Task AddFinancialResourcePartitionAsync(FinancialResourcePartition partition)
         {
             _dbcontext.FinancialResourcePartition.Add(partition);
@@ -402,6 +404,8 @@ namespace MPWebAPI.Models
                 return _dbcontext.StaffResource
                     .Include(sr => sr.Categories)
                     .ThenInclude(src => src.StaffResourceCategory)
+                    .Include(sr => sr.Categories)
+                    .ThenInclude(src => src.StaffResource)
                     .Include(sr => sr.Adjustments)
                     .Include(sr => sr.ResourceScenario)
                     .ToList();
@@ -418,6 +422,31 @@ namespace MPWebAPI.Models
         {
             _dbcontext.StaffResource.Remove(resource);
             await _dbcontext.SaveChangesAsync();
+        }
+
+        public IEnumerable<StaffResourceCategory> StaffResourceCategories
+        {
+            get
+            {
+                return _dbcontext.StaffResourceCategory
+                    .Include(src => src.Group)
+                    .Include(src => src.StaffResources)
+                    .ThenInclude(srsrc => srsrc.StaffResource)
+                    .ToList();
+            }
+        }
+
+        public async Task AddStaffResourceCategoryAsync(StaffResourceCategory category)
+        {
+            _dbcontext.StaffResourceCategory.Add(category);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveStaffResourceCategoryAsync(StaffResourceCategory category)
+        {
+            _dbcontext.StaffResourceCategory.Remove(category);
+            await _dbcontext.SaveChangesAsync();
+
         }
 
         #endregion

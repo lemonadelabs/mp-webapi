@@ -6,7 +6,7 @@ namespace MPWebAPI.ViewModels
 {
     public class ViewModel
     {
-        public virtual void MapToModel(object model)
+        public virtual void MapToModel(object model, IMerlinPlanRepository repo = null)
         {
             MapProperties(this, model);
         }

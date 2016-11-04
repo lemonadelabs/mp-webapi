@@ -59,7 +59,7 @@ namespace MPWebAPI.Controllers
             var scenario = _repository.ResourceScenarios.FirstOrDefault(rs => rs.Id == model.ResourceScenarioId);
             if (scenario == null) return NotFound($"The resource scenario {model.ResourceScenarioId} can't be found");
 
-            model.MapToModel(resource);
+            model.MapToModel(resource, _repository);
 
             var result = await _businessLogic.UpdateStaffResourceAsync(resource);
             if (result.Succeeded)

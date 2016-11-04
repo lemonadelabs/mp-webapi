@@ -716,7 +716,7 @@ namespace MPWebAPI.Models
                 else
                 {
                     // Add a new end adjustment
-                    var end = new StaffAdjustment()
+                    var end = new StaffAdjustment
                     {
                         Date = resource.EndDate.Value,
                         Actual = false,
@@ -735,8 +735,6 @@ namespace MPWebAPI.Models
                     resource.Adjustments.Remove(end);
                 }
             }
-
-            // update the start adjustment date
 
             await _respository.SaveChangesAsync();
             return result;

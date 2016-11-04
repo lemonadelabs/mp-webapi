@@ -108,6 +108,14 @@ namespace MPWebAPI.Models
 
         #endregion
 
+        #region Staff Resource Categories
+
+        IEnumerable<StaffResourceCategory> StaffResourceCategories { get; }
+        Task AddStaffResourceCategoryAsync(StaffResourceCategory category);
+        Task RemoveStaffResourceCategoryAsync(StaffResourceCategory category);
+
+        #endregion
+
         Task SaveChangesAsync();
     }    
 }
