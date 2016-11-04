@@ -38,11 +38,21 @@ namespace MPWebAPI.ViewModels
         public override Task MapToModel(object model, IMerlinPlanRepository repo = null)
         {
             base.MapToModel(model, repo);
+
+            var resource = (StaffResource)model;
+
+            // Map Value to first adjustment
+            if (Value.HasValue)
+            {
+                var adjustment = resource.Adjustments.OrderBy(a => a.Date).FirstOrDefault();
+                if (adjustment != null)
+                {
+                    adjustment.Value = Value.Value;
+                }
+            }
             
             // Map categories
             if (Categories == null || repo == null) return Task.CompletedTask;
-            
-            var resource = (StaffResource)model;
             
             // delete
             var toDelete = resource.Categories
