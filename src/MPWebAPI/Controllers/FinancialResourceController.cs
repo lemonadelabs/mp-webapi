@@ -142,8 +142,6 @@ namespace MPWebAPI.Controllers
             return result.Succeeded ? GetPartitions(id) : BadRequest(result.Errors);
         }
 
-     
-
         [HttpPost("copy")]
         [ValidateModel]
         public async Task<IActionResult> CopyResources([FromBody] CopyRequest[] request)

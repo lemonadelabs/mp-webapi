@@ -297,6 +297,8 @@ namespace MPWebAPI.Models
             }
         }
 
+      
+
         public IEnumerable<FinancialResourceCategory> FinancialResourceCategories
         {
             get
@@ -447,6 +449,30 @@ namespace MPWebAPI.Models
             _dbcontext.StaffResourceCategory.Remove(category);
             await _dbcontext.SaveChangesAsync();
 
+        }
+
+        public async Task AddCategoriesToStaffResourceAsync(IEnumerable<StaffResourceCategory> categories, StaffResource resource)
+        {
+            foreach (var staffResourceCategory in categories.ToList())
+            {
+                var srsrc = new StaffResourceStaffResourceCategory()
+                {
+                    StaffResource = resource,
+                    StaffResourceCategory = staffResourceCategory,
+                };
+                resource.Categories.Add(srsrc);
+            }
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveCategoriesFromStaffResourceAsync(IEnumerable<StaffResourceCategory> categories, StaffResource resource)
+        {
+            var srsrc = resource.Categories.Where(s => categories.Contains(s.StaffResourceCategory)).ToList();
+            foreach (var category in srsrc)
+            {
+                resource.Categories.Remove(category);
+            }
+            await _dbcontext.SaveChangesAsync();
         }
 
         #endregion

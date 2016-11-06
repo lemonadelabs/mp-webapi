@@ -740,6 +740,75 @@ namespace MPWebAPI.Models
             return result;
         }
 
+        public async Task<MerlinPlanBLResult> CopyStaffResourcesAsync(IEnumerable<IResourceCopyRequest> requests)
+        {
+            var result = new MerlinPlanBLResult();
+            var copyRequests = requests.ToArray();
+            var resultData = new List<StaffResource>();
+
+            // Need to validate that resource scenario and copy source exist
+            foreach (var copyRequest in copyRequests)
+            {
+                if (_respository.ResourceScenarios.All(rs => rs.Id != copyRequest.ResourceScenario))
+                {
+                    result.AddError("ResourceScenario", $"Resource Scenario not found with id {copyRequest.ResourceScenario}");
+                }
+
+                if (_respository.StaffResources.All(fr => fr.Id != copyRequest.Id))
+                {
+                    result.AddError("Id", $"Staff Resource not found with id {copyRequest.Id}");
+                }
+            }
+
+            if (!result.Succeeded) return result;
+
+            // Do updates
+            foreach (var copyRequest in copyRequests)
+            {
+                var resource = _respository.StaffResources.Single(sr => sr.Id == copyRequest.Id);
+                var scenario = _respository.ResourceScenarios.Single(rs => rs.Id == copyRequest.ResourceScenario);
+
+                var newStaffResource = new StaffResource
+                {
+                    EndDate = resource.EndDate,
+                    Adjustments = new List<StaffAdjustment>(),
+                    Categories = new List<StaffResourceStaffResourceCategory>(),
+                    Name = copyRequest.Name ?? $"{resource.Name} Copy",
+                    ResourceScenario = scenario,
+                    FteOutput = resource.FteOutput,
+                    StartDate = resource.StartDate,
+                    UserData = resource.UserData
+                };
+
+                await _respository.AddStaffResourceAsync(newStaffResource);
+
+                // Copy Categories
+                await _respository.AddCategoriesToStaffResourceAsync(
+                    resource.Categories.Select(c => c.StaffResourceCategory).ToList(), 
+                    newStaffResource);
+
+                // Copy Adjustment
+                foreach (var adjustment in resource.Adjustments)
+                {
+                    var newAdjustment = new StaffAdjustment()
+                    {
+                        Value = adjustment.Value,
+                        StaffResource = newStaffResource,
+                        Date = adjustment.Date,
+                        Actual = adjustment.Actual,
+                        Additive = adjustment.Additive,
+                    };
+                    newStaffResource.Adjustments.Add(newAdjustment);
+                }
+                
+                await _respository.SaveChangesAsync();
+                resultData.Add(newStaffResource);
+            }
+
+            result.SetData(resultData);
+            return result;
+        }
+
         #endregion
     }
 }

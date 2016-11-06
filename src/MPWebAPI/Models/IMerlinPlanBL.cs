@@ -49,6 +49,7 @@ namespace MPWebAPI.Models
         #region Staff Resources
 
         Task<MerlinPlanBLResult> UpdateStaffResourceAsync(StaffResource resource);
+        Task<MerlinPlanBLResult> CopyStaffResourcesAsync(IEnumerable<IResourceCopyRequest> requests);
 
         #endregion
     }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MPWebAPI.Filters;
@@ -65,6 +66,18 @@ namespace MPWebAPI.Controllers
             if (result.Succeeded)
             {
                 return Ok(new StaffResourceViewModel(resource));
+            }
+            return BadRequest(result.Errors);
+        }
+
+        [HttpPost("copy")]
+        [ValidateModel]
+        public async Task<IActionResult> CopyStaffResources([FromBody] CopyRequest[] requests)
+        {
+            var result = await _businessLogic.CopyStaffResourcesAsync(requests);
+            if (result.Succeeded)
+            {
+                return Ok(result.GetData<IEnumerable<StaffResource>>().Select(sr => new StaffResourceViewModel(sr)));
             }
             return BadRequest(result.Errors);
         }
