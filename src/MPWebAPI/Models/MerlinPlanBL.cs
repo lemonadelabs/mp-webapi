@@ -650,7 +650,7 @@ namespace MPWebAPI.Models
                 await _respository.AddResourceScenarioAsync(newScenario);
 
                 // Add Financial and Staff resources
-                var frcrs = scenario.FinancialResources.Select(fr => new CopyRequest()
+                var frcrs = scenario.FinancialResources.Select(fr => new CopyRequest
                 {
                     ResourceScenario = newScenario.Id,
                     Name = fr.Name,
@@ -660,7 +660,14 @@ namespace MPWebAPI.Models
 
                 await CopyFinancialResourcesAsync(frcrs);
 
-                // TODO: Copy staff resources
+                var srs = scenario.StaffResources.Select(sr => new CopyRequest
+                {
+                    ResourceScenario = newScenario.Id,
+                    Name = sr.Name,
+                    Id = sr.Id
+                });
+
+                await CopyStaffResourcesAsync(srs);
 
                 resultData.Add(newScenario);
             }
