@@ -554,7 +554,8 @@ namespace MPWebAPI.Models
                     EndDate = resource.EndDate,
                     Name = resourceCopyRequest.Name ?? $"{resource.Name} Copy",
                     ResourceScenario = scenario,
-                    Partitions = new List<FinancialResourcePartition>()
+                    Partitions = new List<FinancialResourcePartition>(),
+                    Recurring = resource.Recurring
                 };
 
                 await _respository.AddFinancialResourceAsync(newResource);
@@ -784,7 +785,8 @@ namespace MPWebAPI.Models
                     ResourceScenario = scenario,
                     FteOutput = resource.FteOutput,
                     StartDate = resource.StartDate,
-                    UserData = resource.UserData
+                    UserData = resource.UserData,
+                    Recurring = resource.Recurring
                 };
 
                 await _respository.AddStaffResourceAsync(newStaffResource);

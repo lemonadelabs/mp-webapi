@@ -19,7 +19,7 @@ namespace MPWebAPI.Controllers
         //private readonly ILogger _logger;
 
         public FinancialResourceController(
-            IMerlinPlanRepository repo, 
+            IMerlinPlanRepository repo,
             IMerlinPlanBL mpbl/*, 
             ILoggerFactory loggerFactory*/)
         {

@@ -25,6 +25,7 @@ namespace MPWebAPI.ViewModels
         public DateTime StartDate { get; set; }
         
         public DateTime? EndDate { get; set; }
+        public bool Recurring { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

@@ -107,6 +107,7 @@ namespace MPWebAPI.ViewModels
 
         public List<string> Categories { get; set; }
         public UserViewModel UserData { get; set; }
+        public bool Recurring { get; set; }
 
         public float? Value { get; set; }
 

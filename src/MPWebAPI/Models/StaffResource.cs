@@ -12,6 +12,7 @@ namespace MPWebAPI.Models
         public float? FteOutput { get; set; }
         public List<StaffResourceStaffResourceCategory> Categories { get; set; }
         public List<StaffAdjustment> Adjustments { get; set; }
+        public bool Recurring { get; set; }
 
         public int ResourceScenarioId { get; set; }
         public ResourceScenario ResourceScenario { get; set; }
@@ -19,6 +20,8 @@ namespace MPWebAPI.Models
         public List<ProjectConfig> ProjectsOwned { get; set; }
         public List<StaffResourceProjectConfig> ProjectsManaged { get; set; }
         public MerlinPlanUser UserData { get; set; }
+
+
     }
 
     public class StaffResourceStaffResourceCategory

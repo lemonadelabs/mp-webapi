@@ -3,7 +3,7 @@ using MPWebAPI.Models;
 
 namespace MPWebAPI.ViewModels
 {
-    public class OrganisationViewModel : ViewModel
+    public sealed class OrganisationViewModel : ViewModel
     {
         public OrganisationViewModel(Organisation org)
         {
