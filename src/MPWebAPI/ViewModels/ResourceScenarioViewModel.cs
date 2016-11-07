@@ -12,6 +12,11 @@ namespace MPWebAPI.ViewModels
             Creator = model.Creator.Id;
             ApprovedBy = model.ApprovedBy?.UserName;
             Group = model.Group.Id;
+            CreatorDetails = new UserDetails
+            {
+                FirstName = model.Creator.FirstName,
+                LastName = model.Creator.LastName
+            };
         }
 
         public ResourceScenarioViewModel() {}
@@ -25,13 +30,23 @@ namespace MPWebAPI.ViewModels
         public string Name { get; set; }
         
         public DateTime Created { get; set; }
+
         public DateTime Modified { get; set; }
 
         [Required]
         [EmailAddress]
         public string Creator { get; set; }
+
+        public UserDetails CreatorDetails { get; set; }
         
         public bool Approved { get; set; }
         public string ApprovedBy { get; set; }
+
+
+        public class UserDetails
+        {
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+        }
     }
 }
