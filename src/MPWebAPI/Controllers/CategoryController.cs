@@ -19,6 +19,27 @@ namespace MPWebAPI.Controllers
             _businessLogic = mpbl;
         }
 
+        [HttpGet("businessunit/{id}")]
+        [ValidateBusinessUnitExists]
+        public IActionResult GetBusinessUnit(int id)
+        {
+            return Ok(new BusinessUnitViewModel(_repository.BusinessUnits.Single(bu => bu.Id == id)));
+        }
+
+        [HttpDelete("businessunit/{id}")]
+        [ValidateBusinessUnitExists]
+        public async Task<IActionResult> DeleteBusinessUnit(int id)
+        {
+            var bu = _repository.BusinessUnits.Single(b => b.Id == id);
+            var result = await _businessLogic.DeleteBusinessUnitAsync(bu);
+            if (result.Succeeded)
+            {
+                return Ok(id);
+            }
+            return BadRequest(result.Errors);
+        }
+
+
         [HttpGet("financialresource/{id}")]
         [ValidateFinancialResourceCategoryExists]
         public IActionResult GetFinancialResourceCategory(int id)
@@ -41,10 +62,7 @@ namespace MPWebAPI.Controllers
             {
                 return Ok(id);
             }
-            else
-            {
-                return BadRequest(result.Errors);
-            }
+            return BadRequest(result.Errors);
         }
     }
 }

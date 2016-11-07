@@ -52,6 +52,14 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> CopyStaffResourcesAsync(IEnumerable<IResourceCopyRequest> requests);
 
         #endregion
+
+        #region Business Units
+
+        Task<MerlinPlanBLResult> AddBusinessUnitAsync(BusinessUnit businessUnit);
+        Task<MerlinPlanBLResult> DeleteBusinessUnitAsync(BusinessUnit businessUnit);
+
+        #endregion
+
     }
 
     #region Data Object Interfaces

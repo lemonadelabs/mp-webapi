@@ -83,16 +83,34 @@ namespace MPWebAPI.Controllers
         public async Task<IActionResult> Update([FromBody] OrganisationViewModel orgvm)
         {
             var org = _mprepo.Organisations.FirstOrDefault(o => o.Id == orgvm.Id);
-            if (org != null)
-            {
-                await orgvm.MapToModel(org);
-                await _mprepo.SaveChangesAsync();
-                return Ok();
-            }
-            else
-            {
-                return NotFound();
-            }
+            if (org == null) return NotFound();
+            await orgvm.MapToModel(org);
+            await _mprepo.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpGet("{id}/businessunit")]
+        [ValidateOrganisationExists]
+        public IActionResult GetBusinessUnits(int id)
+        {
+            return Ok(
+                _mprepo.BusinessUnits
+                    .Where(bu => bu.OrganisationId == id)
+                    .Select(bu => new BusinessUnitViewModel(bu))
+                    );
+        }
+
+        [HttpPost("{id}/businessunit")]
+        [ValidateOrganisationExists]
+        [ValidateModel]
+        public async Task<IActionResult> AddBusinessUnit(int id, [FromBody] BusinessUnitViewModel model)
+        {
+            var businessUnit = new BusinessUnit();
+            await model.MapToModel(businessUnit);
+            businessUnit.OrganisationId = id;
+            var result = await _mpbl.AddBusinessUnitAsync(businessUnit);
+            if (!result.Succeeded) return BadRequest(result.Errors);
+            return Ok(new BusinessUnitViewModel(businessUnit));
         }
     }
 }

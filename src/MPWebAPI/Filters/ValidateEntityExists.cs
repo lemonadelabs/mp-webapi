@@ -9,17 +9,19 @@ namespace MPWebAPI.Filters
 {
     public class ValidateOrganisationExistsAttribute : TypeFilterAttribute
     {
-        public ValidateOrganisationExistsAttribute() : base(typeof(ValidateOrganisationExists)) {}
-        
+        public ValidateOrganisationExistsAttribute() : base(typeof(ValidateOrganisationExists))
+        {
+        }
+
         private class ValidateOrganisationExists : IAsyncActionFilter
         {
             private readonly IMerlinPlanRepository _repository;
-            
+
             public ValidateOrganisationExists(IMerlinPlanRepository mprepo)
             {
                 _repository = mprepo;
             }
-            
+
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
                 if (context.ActionArguments.ContainsKey("id"))
@@ -46,17 +48,19 @@ namespace MPWebAPI.Filters
 
     public class ValidateGroupExistsAttribute : TypeFilterAttribute
     {
-        public ValidateGroupExistsAttribute() : base(typeof(ValidateGroupExists)) {}
-        
+        public ValidateGroupExistsAttribute() : base(typeof(ValidateGroupExists))
+        {
+        }
+
         private class ValidateGroupExists : IAsyncActionFilter
         {
             private readonly IMerlinPlanRepository _repository;
-            
+
             public ValidateGroupExists(IMerlinPlanRepository mprepo)
             {
                 _repository = mprepo;
             }
-            
+
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
                 if (context.ActionArguments.ContainsKey("id"))
@@ -69,7 +73,7 @@ namespace MPWebAPI.Filters
                             context.Result = new NotFoundObjectResult(id.Value);
                             return;
                         }
-                        await next();            
+                        await next();
                     }
                 }
                 else
@@ -82,17 +86,19 @@ namespace MPWebAPI.Filters
 
     public class ValidateResourceScenarioExistsAttribute : TypeFilterAttribute
     {
-        public ValidateResourceScenarioExistsAttribute() : base(typeof(ValidateResourceScenarioExists)) {}
-        
+        public ValidateResourceScenarioExistsAttribute() : base(typeof(ValidateResourceScenarioExists))
+        {
+        }
+
         private class ValidateResourceScenarioExists : IAsyncActionFilter
         {
             private readonly IMerlinPlanRepository _repository;
-            
+
             public ValidateResourceScenarioExists(IMerlinPlanRepository mprepo)
             {
                 _repository = mprepo;
             }
-            
+
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
                 if (context.ActionArguments.ContainsKey("id"))
@@ -105,8 +111,8 @@ namespace MPWebAPI.Filters
                             context.Result = new NotFoundObjectResult(id.Value);
                             return;
                         }
-                    
-                        await next();            
+
+                        await next();
                     }
                 }
                 else
@@ -119,17 +125,19 @@ namespace MPWebAPI.Filters
 
     public class ValidateFinancialResourceExistsAttribute : TypeFilterAttribute
     {
-        public ValidateFinancialResourceExistsAttribute() : base(typeof(ValidateFinancialResourceExists)) {}
-        
+        public ValidateFinancialResourceExistsAttribute() : base(typeof(ValidateFinancialResourceExists))
+        {
+        }
+
         private class ValidateFinancialResourceExists : IAsyncActionFilter
         {
             private readonly IMerlinPlanRepository _repository;
-            
+
             public ValidateFinancialResourceExists(IMerlinPlanRepository mprepo)
             {
                 _repository = mprepo;
             }
-            
+
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
                 if (context.ActionArguments.ContainsKey("id"))
@@ -142,8 +150,8 @@ namespace MPWebAPI.Filters
                             context.Result = new NotFoundObjectResult(id.Value);
                             return;
                         }
-                        
-                        await next();            
+
+                        await next();
                     }
                 }
                 else
@@ -156,17 +164,20 @@ namespace MPWebAPI.Filters
 
     public class ValidateFinancialResourceCategoryExistsAttribute : TypeFilterAttribute
     {
-        public ValidateFinancialResourceCategoryExistsAttribute() : base(typeof(ValidateFinancialResourceCategoryExists)) {}
-        
+        public ValidateFinancialResourceCategoryExistsAttribute()
+            : base(typeof(ValidateFinancialResourceCategoryExists))
+        {
+        }
+
         private class ValidateFinancialResourceCategoryExists : IAsyncActionFilter
         {
             private readonly IMerlinPlanRepository _repository;
-            
+
             public ValidateFinancialResourceCategoryExists(IMerlinPlanRepository mprepo)
             {
                 _repository = mprepo;
             }
-            
+
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
                 if (context.ActionArguments.ContainsKey("id"))
@@ -179,7 +190,46 @@ namespace MPWebAPI.Filters
                             context.Result = new NotFoundObjectResult(id.Value);
                             return;
                         }
-                        await next();            
+                        await next();
+                    }
+                }
+                else
+                {
+                    context.Result = new NotFoundResult();
+                }
+            }
+        }
+    }
+
+
+    public class ValidateBusinessUnitExistsAttribute : TypeFilterAttribute
+    {
+        public ValidateBusinessUnitExistsAttribute() : base(typeof(ValidateBusinessUnitExists))
+        {
+        }
+
+        private class ValidateBusinessUnitExists : IAsyncActionFilter
+        {
+            private readonly IMerlinPlanRepository _repository;
+
+            public ValidateBusinessUnitExists(IMerlinPlanRepository mprepo)
+            {
+                _repository = mprepo;
+            }
+
+            public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+            {
+                if (context.ActionArguments.ContainsKey("id"))
+                {
+                    var id = context.ActionArguments["id"] as int?;
+                    if (id.HasValue)
+                    {
+                        if (await _repository.BusinessUnits.ToAsyncEnumerable().All(o => o.Id != id.Value))
+                        {
+                            context.Result = new NotFoundObjectResult(id.Value);
+                            return;
+                        }
+                        await next();
                     }
                 }
                 else
@@ -192,7 +242,9 @@ namespace MPWebAPI.Filters
 
     public class ValidateStaffResourceExistsAttribute : TypeFilterAttribute
     {
-        public ValidateStaffResourceExistsAttribute() : base(typeof(ValidateStaffResourceExists)) { }
+        public ValidateStaffResourceExistsAttribute() : base(typeof(ValidateStaffResourceExists))
+        {
+        }
 
         private class ValidateStaffResourceExists : IAsyncActionFilter
         {
@@ -229,17 +281,19 @@ namespace MPWebAPI.Filters
 
     public class ValidateUserExistsAttribute : TypeFilterAttribute
     {
-        public ValidateUserExistsAttribute() : base(typeof(ValidateUserExists)) {}
-        
+        public ValidateUserExistsAttribute() : base(typeof(ValidateUserExists))
+        {
+        }
+
         private class ValidateUserExists : IAsyncActionFilter
         {
             private readonly UserManager<MerlinPlanUser> _userManager;
-            
+
             public ValidateUserExists(UserManager<MerlinPlanUser> userManager)
             {
                 _userManager = userManager;
             }
-            
+
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
                 if (context.ActionArguments.ContainsKey("id"))
@@ -252,7 +306,7 @@ namespace MPWebAPI.Filters
                             context.Result = new NotFoundObjectResult(id);
                             return;
                         }
-                        await next();            
+                        await next();
                     }
                 }
                 else
@@ -261,5 +315,6 @@ namespace MPWebAPI.Filters
                 }
             }
         }
-    }    
+    }
 }
+

@@ -232,7 +232,7 @@ namespace MPWebAPI.Models
                 }
             }
 
-            if (result.Succeeded)
+            if (!result.Succeeded) return result;
             {
                 foreach (var category in categoryList)
                 {
@@ -815,6 +815,49 @@ namespace MPWebAPI.Models
             }
 
             result.SetData(resultData);
+            return result;
+        }
+
+        #endregion
+
+        #region Business Units
+
+        public async Task<MerlinPlanBLResult> AddBusinessUnitAsync(BusinessUnit businessUnit)
+        {
+            var result = new MerlinPlanBLResult();
+            
+            // Check that name is unique for the org
+            var validate =
+                _respository.BusinessUnits.Where(bu => bu.OrganisationId == businessUnit.OrganisationId)
+                    .All(bu => bu.Name != businessUnit.Name);
+
+            if (validate)
+            {
+                await _respository.AddBusinessUnitAsync(businessUnit);
+                return result;
+            }
+
+            result.AddError("Name", $"The business unit name {businessUnit.Name} is already used in this organisation.");
+            return result;
+
+        }
+
+        public async Task<MerlinPlanBLResult> DeleteBusinessUnitAsync(BusinessUnit businessUnit)
+        {
+            var result = new MerlinPlanBLResult();
+            // We need to make sure that the business unit is not used in any projects.
+            if (businessUnit.ProjectsImpacting.Count > 0)
+            {
+                result.AddError("ProjectsImpacting", "There are projects that impact upon this business unit so it cannot be removed.");
+            }
+
+            if (businessUnit.ProjectsOwned.Count > 0)
+            {
+                result.AddError("ProjectsOwned", "There are projects that are owned by this business unit so it cannot be removed");
+            }
+
+            if (!result.Succeeded) return result;
+            await _respository.RemoveBusinessUnitAsync(businessUnit);
             return result;
         }
 

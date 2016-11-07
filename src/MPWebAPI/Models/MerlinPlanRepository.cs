@@ -451,6 +451,7 @@ namespace MPWebAPI.Models
 
         }
 
+
         public async Task AddCategoriesToStaffResourceAsync(IEnumerable<StaffResourceCategory> categories, StaffResource resource)
         {
             foreach (var staffResourceCategory in categories.ToList())
@@ -473,6 +474,57 @@ namespace MPWebAPI.Models
                 resource.Categories.Remove(category);
             }
             await _dbcontext.SaveChangesAsync();
+        }
+
+        #endregion
+
+        #region Project
+
+        public IEnumerable<Project> Projects
+        {
+            get
+            {
+                return _dbcontext.Project
+                    .Include(p => p.FinancialResourceCategories)
+                    .ThenInclude(pfrc => pfrc.FinancialResourceCategory)
+                    .Include(p => p.Creator)
+                    .Include(p => p.Group)
+                    .Include(p => p.ShareUser)
+                    .ThenInclude(su => su.User)
+                    .Include(p => p.Options)
+                    .ToList();
+            }
+        }
+
+        #endregion
+
+        #region Business Units
+
+        public IEnumerable<BusinessUnit> BusinessUnits
+        {
+            get
+            {
+                return _dbcontext.BusinessUnit
+                    .Include(bu => bu.Organisation)
+                    .Include(bu => bu.ProjectsImpacting)
+                    .Include(bu => bu.ProjectsOwned)
+                    .ToList();
+            }
+        }
+
+        public async Task AddBusinessUnitAsync(BusinessUnit businessUnit)
+        {
+            if(businessUnit == null) return;
+            _dbcontext.BusinessUnit.Add(businessUnit);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveBusinessUnitAsync(BusinessUnit businessUnit)
+        {
+            if (businessUnit == null) return;
+            _dbcontext.BusinessUnit.Remove(businessUnit);
+            await _dbcontext.SaveChangesAsync();
+
         }
 
         #endregion

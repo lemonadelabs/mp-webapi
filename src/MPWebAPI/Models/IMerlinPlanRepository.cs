@@ -120,6 +120,20 @@ namespace MPWebAPI.Models
 
         #endregion
 
+        #region Business Units
+
+        IEnumerable<BusinessUnit> BusinessUnits { get; }
+        Task AddBusinessUnitAsync(BusinessUnit businessUnit);
+        Task RemoveBusinessUnitAsync(BusinessUnit businessUnit);
+
+        #endregion
+
+        #region Project
+
+        IEnumerable<Project> Projects { get; }
+
+        #endregion
+
         Task SaveChangesAsync();
     }    
 }
