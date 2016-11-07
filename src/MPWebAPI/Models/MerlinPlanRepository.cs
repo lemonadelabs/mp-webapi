@@ -489,9 +489,8 @@ namespace MPWebAPI.Models
                     .ThenInclude(pfrc => pfrc.FinancialResourceCategory)
                     .Include(p => p.Creator)
                     .Include(p => p.Group)
-                    .Include(p => p.ShareUser)
-                    .ThenInclude(su => su.User)
-                    .Include(p => p.Options)
+                    .Include(bu => bu.OwningBusinessUnit)
+                    .Include(bu => bu.ImpactedBusinessUnit)
                     .ToList();
             }
         }

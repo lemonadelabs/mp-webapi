@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using MPWebAPI.Models;
+using MPWebAPI.ViewModels;
 
 namespace MPWebAPI.Controllers
 {
@@ -14,5 +16,8 @@ namespace MPWebAPI.Controllers
             _businesLogic = mpbl;
             _repository = repo;
         }
+
+        [HttpGet]
+        public IActionResult GetAll() => Ok(_repository.Projects.Select(p => new ProjectViewModel(p)));
     }
 }
