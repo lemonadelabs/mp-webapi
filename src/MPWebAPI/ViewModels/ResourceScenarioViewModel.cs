@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using MPWebAPI.Models;
 
 namespace MPWebAPI.ViewModels
@@ -9,14 +10,21 @@ namespace MPWebAPI.ViewModels
         public ResourceScenarioViewModel(ResourceScenario model)
         {
             MapToViewModelAsync(model);
-            Creator = model.Creator.Id;
-            ApprovedBy = model.ApprovedBy?.UserName;
-            Group = model.Group.Id;
+        }
+
+        public override Task MapToViewModelAsync(object model, IMerlinPlanRepository repo = null)
+        {
+            base.MapToViewModelAsync(model, repo);
+            var rs = (ResourceScenario) model;
+            Creator = rs.Creator.Id;
+            ApprovedBy = rs.ApprovedBy?.UserName;
+            Group = rs.Group.Id;
             CreatorDetails = new UserDetails
             {
-                FirstName = model.Creator.FirstName,
-                LastName = model.Creator.LastName
+                FirstName = rs.Creator.FirstName,
+                LastName = rs.Creator.LastName
             };
+            return Task.CompletedTask;
         }
 
         public ResourceScenarioViewModel() {}

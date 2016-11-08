@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MPWebAPI.Models
 {
-    public class ResourceScenario
+    public class ResourceScenario : IMerlinPlanDocument
     {
         public int Id { get; set; }
         public string Name { get; set; }

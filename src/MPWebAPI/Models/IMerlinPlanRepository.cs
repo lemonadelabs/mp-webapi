@@ -131,6 +131,15 @@ namespace MPWebAPI.Models
         #region Project
 
         IEnumerable<Project> Projects { get; }
+        IEnumerable<Project> GetUserSharedProjectsForUserAsync(MerlinPlanUser user);
+        IEnumerable<Project> GetGroupShareProjectsForUserAsync(MerlinPlanUser user);
+        IEnumerable<Project> GetOrganisationSharedProjectsAsync(Organisation org);
+        Task ShareProjectWithGroupAsync(Project project, bool share);
+        Task ShareProjectWithOrgAsync(Project project, bool share);
+        Task ShareProjectWithUserAsync(Project project, MerlinPlanUser user);
+        Task UnshareProjectWithUserAsync(Project project, MerlinPlanUser user);
+        Task AddProjectAsync(Project project);
+        Task RemoveProjectAsync(Project project);
 
         #endregion
 

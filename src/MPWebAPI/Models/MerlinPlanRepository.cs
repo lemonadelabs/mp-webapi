@@ -195,7 +195,6 @@ namespace MPWebAPI.Models
                     .Include(rs => rs.FinancialResources)
                     .Include(rs => rs.StaffResources)
                     .ToList();
-
             }
         }
 
@@ -491,8 +490,75 @@ namespace MPWebAPI.Models
                     .Include(p => p.Group)
                     .Include(bu => bu.OwningBusinessUnit)
                     .Include(bu => bu.ImpactedBusinessUnit)
+                    .Include(p => p.ShareUser)
                     .ToList();
             }
+        }
+
+        public IEnumerable<Project> GetUserSharedProjectsForUserAsync(MerlinPlanUser user)
+        {
+            return 
+                Projects
+                    .Where(p => p.ShareUser.Select(su => su.UserId).Contains(user.Id))
+                    .ToList();
+        }
+
+        public IEnumerable<Project> GetGroupShareProjectsForUserAsync(MerlinPlanUser user)
+        {
+            return
+                Projects
+                    .Where(p => p.ShareGroup && user.Groups.Select(g => g.GroupId).Contains(p.Group.Id))
+                    .ToList();
+        }
+
+        public IEnumerable<Project> GetOrganisationSharedProjectsAsync(Organisation org)
+        {
+            return Projects.Where(p => p.Group.OrganisationId == org.Id).ToList();
+        }
+
+        public async Task ShareProjectWithGroupAsync(Project project, bool share)
+        {
+            project.ShareGroup = share;
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task ShareProjectWithOrgAsync(Project project, bool share)
+        {
+            project.ShareAll = share;
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task ShareProjectWithUserAsync(Project project, MerlinPlanUser user)
+        {
+            project.ShareUser.Add(new ProjectUser
+            {
+                Project = project,
+                User = user
+            });
+
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task UnshareProjectWithUserAsync(Project project, MerlinPlanUser user)
+        {
+            var pu = project.ShareUser.SingleOrDefault(u => u.UserId == user.Id);
+            if (pu == null) return;
+            project.ShareUser.Remove(pu);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task AddProjectAsync(Project project)
+        {
+            if (project == null) return;
+            _dbcontext.Project.Add(project);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveProjectAsync(Project project)
+        {
+            if(project == null) return;
+            _dbcontext.Project.Remove(project);
+            await _dbcontext.SaveChangesAsync();
         }
 
         #endregion

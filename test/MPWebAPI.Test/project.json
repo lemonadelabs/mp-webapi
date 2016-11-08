@@ -11,8 +11,7 @@
     "xunit": "2.2.0-beta3-build3402",
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "Microsoft.AspNetCore.TestHost": "1.0.0",
-    "Moq": "4.6.38-alpha",
-    "Microsoft.NETCore.App": "1.0.1"
+    "Moq": "4.6.38-alpha"
   },
 
   "publishOptions": {
@@ -24,6 +23,12 @@
 
   "frameworks": {
     "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
+        }
+      },
       "imports": [
         "dnxcore50",
         "portable-net451+win8"
