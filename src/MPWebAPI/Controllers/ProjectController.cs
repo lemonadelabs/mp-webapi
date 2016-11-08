@@ -32,6 +32,13 @@ namespace MPWebAPI.Controllers
             return Ok(_repository.Projects.Where(p => p.Group.Id == id).Select(p => new ProjectViewModel(p)));
         }
 
+        [HttpGet("user/{id}")]
+        [ValidateUserExists]
+        public IActionResult GetUserCreated(string id)
+        {
+            return Ok(_repository.Projects.Where(p => p.Creator.Id == id).Select(p => new ProjectViewModel(p)));
+        }
+
         [HttpGet("useraccess/{id}")]
         [ValidateUserExists]
         public async Task<IActionResult> GetAllForUser(string id)
@@ -77,6 +84,43 @@ namespace MPWebAPI.Controllers
                 }
             );
         }
+
+        [HttpPut("{id}/group/share")]
+        [ValidateProjectExists]
+        public async Task<IActionResult> GroupShare(int id)
+        {
+            var project = _repository.Projects.Single(p => p.Id == id);
+            await _repository.ShareProjectWithGroupAsync(project, true);
+            return Ok(new ProjectViewModel(project));
+        }
+
+        [HttpPut("{id}/group/unshare")]
+        [ValidateProjectExists]
+        public async Task<IActionResult> GroupUnshare(int id)
+        {
+            var project = _repository.Projects.Single(p => p.Id == id);
+            await _repository.ShareProjectWithGroupAsync(project, false);
+            return Ok(new ProjectViewModel(project));
+        }
+
+        [HttpPut("{id}/share")]
+        [ValidateProjectExists]
+        public async Task<IActionResult> Share(int id)
+        {
+            var project = _repository.Projects.Single(p => p.Id == id);
+            await _repository.ShareProjectWithOrgAsync(project, true);
+            return Ok(new ProjectViewModel(project));
+        }
+
+        [HttpPut("{id}/unshare")]
+        [ValidateProjectExists]
+        public async Task<IActionResult> Unshare(int id)
+        {
+            var project = _repository.Projects.Single(p => p.Id == id);
+            await _repository.ShareProjectWithOrgAsync(project, false);
+            return Ok(new ProjectViewModel(project));
+        }
+
 
     }
 }

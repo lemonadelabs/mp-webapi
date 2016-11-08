@@ -138,6 +138,7 @@ namespace MPWebAPI.Models
             {
                 return _userManager.Users
                     .Include(u => u.Organisation)
+                    .Include(u => u.Groups)
                     .ToList();
             }
         }
@@ -202,7 +203,8 @@ namespace MPWebAPI.Models
         {
             return await _dbcontext.ResourceScenarioUser
                 .Where(rsu => rsu.UserId == user.Id)
-                .Select(rsu => rsu.ResourceScenario).ToListAsync();
+                .Select(rsu => rsu.ResourceScenario)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<ResourceScenario>> GetGroupSharedResourceScenariosForUserAsync(MerlinPlanUser user)
@@ -513,7 +515,7 @@ namespace MPWebAPI.Models
 
         public IEnumerable<Project> GetOrganisationSharedProjectsAsync(Organisation org)
         {
-            return Projects.Where(p => p.Group.OrganisationId == org.Id).ToList();
+            return Projects.Where(p => p.Group.OrganisationId == org.Id && p.ShareAll).ToList();
         }
 
         public async Task ShareProjectWithGroupAsync(Project project, bool share)
@@ -589,7 +591,6 @@ namespace MPWebAPI.Models
             if (businessUnit == null) return;
             _dbcontext.BusinessUnit.Remove(businessUnit);
             await _dbcontext.SaveChangesAsync();
-
         }
 
         #endregion
