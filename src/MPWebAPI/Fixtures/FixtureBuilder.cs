@@ -286,7 +286,7 @@ namespace MPWebAPI.Fixtures
                 Directory.GetCurrentDirectory(),
                 Path.Combine("Fixtures", fixtureFile));
 
-            string fixtureJSON = null;
+            string fixtureJSON;
 
             try
             {
@@ -295,7 +295,7 @@ namespace MPWebAPI.Fixtures
                     fixtureJSON = sr.ReadToEnd();
                 }
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 _logger.LogError(string.Format("The fixture file {0} could not be loaded, skipping fixture add.",
                     fixturePath));
@@ -320,88 +320,86 @@ namespace MPWebAPI.Fixtures
             }
 
             _logger.LogInformation("Adding Organisations...");
-            AddOrganisations();
+            await AddOrganisations();
 
             _logger.LogInformation("Adding Groups...");
-            AddGroups();
+            await AddGroups();
 
             _logger.LogInformation("Adding Users...");
             await AddUsersAsync();
 
             _logger.LogInformation("Adding Business Units...");
-            AddBusinessUnits();
+            await AddBusinessUnits();
 
             _logger.LogInformation("Adding Risk Categories...");
-            AddRiskCategories();
+            await AddRiskCategories();
 
             _logger.LogInformation("Adding Alignment Categories...");
-            AddAlignmentCategories();
+            await AddAlignmentCategories();
 
             _logger.LogInformation("Adding Staff Resource Categories...");
-            AddStaffResourceCategories();
+            await AddStaffResourceCategories();
 
             _logger.LogInformation("Adding Financial Resource Categories...");
-            AddFinancialResourceCategories();
+            await AddFinancialResourceCategories();
 
             _logger.LogInformation("Adding Benefit Categories...");
-            AddBenefitCategories();
+            await AddBenefitCategories();
 
             _logger.LogInformation("Adding Resource Scenarios...");
-            AddResourceScenarios();
+            await AddResourceScenarios();
 
             _logger.LogInformation("Adding Projects...");
-            AddProjects();
+            await AddProjects();
 
             _logger.LogInformation("Adding Portfolios...");
-            AddPortfolios();
+            await AddPortfolios();
 
             _logger.LogInformation("Fixture {0} added.", fixtureFile);
         }
 
-        private List<FixtureData.ProjectFixture> DepSort(List<FixtureData.ProjectFixture> insort)
+        private static IEnumerable<FixtureData.ProjectFixture> DepSort(IEnumerable<FixtureData.ProjectFixture> insort)
         {
             var sorted = new List<FixtureData.ProjectFixture>(insort);
             // Ensures that for all px, py in ps:
             // if py in px.deps then py > px
 
             sorted.Sort((x, y) => {
-                var xAllDeps = x.Options.SelectMany(ox => ox.Dependencies);
-                var yAllDeps = y.Options.SelectMany(oy => oy.Dependencies);
+                var xAllDeps = x.Options.SelectMany(ox => ox.Dependencies).ToList();
+                var yAllDeps = y.Options.SelectMany(oy => oy.Dependencies).ToList();
 
                 if (
                     xAllDeps.Count() == yAllDeps.Count() && xAllDeps.All(xd => yAllDeps.Any(yd => yd.Project == xd.Project && yd.Option == xd.Option)))
                 {
                     return 0;
                 }
-                else if(yAllDeps.Any(yd => yd.Project == x.Name))
+                if(yAllDeps.Any(yd => yd.Project == x.Name))
                 {
                     return -1;
                 }
-                else {
-                    return 1;
-                }
+                return 1;
             });
             return sorted;
         }
 
-        private void AddProjects()
+        private async Task AddProjects()
         {
-            if (!_dbcontext.Project.Any())
-            {
+            //if (! await _dbcontext.Project.AnyAsync())
+            //{
                 foreach (var p in DepSort(_fixtureData.Projects))
                 {
-                    var newProject = new Project()
+                    var newProject = new Project
                     {
                         Name = p.Name,
                         Summary = p.Summary,
-                        Creator = _dbcontext.Users.First(u => u.UserName == p.Creator), 
-                        Group = _dbcontext.Group.First(g => g.Name == p.Group),
+                        Creator = await _dbcontext.Users.FirstAsync(u => u.UserName == p.Creator), 
+                        Group = await _dbcontext.Group.FirstAsync(g => g.Name == p.Group),
                         
-                        OwningBusinessUnit = _dbcontext.BusinessUnit.FirstOrDefault(bu => bu.Name == p.OwningBusinessUnit),
-                        ImpactedBusinessUnit = _dbcontext.BusinessUnit.FirstOrDefault(ibu => ibu.Name == p.ImpactedBusinessUnit),
+                        OwningBusinessUnit = await _dbcontext.BusinessUnit.FirstOrDefaultAsync(bu => bu.Name == p.OwningBusinessUnit),
+                        ImpactedBusinessUnit = await _dbcontext.BusinessUnit.FirstOrDefaultAsync(ibu => ibu.Name == p.ImpactedBusinessUnit),
                     };
                     _dbcontext.Project.Add(newProject);
-                    _dbcontext.SaveChanges();
+                    await _dbcontext.SaveChangesAsync();
                     
                     
                     foreach (var o in p.Options)
@@ -413,7 +411,7 @@ namespace MPWebAPI.Fixtures
                             Project = newProject
                         };
                         _dbcontext.ProjectOption.Add(option);
-                        _dbcontext.SaveChanges();
+                        await _dbcontext.SaveChangesAsync();
 
                         foreach (var phase in o.Phases)
                         {
@@ -425,7 +423,7 @@ namespace MPWebAPI.Fixtures
                                 ProjectOption = option
                             };
                             _dbcontext.ProjectPhase.Add(newPhase);
-                            _dbcontext.SaveChanges();
+                            await _dbcontext.SaveChangesAsync();
 
                            foreach (var ft in phase.FinancialResources)
                            {
@@ -436,16 +434,16 @@ namespace MPWebAPI.Fixtures
                                     ProjectPhase = newPhase
                                 };
                                 _dbcontext.FinancialTransaction.Add(newft);
-                                _dbcontext.SaveChanges();
+                                await _dbcontext.SaveChangesAsync();
 
                                 foreach (var ftrc in ft.Categories)
                                 {
                                     var newftrc = new FinancialTransactionResourceCategory() {
-                                        FinancialResourceCategory = _dbcontext.FinancialResourceCategory.FirstOrDefault(frc => frc.Name == ftrc),
+                                        FinancialResourceCategory = await _dbcontext.FinancialResourceCategory.FirstOrDefaultAsync(frc => frc.Name == ftrc),
                                         FinancialTransaction = newft 
                                     };
                                     _dbcontext.Add(newftrc);
-                                    _dbcontext.SaveChanges();
+                                    await _dbcontext.SaveChangesAsync();
                                 }                               
                            }
 
@@ -455,10 +453,12 @@ namespace MPWebAPI.Fixtures
                                    Value = st.Value,
                                    Additive = st.Additive,
                                    Date = st.Date,
-                                   Category = _dbcontext.StaffResourceCategory.FirstOrDefault(src => src.Name == st.Category),
-                                   StaffResource = _dbcontext.StaffResource.FirstOrDefault(sr => sr.Name == st.StaffResource),
+                                   Category = await _dbcontext.StaffResourceCategory.FirstOrDefaultAsync(src => src.Name == st.Category),
+                                   StaffResource = await _dbcontext.StaffResource.FirstOrDefaultAsync(sr => sr.Name == st.StaffResource),
                                    ProjectPhase = newPhase
                                };
+                               _dbcontext.StaffTransaction.Add(newStaffTransaction);
+                               await _dbcontext.SaveChangesAsync();
                            }
                         }
 
@@ -466,7 +466,7 @@ namespace MPWebAPI.Fixtures
                         {
                             var newRiskProfile = new RiskProfile()
                             {
-                                RiskCategory = _dbcontext.RiskCategory.First(rc => rc.Name == rp.Category),
+                                RiskCategory = await _dbcontext.RiskCategory.FirstAsync(rc => rc.Name == rp.Category),
                                 Probability = rp.Probability,
                                 Impact = rp.Impact,
                                 Mitigation = rp.Mitigation ? 1.0f : 0.0f,
@@ -476,11 +476,11 @@ namespace MPWebAPI.Fixtures
                             };
                             _dbcontext.RiskProfile.Add(newRiskProfile);
                         }
-                        _dbcontext.SaveChanges();
+                        await _dbcontext.SaveChangesAsync();
 
                         foreach (var b in o.Benefits)
                         {
-                            var newBenefit = new ProjectBenefit()
+                            var newBenefit = new ProjectBenefit
                             {
                                 Name = b.Name,
                                 Description = b.Description,
@@ -488,7 +488,7 @@ namespace MPWebAPI.Fixtures
                                 ProjectOption = option
                             };
                             _dbcontext.ProjectBenefit.Add(newBenefit);
-                            _dbcontext.SaveChanges();
+                            await _dbcontext.SaveChangesAsync();
 
                             foreach (var a in b.Alignments)
                             {
@@ -496,212 +496,205 @@ namespace MPWebAPI.Fixtures
                                 {
                                     Value = a.Value,
                                     Date = a.Date,
-                                    AlignmentCategory = _dbcontext.AlignmentCategory.FirstOrDefault(ac => ac.Name == a.AlignmentCategory),
+                                    AlignmentCategory = await _dbcontext.AlignmentCategory.FirstOrDefaultAsync(ac => ac.Name == a.AlignmentCategory),
                                     ProjectBenefit = newBenefit
                                 };
                                 _dbcontext.Alignment.Add(newAlignment);
                             }
-                            _dbcontext.SaveChanges();
+                            await _dbcontext.SaveChangesAsync();
 
                             foreach (var bc in b.Categories)
                             {
                                 var pbbc = new ProjectBenefitBenefitCategory() {
                                     ProjectBenefit = newBenefit,
-                                    BenefitCategory = _dbcontext.BenefitCategory.First(c => c.Name == bc)
+                                    BenefitCategory = await _dbcontext.BenefitCategory.FirstAsync(c => c.Name == bc)
                                 };
                                 _dbcontext.Add(pbbc);
                             }
-                            _dbcontext.SaveChanges();
+                            await _dbcontext.SaveChangesAsync();
                         }
 
                         foreach (var dep in o.Dependencies)
                         {
                             var newDep = new ProjectDependency() {
-                                DependsOn = _dbcontext.ProjectOption.First(po => po.Project.Name == dep.Project && po.Description == dep.Option),
+                                DependsOn = await _dbcontext.ProjectOption.FirstAsync(po => po.Project.Name == dep.Project && po.Description == dep.Option),
                                 RequiredBy = option 
                             };
                             _dbcontext.Add(newDep);
                         }
-                        _dbcontext.SaveChanges();
+                        await _dbcontext.SaveChangesAsync();
                     }
                 }
-            }
+            //}
         }
 
-        private void AddFinancialResourceCategories()
+        private async Task AddFinancialResourceCategories()
         {
-            if (!_dbcontext.FinancialResourceCategory.Any())
+            //if (await _dbcontext.FinancialResourceCategory.AnyAsync()) return;
+            foreach (var frc in _fixtureData.FinancialResourceCategories)
             {
-                foreach (var frc in _fixtureData.FinancialResourceCategories)
-                {
-                    _dbcontext.FinancialResourceCategory.Add(new FinancialResourceCategory() {
-                        Name = frc.Name,
-                        Group = _dbcontext.Group.First(g => g.Name == frc.Group)
-                    });
-                }
-                _dbcontext.SaveChanges();
+                _dbcontext.FinancialResourceCategory.Add(new FinancialResourceCategory {
+                    Name = frc.Name,
+                    Group = await _dbcontext.Group.FirstAsync(g => g.Name == frc.Group)
+                });
             }
+            await _dbcontext.SaveChangesAsync();
         }
 
-        private void AddStaffResourceCategories()
+        private async Task AddStaffResourceCategories()
         {
-            if (!_dbcontext.StaffResourceCategory.Any())
+            //if (await _dbcontext.StaffResourceCategory.AnyAsync()) return;
+            foreach (var src in _fixtureData.StaffResourceCategories)
             {
-                foreach (var src in _fixtureData.StaffResourceCategories)
-                {
-                    _dbcontext.Add(new StaffResourceCategory() {
-                        Name = src.Name,
-                        Group = _dbcontext.Group.First(g => g.Name == src.Group)
-                    });                    
-                }
-                _dbcontext.SaveChanges();
+                _dbcontext.Add(new StaffResourceCategory() {
+                    Name = src.Name,
+                    Group = await _dbcontext.Group.FirstAsync(g => g.Name == src.Group)
+                });                    
             }
+            await _dbcontext.SaveChangesAsync();
         }
 
-        private void AddPortfolios()
+        private async Task AddPortfolios()
         {
-            if (!_dbcontext.Portfolio.Any())
+            //if (await _dbcontext.Portfolio.AnyAsync()) return;
+            foreach (var p in _fixtureData.Portfolios)
             {
-                foreach (var p in _fixtureData.Portfolios)
-                {
-                    var newPortfolio = new Portfolio() {
-                        Creator = _dbcontext.Users.First(u => u.UserName == p.Creator),
-                        Group = _dbcontext.Group.First(g => g.Name == p.Group),
-                        Name = p.Name,
-                        StartYear = p.StartYear,
-                        EndYear = p.EndYear,
-                        Approved = p.Approved,
-                        ApprovedBy = _dbcontext.Users.FirstOrDefault(u => u.UserName == p.ApprovedBy),
-                    };
-                    _dbcontext.Portfolio.Add(newPortfolio);
-                    _dbcontext.SaveChanges();
+                var newPortfolio = new Portfolio() {
+                    Creator = await _dbcontext.Users.FirstAsync(u => u.UserName == p.Creator),
+                    Group = await _dbcontext.Group.FirstAsync(g => g.Name == p.Group),
+                    Name = p.Name,
+                    StartYear = p.StartYear,
+                    EndYear = p.EndYear,
+                    Approved = p.Approved,
+                    ApprovedBy = await _dbcontext.Users.FirstOrDefaultAsync(u => u.UserName == p.ApprovedBy),
+                };
+                _dbcontext.Portfolio.Add(newPortfolio);
+                await _dbcontext.SaveChangesAsync();
 
-                    foreach (var pc in p.Projects)
-                    {
-                        var newProjectConfig = new ProjectConfig() {
-                            StartDate = pc.StartDate,
-                            ProjectOption = _dbcontext.ProjectOption.First(po => po.Description == pc.Option && po.Project.Name == pc.Project),
-                            Portfolio = newPortfolio,
-                            Owner = _dbcontext.StaffResource.FirstOrDefault(sr => sr.Name == pc.Owner),
+                foreach (var pc in p.Projects)
+                {
+                    var newProjectConfig = new ProjectConfig() {
+                        StartDate = pc.StartDate,
+                        ProjectOption = await _dbcontext.ProjectOption.FirstAsync(po => po.Description == pc.Option && po.Project.Name == pc.Project),
+                        Portfolio = newPortfolio,
+                        Owner = await _dbcontext.StaffResource.FirstOrDefaultAsync(sr => sr.Name == pc.Owner),
                             
-                        };
-                        _dbcontext.ProjectConfig.Add(newProjectConfig);
-                        _dbcontext.SaveChanges();
-                        _dbcontext.AddRange(pc.Managers.Select(m => new StaffResourceProjectConfig() {
-                                StaffResource = _dbcontext.StaffResource.FirstOrDefault(sr => sr.Name == m),
-                                ProjectConfig = newProjectConfig         
-                          }));
-                        _dbcontext.SaveChanges();
+                    };
+                    _dbcontext.ProjectConfig.Add(newProjectConfig);
+                    await _dbcontext.SaveChangesAsync();
+                    
+                    _dbcontext.AddRange(pc.Managers.Select(m => new StaffResourceProjectConfig {
+                        StaffResource = _dbcontext.StaffResource.FirstOrDefault(sr => sr.Name == m),
+                        ProjectConfig = newProjectConfig       
+                    }));
+                    await _dbcontext.SaveChangesAsync();
 
-                        foreach (var ppc in pc.Phases)
-                        {
-                            _dbcontext.PhaseConfig.Add(new PhaseConfig() {
-                                StartDate = ppc.StartDate,
-                                EndDate = ppc.EndDate,
-                                ProjectPhase = _dbcontext.ProjectPhase.First(pp => pp.Name == ppc.ProjectPhase && pp.ProjectOption == newProjectConfig.ProjectOption && pp.ProjectOption.Project.Name == newProjectConfig.ProjectOption.Project.Name),
-                                ProjectConfig = newProjectConfig
-                            });
-                        }
-                        _dbcontext.SaveChanges();                     
+                    foreach (var ppc in pc.Phases)
+                    {
+                        _dbcontext.PhaseConfig.Add(new PhaseConfig() {
+                            StartDate = ppc.StartDate,
+                            EndDate = ppc.EndDate,
+                            ProjectPhase = await _dbcontext.ProjectPhase.FirstAsync(pp => pp.Name == ppc.ProjectPhase && pp.ProjectOption == newProjectConfig.ProjectOption && pp.ProjectOption.Project.Name == newProjectConfig.ProjectOption.Project.Name),
+                            ProjectConfig = newProjectConfig
+                        });
                     }
+                    await _dbcontext.SaveChangesAsync();                     
                 }
             }
         }
 
-        private void AddResourceScenarios()
+        private async Task AddResourceScenarios()
         {
-            if (!_dbcontext.ResourceScenario.Any())
+            //if (await _dbcontext.ResourceScenario.AnyAsync()) return;
+            foreach (var rs in _fixtureData.ResourceScenarios)
             {
-                foreach (var rs in _fixtureData.ResourceScenarios)
+                var resourceScenario = new ResourceScenario {
+                    Name = rs.Name,
+                    Creator = await _dbcontext.Users.FirstAsync(u => u.UserName == rs.Creator),
+                    Group = await _dbcontext.Group.FirstAsync(g => g.Name == rs.Group),
+                };
+
+                _dbcontext.ResourceScenario.Add(resourceScenario);
+                await _dbcontext.SaveChangesAsync();
+
+                // Staff Resources
+                foreach (var sr in rs.StaffResources)
                 {
-                    ResourceScenario resourceScenario = new ResourceScenario() {
-                        Name = rs.Name,
-                        Creator = _dbcontext.Users.First(u => u.UserName == rs.Creator),
-                        Group = _dbcontext.Group.First(g => g.Name == rs.Group),
+                    var staffResource = new StaffResource {
+                        Name = sr.Name,
+                        StartDate = sr.StartDate,
+                        EndDate = sr.EndDate,
+                        ResourceScenario = resourceScenario,
                     };
+                    _dbcontext.Add(staffResource);
+                    await _dbcontext.SaveChangesAsync();
 
-                    _dbcontext.ResourceScenario.Add(resourceScenario);
-                    _dbcontext.SaveChanges();
-
-                    // Staff Resources
-                    foreach (var sr in rs.StaffResources)
+                    foreach (var c in sr.Categories)
                     {
-                        var staffResource = new StaffResource() {
-                            Name = sr.Name,
-                            StartDate = sr.StartDate,
-                            EndDate = sr.EndDate,
-                            ResourceScenario = resourceScenario,
-                        };
-                        _dbcontext.Add(staffResource);
-                        _dbcontext.SaveChanges();
+                        _dbcontext.Add(new StaffResourceStaffResourceCategory {
+                            StaffResource = staffResource,
+                            StaffResourceCategory = await _dbcontext.StaffResourceCategory.FirstAsync(src => src.Name == c) 
+                        });
+                    }
+                    await _dbcontext.SaveChangesAsync();
+                        
+                    foreach (var a in sr.Adjustments)
+                    {
+                        _dbcontext.Add(new StaffAdjustment() {
+                            Value = a.Value,
+                            Additive = a.Additive,
+                            Date = a.Date,
+                            Actual = a.Actual,
+                            StaffResource = staffResource
+                        });
+                    }
+                    await _dbcontext.SaveChangesAsync();
+                }
 
-                        foreach (var c in sr.Categories)
+                // Financial Resources
+                foreach (var fr in rs.FinancialResources)
+                {
+                    var financialResource = new FinancialResource() {
+                        Name = fr.Name,
+                        StartDate = fr.StartDate,
+                        EndDate = fr.EndDate,
+                        ResourceScenario = resourceScenario
+                    };
+                    _dbcontext.FinancialResource.Add(financialResource);
+                    await _dbcontext.SaveChangesAsync();
+                        
+                    // Partitions
+                    foreach (var p in fr.Partitions)
+                    {
+                        var partition = new FinancialResourcePartition()
                         {
-                            _dbcontext.Add(new StaffResourceStaffResourceCategory() {
-                                StaffResource = staffResource,
-                                StaffResourceCategory = _dbcontext.StaffResourceCategory.First(src => src.Name == c) 
+                            FinancialResource = financialResource
+                        };
+                        _dbcontext.FinancialResourcePartition.Add(partition);
+                        await _dbcontext.SaveChangesAsync();
+
+                        // Categories
+                        foreach (var c in p.Categories)
+                        {
+                            _dbcontext.Add(new PartitionResourceCategory() {
+                                FinancialResourcePartition = partition,
+                                FinancialResourceCategory = await _dbcontext.FinancialResourceCategory.FirstAsync(frc => frc.Name == c)
                             });
                         }
-                        _dbcontext.SaveChanges();
-                        
-                        foreach (var a in sr.Adjustments)
+                        await _dbcontext.SaveChangesAsync();
+
+                        // Adjustments
+                        foreach (var a in p.Adjustments)
                         {
-                            _dbcontext.Add(new StaffAdjustment() {
+                            _dbcontext.FinancialAdjustment.Add(new FinancialAdjustment() {
                                 Value = a.Value,
                                 Additive = a.Additive,
                                 Date = a.Date,
                                 Actual = a.Actual,
-                                StaffResource = staffResource
+                                FinancialResourcePartition = partition
                             });
                         }
-                        _dbcontext.SaveChanges();
-                    }
-
-                    // Financial Resources
-                    foreach (var fr in rs.FinancialResources)
-                    {
-                        var financialResource = new FinancialResource() {
-                            Name = fr.Name,
-                            StartDate = fr.StartDate,
-                            EndDate = fr.EndDate,
-                            ResourceScenario = resourceScenario
-                        };
-                        _dbcontext.FinancialResource.Add(financialResource);
-                        _dbcontext.SaveChanges();
-                        
-                        // Partitions
-                        foreach (var p in fr.Partitions)
-                        {
-                            var partition = new FinancialResourcePartition()
-                            {
-                                FinancialResource = financialResource
-                            };
-                            _dbcontext.FinancialResourcePartition.Add(partition);
-                            _dbcontext.SaveChanges();
-
-                            // Categories
-                            foreach (var c in p.Categories)
-                            {
-                                _dbcontext.Add(new PartitionResourceCategory() {
-                                    FinancialResourcePartition = partition,
-                                    FinancialResourceCategory = _dbcontext.FinancialResourceCategory.First(frc => frc.Name == c)
-                                });
-                            }
-                            _dbcontext.SaveChanges();
-
-                            // Adjustments
-                            foreach (var a in p.Adjustments)
-                            {
-                                _dbcontext.FinancialAdjustment.Add(new FinancialAdjustment() {
-                                    Value = a.Value,
-                                    Additive = a.Additive,
-                                    Date = a.Date,
-                                    Actual = a.Actual,
-                                    FinancialResourcePartition = partition
-                                });
-                            }
-                            _dbcontext.SaveChanges();
-                        }
+                        await _dbcontext.SaveChangesAsync();
                     }
                 }
             }
@@ -709,140 +702,125 @@ namespace MPWebAPI.Fixtures
 
         private async Task AddUsersAsync()
         {
-            if (!_dbcontext.Users.Any())
+            //if (await _dbcontext.Users.AnyAsync()) return;
+            foreach (var u in _fixtureData.Users)
             {
-                foreach (var u in _fixtureData.Users)
+                // Add Users
+                var newUser = new MerlinPlanUser() {
+                    UserName = u.UserName,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    EmployeeId = u.EmployeeId,
+                    Email = u.Email,
+                    Organisation = await _dbcontext.Organisation.FirstAsync(),
+                    EmailConfirmed = true
+                };
+
+                await _userManager.CreateAsync(newUser, u.Password);
+
+                // Add user to groups
+                var userGroups = new List<UserGroup>();
+                foreach (var g in u.Groups)
                 {
-                    // Add Users
-                    var newUser = new MerlinPlanUser() {
-                        UserName = u.UserName,
-                        FirstName = u.FirstName,
-                        LastName = u.LastName,
-                        EmployeeId = u.EmployeeId,
-                        Email = u.Email,
-                        Organisation = _dbcontext.Organisation.First(),
-                        EmailConfirmed = true
+                    var newUserGroup = new UserGroup() {
+                        User = newUser,
+                        Group = await _dbcontext.Group.FirstAsync(gr => gr.Name == g)
                     };
-
-                    await _userManager.CreateAsync(newUser, u.Password);
-
-                      // Add user to groups
-                    var userGroups = new List<UserGroup>();
-                    foreach (var g in u.Groups)
-                    {
-                        var newUserGroup = new UserGroup() {
-                            User = newUser,
-                            Group = _dbcontext.Group.First(gr => gr.Name == g)
-                        };
-                        userGroups.Add(newUserGroup);
-                    }
-                    _dbcontext.UserGroup.AddRange(userGroups);
-                    _dbcontext.SaveChanges();
+                    userGroups.Add(newUserGroup);
+                }
+                _dbcontext.UserGroup.AddRange(userGroups);
+                await _dbcontext.SaveChangesAsync();
                     
-                    // Add Roles
-                    foreach (var r in u.Roles)
+                // Add Roles
+                foreach (var r in u.Roles)
+                {
+                    var roleExistsResult = await _roleManager.RoleExistsAsync(r);
+                    if (!roleExistsResult)
                     {
-                        var roleExistsResult = await _roleManager.RoleExistsAsync(r);
-                        if (!roleExistsResult)
-                        {
-                            var newRole = new IdentityRole();
-                            newRole.Name = r;
-                            await _roleManager.CreateAsync(newRole);
-                        }
-                        await _userManager.AddToRoleAsync(newUser, r);
+                        var newRole = new IdentityRole {Name = r};
+                        await _roleManager.CreateAsync(newRole);
                     }
+                    await _userManager.AddToRoleAsync(newUser, r);
                 }
             }
         }
 
-        private void AddAlignmentCategories()
+        private async Task AddAlignmentCategories()
         {
-            if (!_dbcontext.AlignmentCategory.Any())
+            //if (await _dbcontext.AlignmentCategory.AnyAsync()) return;
+            foreach (var ac in _fixtureData.AlignmentCategories)
             {
-                foreach (var ac in _fixtureData.AlignmentCategories)
-                {
-                    _dbcontext.AlignmentCategory.Add(new AlignmentCategory() {
-                        Name = ac.Name,
-                        Description = ac.Description,
-                        Area = ac.Area,
-                        Group = _dbcontext.Group.First(g => g.Name == ac.Group)
-                    });
-                }
-                _dbcontext.SaveChanges();
+                _dbcontext.AlignmentCategory.Add(new AlignmentCategory() {
+                    Name = ac.Name,
+                    Description = ac.Description,
+                    Area = ac.Area,
+                    Group = await _dbcontext.Group.FirstAsync(g => g.Name == ac.Group)
+                });
             }
+            await _dbcontext.SaveChangesAsync();
         }
 
-        private void AddBusinessUnits()
+        private async Task AddBusinessUnits()
         {
-            if (!_dbcontext.BusinessUnit.Any())
+            //if (await _dbcontext.BusinessUnit.AnyAsync()) return;
+            foreach (var bu in _fixtureData.BusinessUnits)
             {
-                foreach (var bu in _fixtureData.BusinessUnits)
-                {
-                    _dbcontext.BusinessUnit.Add(new BusinessUnit() {
-                        Name = bu.Name,
-                        Description = bu.Description,
-                        Organisation = _dbcontext.Organisation.First(o => o.Name == bu.Organisation)
-                    });
-                }
-                _dbcontext.SaveChanges();
+                _dbcontext.BusinessUnit.Add(new BusinessUnit() {
+                    Name = bu.Name,
+                    Description = bu.Description,
+                    Organisation = await _dbcontext.Organisation.FirstAsync(o => o.Name == bu.Organisation)
+                });
             }
+            await _dbcontext.SaveChangesAsync();
         }
 
-        private void AddRiskCategories()
+        private async Task AddRiskCategories()
         {
-            if (!_dbcontext.RiskCategory.Any())
+            //if (await _dbcontext.RiskCategory.AnyAsync()) return;
+            foreach (var rc in _fixtureData.RiskCategories)
             {
-                foreach (var rc in _fixtureData.RiskCategories)
-                {
-                    _dbcontext.RiskCategory.Add(new RiskCategory() {
-                        Name = rc.Name,
-                        Bias = rc.Bias,
-                        Group = _dbcontext.Group.First(g => g.Name == rc.Group)
-                    });                   
-                }
-                _dbcontext.SaveChanges();
+                _dbcontext.RiskCategory.Add(new RiskCategory() {
+                    Name = rc.Name,
+                    Bias = rc.Bias,
+                    Group = await _dbcontext.Group.FirstAsync(g => g.Name == rc.Group)
+                });                   
             }
+            await _dbcontext.SaveChangesAsync();
         }
 
-        private void AddBenefitCategories()
+        private async Task AddBenefitCategories()
         {
-            if (!_dbcontext.BenefitCategory.Any())
+            //if (await _dbcontext.BenefitCategory.AnyAsync()) return;
+            foreach (var bc in _fixtureData.BenefitCategories)
             {
-                foreach (var bc in _fixtureData.BenefitCategories)
-                {
-                    _dbcontext.BenefitCategory.Add(new BenefitCategory() {
-                        Name = bc.Name,
-                        Description = bc.Description,
-                        Group = _dbcontext.Group.First(g => g.Name == bc.Group)
-                    });
-                }
-                _dbcontext.SaveChanges();
+                _dbcontext.BenefitCategory.Add(new BenefitCategory() {
+                    Name = bc.Name,
+                    Description = bc.Description,
+                    Group = await _dbcontext.Group.FirstAsync(g => g.Name == bc.Group)
+                });
             }
+            await _dbcontext.SaveChangesAsync();
         }
 
-        private void AddGroups()
+        private async Task AddGroups()
         {
-            if (!_dbcontext.Group.Any())
+            //if (await _dbcontext.Group.AnyAsync()) return;
+            foreach (var g in _fixtureData.Groups)
             {
-                foreach (var g in _fixtureData.Groups)
-                {
-                     _dbcontext.Group.Add(new Group() {
-                         Name = g.Name,
-                         Description = g.Description,
-                         Organisation = _dbcontext.Organisation.First(o => o.Name == g.Organisation)
-                     });
-                }
-                _dbcontext.SaveChanges();
+                _dbcontext.Group.Add(new Group() {
+                    Name = g.Name,
+                    Description = g.Description,
+                    Organisation = await _dbcontext.Organisation.FirstAsync(o => o.Name == g.Organisation)
+                });
             }
+            await _dbcontext.SaveChangesAsync();
         }
 
-        private void AddOrganisations()
+        private async Task AddOrganisations()
         {
-            if (!_dbcontext.Organisation.Any())
-            {
-                _dbcontext.Organisation.AddRange(_fixtureData.Organisations);
-                _dbcontext.SaveChanges();
-            }
+            //if (await _dbcontext.Organisation.AnyAsync()) return;
+            _dbcontext.Organisation.AddRange(_fixtureData.Organisations);
+            await _dbcontext.SaveChangesAsync();
         }
     }
 }

@@ -16,6 +16,11 @@ namespace MPWebAPI.Controllers
         private readonly IMerlinPlanBL _businesLogic;
         private readonly IMerlinPlanRepository _repository;
 
+        public class UserList
+        {
+            public IEnumerable<string> Users { get; set; }
+        }
+
         public ProjectController(IMerlinPlanRepository repo, IMerlinPlanBL mpbl)
         {
             _businesLogic = mpbl;
@@ -122,5 +127,56 @@ namespace MPWebAPI.Controllers
         }
 
 
+        [HttpPut("{id}/user/share")]
+        [ValidateResourceScenarioExists]
+        public async Task<IActionResult> ShareWithUser(int id, [FromBody] UserList userNameList)
+        {
+            var ps = _repository.Projects.Single(r => r.Id == id);
+            var users = new List<MerlinPlanUser>();
+            foreach (var userName in userNameList.Users)
+            {
+                var u = await _repository.FindUserByUserNameAsync(userName);
+                if (u != null)
+                {
+                    users.Add(u);
+                }
+                else
+                {
+                    return BadRequest(new { Users = $"User {userName} does not exist." });
+                }
+            }
+
+            foreach (var user in users)
+            {
+                await _repository.ShareProjectWithUserAsync(ps, user);
+            }
+            return Ok();
+        }
+
+        [HttpPut("{id}/user/unshare")]
+        [ValidateResourceScenarioExists]
+        public async Task<IActionResult> UnshareWithUser(int id, [FromBody] UserList userNameList)
+        {
+            var ps = _repository.Projects.Single(r => r.Id == id);
+            var users = new List<MerlinPlanUser>();
+            foreach (var userName in userNameList.Users)
+            {
+                var u = await _repository.FindUserByUserNameAsync(userName);
+                if (u != null)
+                {
+                    users.Add(u);
+                }
+                else
+                {
+                    return BadRequest(new { Users = $"User {userName} does not exist." });
+                }
+            }
+
+            foreach (var user in users)
+            {
+                await _repository.UnshareProjectWithUserAsync(ps, user);
+            }
+            return Ok();
+        }
     }
 }

@@ -366,7 +366,5 @@ namespace MPWebAPI.Controllers
             }
             return BadRequest(result.Errors);
         }
-
-        
     }
 }

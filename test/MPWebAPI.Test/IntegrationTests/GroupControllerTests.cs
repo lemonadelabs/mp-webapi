@@ -12,7 +12,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MPWebAPI.Test.IntegrationTests
 {
-    public class GroupControllerTests : IClassFixture<IntegrationFixture>
+    [Collection("Database collection")]
+    public class GroupControllerTests
     {
         private readonly IntegrationFixture _fixture;
 
@@ -55,7 +56,7 @@ namespace MPWebAPI.Test.IntegrationTests
         [Fact]
         public async Task GetGroupUsers()
         {
-            var response = await _fixture.GetJSONResult<List<UserViewModel>>("/api/group/1/user");
+            var response = await _fixture.GetJSONResult<List<UserViewModel>>("/api/group/1/user"); 
             Assert.NotNull(response.JSONData);
             var u = response.JSONData.FirstOrDefault(us => us.UserName == "friedrich@don.govt.nz");
             Assert.Equal("EPMO", u.Groups.First().Name);

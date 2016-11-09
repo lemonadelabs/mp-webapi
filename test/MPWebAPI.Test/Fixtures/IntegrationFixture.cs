@@ -55,14 +55,19 @@ namespace MPWebAPI.Test.Fixtures
 
             // Add fixures
             var fb = Server.Host.Services.GetService(typeof(IFixtureBuilder)) as IFixtureBuilder;
-            await fb.AddFixture(FixtureFile, true);
+            if (fb != null) await fb.AddFixture(FixtureFile, true);
         }
 
         public Task DisposeAsync()
         {
             return Task.CompletedTask;
         }
-    }    
+    }
+
+    [CollectionDefinition("Database collection")]
+    public class DatabaseCollection : ICollectionFixture<IntegrationFixture>
+    {
+    }
 }
 
 
