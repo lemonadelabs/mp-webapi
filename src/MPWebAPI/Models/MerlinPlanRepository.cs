@@ -598,6 +598,28 @@ namespace MPWebAPI.Models
 
         #endregion
 
+        #region Portfolio
+
+        public IEnumerable<Portfolio> Portfolios
+        {
+            get
+            {
+                return _dbcontext.Portfolio
+                    .Include(p => p.Creator)
+                    .Include(p => p.ApprovedBy)
+                    .Include(p => p.Group)
+                    .Include(p => p.PortfolioTags)
+                    .Include(p => p.ShareUser)
+                    .ThenInclude(pu => pu.User)
+                    .Include(p => p.Projects)
+                    .ThenInclude(pc => pc.ProjectOption)
+                    .ThenInclude(po => po.Project)
+                    .ToList();
+            }
+        }
+
+        #endregion
+
         public async Task SaveChangesAsync()
         {
             await _dbcontext.SaveChangesAsync();

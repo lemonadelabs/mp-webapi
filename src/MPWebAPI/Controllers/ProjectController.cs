@@ -178,5 +178,18 @@ namespace MPWebAPI.Controllers
             }
             return Ok();
         }
+
+        [HttpDelete("{id}")]
+        [ValidateProjectExists]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var project = _repository.Projects.Single(p => p.Id == id);
+            var result = await _businesLogic.DeleteProjectAsync(project);
+            if (result.Succeeded)
+            {
+                return Ok(id);
+            }
+            return BadRequest(result.Errors);
+        }
     }
 }

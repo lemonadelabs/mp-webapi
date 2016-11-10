@@ -143,6 +143,10 @@ namespace MPWebAPI.Models
 
         #endregion
 
+        #region Portfolio
+        IEnumerable<Portfolio> Portfolios { get; }
+        #endregion
+
         Task SaveChangesAsync();
     }    
 }

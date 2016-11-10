@@ -384,8 +384,8 @@ namespace MPWebAPI.Fixtures
 
         private async Task AddProjects()
         {
-            //if (! await _dbcontext.Project.AnyAsync())
-            //{
+            if (!await _dbcontext.Project.AnyAsync())
+            {
                 foreach (var p in DepSort(_fixtureData.Projects))
                 {
                     var newProject = new Project
@@ -525,12 +525,12 @@ namespace MPWebAPI.Fixtures
                         await _dbcontext.SaveChangesAsync();
                     }
                 }
-            //}
+            }
         }
 
         private async Task AddFinancialResourceCategories()
         {
-            //if (await _dbcontext.FinancialResourceCategory.AnyAsync()) return;
+            if (await _dbcontext.FinancialResourceCategory.AnyAsync()) return;
             foreach (var frc in _fixtureData.FinancialResourceCategories)
             {
                 _dbcontext.FinancialResourceCategory.Add(new FinancialResourceCategory {
@@ -543,7 +543,7 @@ namespace MPWebAPI.Fixtures
 
         private async Task AddStaffResourceCategories()
         {
-            //if (await _dbcontext.StaffResourceCategory.AnyAsync()) return;
+            if (await _dbcontext.StaffResourceCategory.AnyAsync()) return;
             foreach (var src in _fixtureData.StaffResourceCategories)
             {
                 _dbcontext.Add(new StaffResourceCategory() {
@@ -556,7 +556,7 @@ namespace MPWebAPI.Fixtures
 
         private async Task AddPortfolios()
         {
-            //if (await _dbcontext.Portfolio.AnyAsync()) return;
+            if (await _dbcontext.Portfolio.AnyAsync()) return;
             foreach (var p in _fixtureData.Portfolios)
             {
                 var newPortfolio = new Portfolio() {
@@ -605,7 +605,7 @@ namespace MPWebAPI.Fixtures
 
         private async Task AddResourceScenarios()
         {
-            //if (await _dbcontext.ResourceScenario.AnyAsync()) return;
+            if (await _dbcontext.ResourceScenario.AnyAsync()) return;
             foreach (var rs in _fixtureData.ResourceScenarios)
             {
                 var resourceScenario = new ResourceScenario {
@@ -702,7 +702,7 @@ namespace MPWebAPI.Fixtures
 
         private async Task AddUsersAsync()
         {
-            //if (await _dbcontext.Users.AnyAsync()) return;
+            if (await _dbcontext.Users.AnyAsync()) return;
             foreach (var u in _fixtureData.Users)
             {
                 // Add Users
@@ -747,7 +747,7 @@ namespace MPWebAPI.Fixtures
 
         private async Task AddAlignmentCategories()
         {
-            //if (await _dbcontext.AlignmentCategory.AnyAsync()) return;
+            if (await _dbcontext.AlignmentCategory.AnyAsync()) return;
             foreach (var ac in _fixtureData.AlignmentCategories)
             {
                 _dbcontext.AlignmentCategory.Add(new AlignmentCategory() {
@@ -762,7 +762,7 @@ namespace MPWebAPI.Fixtures
 
         private async Task AddBusinessUnits()
         {
-            //if (await _dbcontext.BusinessUnit.AnyAsync()) return;
+            if (await _dbcontext.BusinessUnit.AnyAsync()) return;
             foreach (var bu in _fixtureData.BusinessUnits)
             {
                 _dbcontext.BusinessUnit.Add(new BusinessUnit() {
@@ -776,7 +776,7 @@ namespace MPWebAPI.Fixtures
 
         private async Task AddRiskCategories()
         {
-            //if (await _dbcontext.RiskCategory.AnyAsync()) return;
+            if (await _dbcontext.RiskCategory.AnyAsync()) return;
             foreach (var rc in _fixtureData.RiskCategories)
             {
                 _dbcontext.RiskCategory.Add(new RiskCategory() {
@@ -790,7 +790,7 @@ namespace MPWebAPI.Fixtures
 
         private async Task AddBenefitCategories()
         {
-            //if (await _dbcontext.BenefitCategory.AnyAsync()) return;
+            if (await _dbcontext.BenefitCategory.AnyAsync()) return;
             foreach (var bc in _fixtureData.BenefitCategories)
             {
                 _dbcontext.BenefitCategory.Add(new BenefitCategory() {
@@ -804,7 +804,7 @@ namespace MPWebAPI.Fixtures
 
         private async Task AddGroups()
         {
-            //if (await _dbcontext.Group.AnyAsync()) return;
+            if (await _dbcontext.Group.AnyAsync()) return;
             foreach (var g in _fixtureData.Groups)
             {
                 _dbcontext.Group.Add(new Group() {
@@ -818,7 +818,7 @@ namespace MPWebAPI.Fixtures
 
         private async Task AddOrganisations()
         {
-            //if (await _dbcontext.Organisation.AnyAsync()) return;
+            if (await _dbcontext.Organisation.AnyAsync()) return;
             _dbcontext.Organisation.AddRange(_fixtureData.Organisations);
             await _dbcontext.SaveChangesAsync();
         }

@@ -116,7 +116,7 @@ namespace MPWebAPI.Controllers
         {
             var partition = _repository.FinancialResourcePartitions.FirstOrDefault(p => p.Id == partitionId);
             if (partition == null) return NotFound(partitionId);
-            var result = await _businessLogic.RemoveFinancialResourcePartitionAsync(partition);
+            var result = await _businessLogic.DeleteFinancialResourcePartitionAsync(partition);
             if (result.Succeeded)
             {
                 return Ok(partitionId);

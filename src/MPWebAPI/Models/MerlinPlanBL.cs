@@ -439,7 +439,7 @@ namespace MPWebAPI.Models
             return result;
         }
 
-        public async Task<MerlinPlanBLResult> RemoveFinancialResourcePartitionAsync(FinancialResourcePartition partition)
+        public async Task<MerlinPlanBLResult> DeleteFinancialResourcePartitionAsync(FinancialResourcePartition partition)
         {
             var result = new MerlinPlanBLResult();
             
@@ -862,5 +862,27 @@ namespace MPWebAPI.Models
         }
 
         #endregion
+
+        #region Project
+
+        public async Task<MerlinPlanBLResult> DeleteProjectAsync(Project project)
+        {
+            var result = new MerlinPlanBLResult();
+            // Need to make sure that the project isn't being used in any
+            // portfolio document before we delete.
+            if (_respository.Portfolios.Any(p => p.Projects.Exists(pr => pr.ProjectOption.ProjectId == project.Id)))
+            {
+                result.AddError("ProjectOption", "There are protfolios that use a project option from this project so it cannot be removed.");
+            }
+
+            if (!result.Succeeded) return result;
+            await _respository.RemoveProjectAsync(project);
+            return result;
+        }
+
+        #endregion
+
+
+
     }
 }

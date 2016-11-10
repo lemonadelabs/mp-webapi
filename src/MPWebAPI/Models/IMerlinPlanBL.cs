@@ -39,7 +39,7 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> AddFinancialResourceCategoriesAsync(Group group, IEnumerable<FinancialResourceCategory> categories);
         Task<MerlinPlanBLResult> AddFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<IPartitionRequest> partitions);
         Task<MerlinPlanBLResult> UpdateFinancialResourceAsync(FinancialResource resource);
-        Task<MerlinPlanBLResult> RemoveFinancialResourcePartitionAsync(FinancialResourcePartition partition);
+        Task<MerlinPlanBLResult> DeleteFinancialResourcePartitionAsync(FinancialResourcePartition partition);
         Task<MerlinPlanBLResult> UpdateFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<IPartitionUpdate> partitions);
         Task<MerlinPlanBLResult> CopyFinancialResourcesAsync(IEnumerable<IResourceCopyRequest> requests);
         Task<MerlinPlanBLResult> CopyResourceScenariosAsync(IEnumerable<IScenarioCopyRequest> requests);
@@ -57,6 +57,12 @@ namespace MPWebAPI.Models
 
         Task<MerlinPlanBLResult> AddBusinessUnitAsync(BusinessUnit businessUnit);
         Task<MerlinPlanBLResult> DeleteBusinessUnitAsync(BusinessUnit businessUnit);
+
+        #endregion
+
+        #region Projects
+
+        Task<MerlinPlanBLResult> DeleteProjectAsync(Project project);
 
         #endregion
 
