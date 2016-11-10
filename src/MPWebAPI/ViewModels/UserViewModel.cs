@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,15 +15,16 @@ namespace MPWebAPI.ViewModels
             Active = true;
         }
 
-        public override async Task MapToViewModelAsync(object user, IMerlinPlanRepository repo = null)
+        public override async Task<ViewModelMapResult> MapToViewModelAsync(object user, IMerlinPlanRepository repo = null)
         {
             var u = (MerlinPlanUser)user;
-            if (u == null || repo == null) return;
+            if (u == null || repo == null) throw new ArgumentNullException();
             await base.MapToViewModelAsync(u, repo);
             UserEmailConfirmed = u.EmailConfirmed;
             Roles = await repo.GetUserRolesAsync(u);
             var gs = await repo.GetUserGroupsAsync(u);
             Groups = gs.Select(g => new GroupData { Id = g.Id, Name = g.Name});
+            return new ViewModelMapResult();
         }
 
         public string Id { get; set; }

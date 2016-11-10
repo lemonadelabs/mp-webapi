@@ -16,10 +16,10 @@ namespace MPWebAPI.ViewModels
             MapToViewModelAsync(model);
         }
 
-        public override Task MapToViewModelAsync(object model, IMerlinPlanRepository repo = null)
+        public override Task<ViewModelMapResult> MapToViewModelAsync(object model, IMerlinPlanRepository repo = null)
         {
             var sr = (StaffResource) model;
-            if (sr == null) return Task.CompletedTask;
+            if (sr == null) throw new InvalidCastException();
             
             base.MapToViewModelAsync(sr, repo);
             
@@ -32,10 +32,10 @@ namespace MPWebAPI.ViewModels
             var first = sr.Adjustments.OrderBy(a => a.Date).FirstOrDefault();
             Value = first?.Value ?? 0f;
 
-            return Task.CompletedTask;
+            return Task.FromResult(new ViewModelMapResult());
         }
 
-        public override Task MapToModel(object model, IMerlinPlanRepository repo = null)
+        public override Task<ViewModelMapResult> MapToModel(object model, IMerlinPlanRepository repo = null)
         {
             base.MapToModel(model, repo);
 
@@ -52,7 +52,7 @@ namespace MPWebAPI.ViewModels
             }
             
             // Map categories
-            if (Categories == null || repo == null) return Task.CompletedTask;
+            if (Categories == null || repo == null) throw new ArgumentNullException();
             
             // delete
             var toDelete = resource.Categories
@@ -90,7 +90,7 @@ namespace MPWebAPI.ViewModels
 
                 resource.Categories.Add(srsrc);
             }
-            return Task.CompletedTask;
+            return new Task<ViewModelMapResult>(() => new ViewModelMapResult());
         }
 
         public int Id { get; set; }

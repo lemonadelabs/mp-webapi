@@ -63,6 +63,7 @@ namespace MPWebAPI.Models
         #region Projects
 
         Task<MerlinPlanBLResult> DeleteProjectAsync(Project project);
+        Task<MerlinPlanBLResult> AddProjectAsync(Project project);
 
         #endregion
 

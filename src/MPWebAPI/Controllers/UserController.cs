@@ -164,7 +164,7 @@ namespace MPWebAPI.Controllers
         [ValidateModel]
         public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest emailConfirm)
         {
-            var user = _repository.Users.Where(u => u.UserName == emailConfirm.Email).SingleOrDefault();
+            var user = _repository.Users.SingleOrDefault(u => u.UserName == emailConfirm.Email);
 
             if (user != null)
             {

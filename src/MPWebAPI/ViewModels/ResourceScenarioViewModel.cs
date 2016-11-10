@@ -12,7 +12,7 @@ namespace MPWebAPI.ViewModels
             MapToViewModelAsync(model);
         }
 
-        public override Task MapToViewModelAsync(object model, IMerlinPlanRepository repo = null)
+        public override Task<ViewModelMapResult> MapToViewModelAsync(object model, IMerlinPlanRepository repo = null)
         {
             base.MapToViewModelAsync(model, repo);
             var rs = (ResourceScenario) model;
@@ -24,7 +24,7 @@ namespace MPWebAPI.ViewModels
                 FirstName = rs.Creator.FirstName,
                 LastName = rs.Creator.LastName
             };
-            return Task.CompletedTask;
+            return new Task<ViewModelMapResult>(() => new ViewModelMapResult());
         }
 
         public ResourceScenarioViewModel() {}

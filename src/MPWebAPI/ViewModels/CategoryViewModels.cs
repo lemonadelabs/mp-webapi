@@ -13,12 +13,12 @@ namespace MPWebAPI.ViewModels
         
         public FinancialResourceCategoryViewModel() {}
         
-        public override Task MapToViewModelAsync(object model, IMerlinPlanRepository repo = null)
+        public override Task<ViewModelMapResult> MapToViewModelAsync(object model, IMerlinPlanRepository repo = null)
         {
             var frc = (FinancialResourceCategory) model;
             base.MapToViewModelAsync(model, repo);
             Group = new GroupData { Id = frc.Group.Id, Name = frc.Group.Name };
-            return Task.CompletedTask;
+            return new Task<ViewModelMapResult>(() => new ViewModelMapResult());
         }
         
         public int Id { get; set; }

@@ -880,6 +880,16 @@ namespace MPWebAPI.Models
             return result;
         }
 
+        public async Task<MerlinPlanBLResult> AddProjectAsync(Project project)
+        {
+            // check that required values are set
+
+
+            var result = new MerlinPlanBLResult();
+            await _respository.AddProjectAsync(project);
+            return result;
+        }
+
         #endregion
 
 

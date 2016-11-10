@@ -16,19 +16,19 @@ namespace MPWebAPI.ViewModels
         {
         }
 
-        public override Task MapToModel(object model, IMerlinPlanRepository repo = null)
+        public override Task<ViewModelMapResult> MapToModel(object model, IMerlinPlanRepository repo = null)
         {
             base.MapToModel(model, repo);
 
-            if (!Value.HasValue) return Task.CompletedTask;
+            if (!Value.HasValue) return Task.FromResult(new ViewModelMapResult());
             var frp = (FinancialResourcePartition) model;
             var adjustment = frp.Adjustments.OrderBy(a => a.Date).FirstOrDefault();
-            if (adjustment == null) return Task.CompletedTask;
+            if (adjustment == null) return Task.FromResult(new ViewModelMapResult());
             adjustment.Value = Value.Value;
-            return Task.CompletedTask;
+            return Task.FromResult(new ViewModelMapResult());
         }
 
-        public override Task MapToViewModelAsync(object model, IMerlinPlanRepository repo = null)
+        public override Task<ViewModelMapResult> MapToViewModelAsync(object model, IMerlinPlanRepository repo = null)
         {
             base.MapToViewModelAsync(model, repo);
             var frp = (FinancialResourcePartition) model;
@@ -38,7 +38,7 @@ namespace MPWebAPI.ViewModels
             {
                 Value = adjustment.Value;
             }
-            return Task.CompletedTask;
+            return Task.FromResult(new ViewModelMapResult());
         }
 
         public int Id { get; set; }

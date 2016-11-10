@@ -3,7 +3,7 @@ using MPWebAPI.Models;
 
 namespace MPWebAPI.ViewModels
 {
-    public class GroupViewModel : ViewModel
+    public sealed class GroupViewModel : ViewModel
     {
         public GroupViewModel(Group g)
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -73,7 +74,7 @@ namespace MPWebAPI.Controllers
                     {
                         User = uvm,
                         Documents = new List<ProjectViewModel>(
-                            new[] { new ProjectViewModel(rs) })
+                            new[] {new ProjectViewModel(rs)})
                     };
                     userSharedProjects.Add(newuss);
                 }
@@ -142,7 +143,7 @@ namespace MPWebAPI.Controllers
                 }
                 else
                 {
-                    return BadRequest(new { Users = $"User {userName} does not exist." });
+                    return BadRequest(new {Users = $"User {userName} does not exist."});
                 }
             }
 
@@ -168,7 +169,7 @@ namespace MPWebAPI.Controllers
                 }
                 else
                 {
-                    return BadRequest(new { Users = $"User {userName} does not exist." });
+                    return BadRequest(new {Users = $"User {userName} does not exist."});
                 }
             }
 
@@ -188,6 +189,26 @@ namespace MPWebAPI.Controllers
             if (result.Succeeded)
             {
                 return Ok(id);
+            }
+            return BadRequest(result.Errors);
+        }
+
+        [HttpPost]
+        [ValidateModel]
+        public async Task<IActionResult> CreateProject([FromBody] ProjectViewModel model)
+        {
+            var project = new Project();
+            
+            var mapResult = await model.MapToModel(project, _repository);
+            if (!mapResult.Succeeded)
+            {
+                return BadRequest(mapResult.Errors);
+            }
+
+            var result = await _businesLogic.AddProjectAsync(project);
+            if (result.Succeeded)
+            {
+                return Ok(new ProjectViewModel(project));
             }
             return BadRequest(result.Errors);
         }
