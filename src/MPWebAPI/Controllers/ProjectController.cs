@@ -212,5 +212,16 @@ namespace MPWebAPI.Controllers
             }
             return BadRequest(result.Errors);
         }
+
+        [HttpGet("{id}/option")]
+        [ValidateProjectExists]
+        public IActionResult GetProjectOptions(int id)
+        {
+            return Ok(
+                _repository.ProjectOptions
+                    .Where(po => po.ProjectId == id)
+                    .Select(po => new ProjectOptionViewModel(po))
+            );
+        }
     }
 }

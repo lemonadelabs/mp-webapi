@@ -31,5 +31,4 @@ namespace MPWebAPI.Models
         public int RequiredById { get; set; }
         public ProjectOption RequiredBy { get; set; }
     }
-
 }

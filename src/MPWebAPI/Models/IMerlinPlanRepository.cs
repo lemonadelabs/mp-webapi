@@ -143,6 +143,12 @@ namespace MPWebAPI.Models
 
         #endregion
 
+        #region Project Option
+
+        IEnumerable<ProjectOption> ProjectOptions { get; }
+
+        #endregion
+
         #region Portfolio
         IEnumerable<Portfolio> Portfolios { get; }
         #endregion

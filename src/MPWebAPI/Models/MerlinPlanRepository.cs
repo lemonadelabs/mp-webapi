@@ -566,6 +566,34 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+
+
+        #endregion
+
+        #region Project Option
+
+        public IEnumerable<ProjectOption> ProjectOptions
+        {
+            get
+            {
+                return _dbcontext.ProjectOption
+                    .Include(po => po.Benefits)
+                    .ThenInclude(pb => pb.Alignments)
+                    .Include(po => po.Dependencies)
+                    .ThenInclude(pd => pd.DependsOn)
+                    .Include(po => po.RequiredBy)
+                    .ThenInclude(pd => pd.RequiredBy)
+                    .Include(po => po.Phases)
+                    .ThenInclude(pp => pp.FinancialResources)
+                    .ThenInclude(fr => fr.Categories)
+                    .ThenInclude(frc => frc.FinancialResourceCategory)
+                    .Include(po => po.Phases)
+                    .ThenInclude(pp => pp.StaffResources)
+                    .ThenInclude(sr => sr.Category)
+                    .ToList();
+            }
+        }
+
         #endregion
 
         #region Business Units

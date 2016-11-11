@@ -18,7 +18,7 @@ namespace MPWebAPI.ViewModels
             var frc = (FinancialResourceCategory) model;
             base.MapToViewModelAsync(model, repo);
             Group = new GroupData { Id = frc.Group.Id, Name = frc.Group.Name };
-            return new Task<ViewModelMapResult>(() => new ViewModelMapResult());
+            return Task.FromResult(new ViewModelMapResult());
         }
         
         public int Id { get; set; }
