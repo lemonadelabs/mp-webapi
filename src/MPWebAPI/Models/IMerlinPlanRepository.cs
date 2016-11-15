@@ -162,5 +162,6 @@ namespace MPWebAPI.Models
         #endregion
 
         Task SaveChangesAsync();
+        Task RemoveProjectPhaseAsync(ProjectPhase phase);
     }    
 }

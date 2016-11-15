@@ -896,6 +896,12 @@ namespace MPWebAPI.Models
             return new MerlinPlanBLResult();
         }
 
+        public async Task<MerlinPlanBLResult> DeleteProjectPhaseAsync(ProjectPhase phase)
+        {
+            await _respository.RemoveProjectPhaseAsync(phase);
+            return new MerlinPlanBLResult();
+        }
+
         #endregion
 
 

@@ -630,7 +630,7 @@ namespace MPWebAPI.Models
 
         #endregion
 
-        #region Project Options
+        #region Project Phases
 
         public IEnumerable<ProjectPhase> ProjectPhases
         {
@@ -645,6 +645,12 @@ namespace MPWebAPI.Models
                     .Include(pp => pp.ProjectOption)
                     .ToList();
             }
+        }
+
+        public async Task RemoveProjectPhaseAsync(ProjectPhase phase)
+        {
+            _dbcontext.ProjectPhase.Remove(phase);
+            await _dbcontext.SaveChangesAsync();
         }
 
         #endregion

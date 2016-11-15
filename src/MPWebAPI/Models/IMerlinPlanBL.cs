@@ -65,6 +65,7 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> DeleteProjectAsync(Project project);
         Task<MerlinPlanBLResult> AddProjectAsync(Project project);
         Task<MerlinPlanBLResult> AddProjectPhaseAsync(ProjectPhase phase);
+        Task<MerlinPlanBLResult> DeleteProjectPhaseAsync(ProjectPhase phase);
 
         #endregion
 

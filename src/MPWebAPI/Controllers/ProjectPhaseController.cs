@@ -43,6 +43,15 @@ namespace MPWebAPI.Controllers
             return BadRequest(result.Errors);
         }
 
+        [HttpDelete("{id}")]
+        [ValidateProjectPhaseExists]
+        public async Task<IActionResult> DeletePhase(int id)
+        {
+            var phase = _repository.ProjectPhases.Single(pp => pp.Id == id);
+            await _businessLogic.DeleteProjectPhaseAsync(phase);
+            return Ok(id);
+        }
+
         //TODO: Add an update method
 
     }
