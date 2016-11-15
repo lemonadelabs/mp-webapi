@@ -622,6 +622,27 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+
+
+        #endregion
+
+        #region Project Options
+
+        public IEnumerable<ProjectPhase> ProjectPhases
+        {
+            get
+            {
+                return _dbcontext.ProjectPhase
+                    .Include(pp => pp.FinancialResources)
+                    .ThenInclude(fr => fr.Categories)
+                    .ThenInclude(frc => frc.FinancialResourceCategory)
+                    .Include(pp => pp.StaffResources)
+                    .ThenInclude(sr => sr.Category)
+                    .Include(pp => pp.ProjectOption)
+                    .ToList();
+            }
+        }
+
         #endregion
 
         #region Business Units

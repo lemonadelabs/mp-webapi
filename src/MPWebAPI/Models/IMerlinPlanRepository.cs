@@ -151,6 +151,12 @@ namespace MPWebAPI.Models
 
         #endregion
 
+        #region Project Phase
+        IEnumerable<ProjectPhase> ProjectPhases { get; }
+
+
+        #endregion
+
         #region Portfolio
         IEnumerable<Portfolio> Portfolios { get; }
         #endregion

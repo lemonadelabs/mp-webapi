@@ -45,17 +45,17 @@ namespace MPWebAPI.Filters
         }
     }
 
-    public class ValidateProjectOptionExistsAttribute : TypeFilterAttribute
+    public class ValidateProjectPhaseExistsAttribute : TypeFilterAttribute
     {
-        public ValidateProjectOptionExistsAttribute() : base(typeof(ValidateProjectOptionExists))
+        public ValidateProjectPhaseExistsAttribute() : base(typeof(ValidateProjectPhaseExists))
         {
         }
 
-        private class ValidateProjectOptionExists : IAsyncActionFilter
+        private class ValidateProjectPhaseExists : IAsyncActionFilter
         {
             private readonly IMerlinPlanRepository _repository;
 
-            public ValidateProjectOptionExists(IMerlinPlanRepository mprepo)
+            public ValidateProjectPhaseExists(IMerlinPlanRepository mprepo)
             {
                 _repository = mprepo;
             }
@@ -67,7 +67,7 @@ namespace MPWebAPI.Filters
                     var id = context.ActionArguments["id"] as int?;
                     if (id.HasValue)
                     {
-                        if (await _repository.ProjectOptions.ToAsyncEnumerable().All(o => o.Id != id.Value))
+                        if (await _repository.ProjectPhases.ToAsyncEnumerable().All(o => o.Id != id.Value))
                         {
                             context.Result = new NotFoundObjectResult(id.Value);
                             return;

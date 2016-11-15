@@ -890,6 +890,11 @@ namespace MPWebAPI.Models
             return result;
         }
 
+        public Task<MerlinPlanBLResult> AddProjectPhaseAsync(ProjectPhase phase)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
 
