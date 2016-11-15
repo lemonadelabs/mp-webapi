@@ -223,6 +223,8 @@ namespace MPWebAPI.Controllers
             );
         }
 
+        // TODO: Update an option
+
         [HttpPost("{id}/option")]
         [ValidateProjectExists]
         [ValidateModel]

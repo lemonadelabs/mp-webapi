@@ -153,7 +153,7 @@ namespace MPWebAPI.Models
 
         #region Project Phase
         IEnumerable<ProjectPhase> ProjectPhases { get; }
-
+        Task AddProjectPhaseAsync(ProjectPhase phase);
 
         #endregion
 

@@ -32,7 +32,8 @@ namespace MPWebAPI.Controllers
             => Ok(new ProjectPhaseViewModel(_repository.ProjectPhases.Single(pp => pp.Id == id)));
 
         [HttpPost]
-        public async Task<IActionResult> AddPhase(int id, [FromBody] ProjectPhaseViewModel viewModel)
+        [ValidateModel]
+        public async Task<IActionResult> AddPhase([FromBody] ProjectPhaseViewModel viewModel)
         {
             var newPhase = new ProjectPhase();
             var mapResult = await viewModel.MapToModel(newPhase);
@@ -41,6 +42,8 @@ namespace MPWebAPI.Controllers
             if (result.Succeeded) return Ok(new ProjectPhaseViewModel(newPhase));
             return BadRequest(result.Errors);
         }
+
+        //TODO: Add an update method
 
     }
 }

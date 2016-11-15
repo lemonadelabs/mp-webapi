@@ -14,8 +14,8 @@ namespace MPWebAPI.Models
         public string Description { get; set; }
         public DateTime EstimatedStartDate { get; set; }
         public DateTime EstimatedEndDate { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public List<FinancialTransaction> FinancialResources { get; set; }
         public List<StaffTransaction> StaffResources { get; set; }
 

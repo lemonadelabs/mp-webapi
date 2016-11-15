@@ -622,7 +622,11 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
-
+        public async Task AddProjectPhaseAsync(ProjectPhase phase)
+        {
+            _dbcontext.ProjectPhase.Add(phase);
+            await _dbcontext.SaveChangesAsync();
+        }
 
         #endregion
 

@@ -449,11 +449,11 @@ namespace MPWebAPI.Models
                 .IsRequired();
             
             builder.Entity<ProjectPhase>()
-                .Property(pp => pp.StartDate)
+                .Property(pp => pp.EstimatedStartDate)
                 .IsRequired();
             
             builder.Entity<ProjectPhase>()
-                .Property(pp => pp.EndDate)
+                .Property(pp => pp.EstimatedEndDate)
                 .IsRequired();
 
             // ResourceScenario
