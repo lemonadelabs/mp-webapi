@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -222,6 +221,49 @@ namespace MPWebAPI.Controllers
                     .Where(po => po.ProjectId == id)
                     .Select(po => new ProjectOptionViewModel(po))
             );
+        }
+
+        [HttpPost("{id}/option")]
+        [ValidateProjectExists]
+        [ValidateModel]
+        public async Task<IActionResult> CreateProjectOption(int id, [FromBody] ProjectOptionViewModel viewModel)
+        {
+            var project = _repository.Projects.Single(p => p.Id == id);
+            var newOption = new ProjectOption
+            {
+                Project = project
+            };
+
+            var mapResult = await viewModel.MapToModel(newOption);
+            if (!mapResult.Succeeded)
+            {
+                return BadRequest(mapResult.Errors);
+            }
+
+            // Check dependencies
+            foreach (var dependency in viewModel.Dependencies)
+            {
+                var targetOption = _repository.ProjectOptions.SingleOrDefault(po => po.Id == dependency.OptionId);
+                if (targetOption != null) continue;
+                ModelState.AddModelError("Dependencies", $"The option with id {dependency.OptionId} does not exist.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _repository.AddProjectOptionAsync(newOption);
+            if (viewModel.Dependencies == null) return Ok(new ProjectOptionViewModel(newOption));
+
+            
+            foreach (var dependency in viewModel.Dependencies)
+            {
+                var targetOption = _repository.ProjectOptions.Single(po => po.Id == dependency.OptionId);
+                await _repository.AddProjectDependencyAsync(newOption, targetOption);
+            }
+
+            return Ok(new ProjectOptionViewModel(newOption));
         }
     }
 }

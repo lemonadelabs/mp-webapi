@@ -35,6 +35,7 @@ namespace MPWebAPI.Models
         public DbSet<ProjectBenefit> ProjectBenefit { get; set; }
         public DbSet<ProjectConfig> ProjectConfig { get; set; }
         public DbSet<ProjectOption> ProjectOption { get; set; }
+        public DbSet<ProjectDependency> ProjectDependency { get; set; }
         public DbSet<ProjectPhase> ProjectPhase { get; set; }
         public DbSet<ProjectUser> ProjectUser { get; set; }
         public DbSet<ResourceScenario> ResourceScenario { get; set; }

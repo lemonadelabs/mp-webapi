@@ -10,13 +10,15 @@ namespace MPWebAPI.ViewModels
     {
         public int Id { get; set; }
 
-        [Required]
         public int ProjectId { get; set; }
 
         [Required]
         public string Description { get; set; }
 
+        [Range(0.0, 1.0)]
         public float Priority { get; set; }
+
+        [Range(0.0, 1.0)]
         public float Complexity { get; set; }
 
         public List<ProjectPhaseViewModel> Phases { get; set; }
@@ -25,6 +27,7 @@ namespace MPWebAPI.ViewModels
         public class Dependency
         {
             public int ProjectId { get; set; }
+            [Required]
             public int OptionId { get; set; }
         }
 
@@ -41,14 +44,14 @@ namespace MPWebAPI.ViewModels
         {
             base.MapToViewModelAsync(model, repo);
             var po = (ProjectOption) model;
-            Phases = po.Phases.Select(pp => new ProjectPhaseViewModel(pp)).ToList();
-            Dependencies = po.RequiredBy.Select(
+            Phases = po.Phases?.Select(pp => new ProjectPhaseViewModel(pp)).ToList();
+            Dependencies = po.RequiredBy?.Select(
                     d => new Dependency
                     {
                         OptionId = d.DependsOnId,
                         ProjectId = d.DependsOn.ProjectId
                     }
-                ).ToList();
+                )?.ToList();
             return Task.FromResult(new ViewModelMapResult());
         }
     }

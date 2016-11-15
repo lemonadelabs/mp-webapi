@@ -19,7 +19,11 @@ namespace MPWebAPI.Models
         public List<ProjectPhase> Phases { get; set; }
         public List<RiskProfile> RiskProfile { get; set; }
         public List<ProjectBenefit> Benefits { get; set; }
+
+        // Project options that depend on this option
         public List<ProjectDependency> Dependencies {get; set;}
+        
+        // Project options that this option depends on
         public List<ProjectDependency> RequiredBy { get; set; }
     }
 

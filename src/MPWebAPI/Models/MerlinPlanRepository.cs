@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -580,9 +581,13 @@ namespace MPWebAPI.Models
                     .Include(po => po.Benefits)
                     .ThenInclude(pb => pb.Alignments)
                     .Include(po => po.Dependencies)
+                    .ThenInclude(pd => pd.RequiredBy)
+                    .Include(po => po.Dependencies)
                     .ThenInclude(pd => pd.DependsOn)
                     .Include(po => po.RequiredBy)
-                    .ThenInclude(pd => pd.RequiredBy)
+                    .ThenInclude(rb => rb.DependsOn)
+                    .Include(po => po.RequiredBy)
+                    .ThenInclude(rb => rb.RequiredBy)
                     .Include(po => po.Phases)
                     .ThenInclude(pp => pp.FinancialResources)
                     .ThenInclude(fr => fr.Categories)
@@ -592,6 +597,29 @@ namespace MPWebAPI.Models
                     .ThenInclude(sr => sr.Category)
                     .ToList();
             }
+        }
+
+        public async Task AddProjectOptionAsync(ProjectOption option)
+        {
+            if(option == null) throw new ArgumentNullException(nameof(option));
+            _dbcontext.ProjectOption.Add(option);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task AddProjectDependencyAsync(ProjectOption dependee, ProjectOption dependedOn)
+        {
+            if(await _dbcontext
+                .ProjectDependency
+                .AnyAsync(pd => pd.RequiredById == dependee.Id && pd.DependsOnId == dependedOn.Id)
+              ) return;
+
+            _dbcontext.ProjectDependency.Add(new ProjectDependency
+            {
+                DependsOn = dependedOn,
+                RequiredBy = dependee
+            });
+
+            await _dbcontext.SaveChangesAsync();
         }
 
         #endregion
