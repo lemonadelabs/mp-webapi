@@ -45,14 +45,23 @@ namespace MPWebAPI.Controllers
 
         [HttpDelete("{id}")]
         [ValidateProjectPhaseExists]
-        public async Task<IActionResult> DeletePhase(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var phase = _repository.ProjectPhases.Single(pp => pp.Id == id);
             await _businessLogic.DeleteProjectPhaseAsync(phase);
             return Ok(id);
         }
 
-        //TODO: Add an update method
-
+        [HttpPut]
+        [ValidateModel]
+        public async Task<IActionResult> Update([FromBody] ProjectPhaseViewModel viewModel)
+        {
+            var model = _repository.ProjectPhases.SingleOrDefault(pp => pp.Id == viewModel.Id);
+            if (model == null) return NotFound(viewModel.Id);
+            var result = await viewModel.MapToModel(model);
+            if (!result.Succeeded) return BadRequest(result.Errors);
+            await _repository.SaveChangesAsync();
+            return Ok(new ProjectPhaseViewModel(model));
+        }
     }
 }
