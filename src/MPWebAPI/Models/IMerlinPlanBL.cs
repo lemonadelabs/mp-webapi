@@ -69,6 +69,7 @@ namespace MPWebAPI.Models
 
         #endregion
 
+        Task<MerlinPlanBLResult> DeleteProjectOptionAsync(ProjectOption option);
     }
 
     #region Data Object Interfaces

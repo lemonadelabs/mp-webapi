@@ -902,6 +902,36 @@ namespace MPWebAPI.Models
             return new MerlinPlanBLResult();
         }
 
+        public async Task<MerlinPlanBLResult> DeleteProjectOptionAsync(ProjectOption option)
+        {
+            var result = new MerlinPlanBLResult();
+
+            // Need to disallow delete if option is used in a current portfolio which is approved.
+            var portfolios =
+                _respository.Portfolios.Where(p => p.Approved)
+                    .Where(p => p.Projects.Any(pr => pr.ProjectOptionId == option.Id))
+                    .ToList();
+
+
+            foreach (var portfolio in portfolios)
+            {
+                result.AddError("Portfolio", $"approved portfolio with id: {portfolio.Id} is currently using this option so it cannot be deleted.");
+            }
+            
+            // Need to disallow delete if there are any dependencies on this project
+            var deps =
+                _respository.ProjectOptions.Where(po => po.RequiredBy.Any(d => d.DependsOnId == option.Id)).ToList();
+
+            foreach (var dep in deps)
+            {
+                result.AddError("Dependencies", $"the project option with id: {dep.Id} depends on this option so it cannot be deleted.");
+            }    
+             
+            if (!result.Succeeded) return result;
+            await _respository.RemoveProjectOptionAsync(option);
+            return result;
+        }
+
         #endregion
 
 

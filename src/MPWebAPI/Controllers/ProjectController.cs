@@ -223,7 +223,29 @@ namespace MPWebAPI.Controllers
             );
         }
 
-        // TODO: Update an option
+        // TODO: Test this with updating dependencies etc.
+        [HttpPut("option")]
+        [ValidateModel]
+        public async Task<IActionResult> UpdateProjectOption([FromBody] ProjectOptionViewModel viewModel)
+        {
+            var option = _repository.ProjectOptions.SingleOrDefault(po => po.Id == viewModel.Id);
+            if (option == null) return NotFound(viewModel.Id);
+            var result = await viewModel.MapToModel(option, _repository);
+            if (!result.Succeeded) return BadRequest(result.Errors);
+            await _repository.SaveChangesAsync();
+            return Ok(new ProjectOptionViewModel(option));
+        }
+
+        [HttpDelete("option/{id}")]
+        public async Task<IActionResult> DeleteProjectOption(int id)
+        {
+            var option = _repository.ProjectOptions.SingleOrDefault(po => po.Id == id);
+            if (option == null) return NotFound(id);
+            var result = await _businesLogic.DeleteProjectOptionAsync(option);
+            if (result.Succeeded) return Ok(id);
+            return BadRequest(result.Errors);
+        }
+
 
         [HttpPost("{id}/option")]
         [ValidateProjectExists]
@@ -236,7 +258,7 @@ namespace MPWebAPI.Controllers
                 Project = project
             };
 
-            var mapResult = await viewModel.MapToModel(newOption);
+            var mapResult = await viewModel.MapToModel(newOption, _repository);
             if (!mapResult.Succeeded)
             {
                 return BadRequest(mapResult.Errors);

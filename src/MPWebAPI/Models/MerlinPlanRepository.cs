@@ -653,6 +653,23 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+        public async Task RemoveProjectOptionAsync(ProjectOption option)
+        {
+            _dbcontext.ProjectOption.Remove(option);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveProjectDependencyAsync(ProjectOption option, ProjectOption target)
+        {
+            var dep =
+                await _dbcontext.ProjectDependency
+                    .SingleOrDefaultAsync(pd => pd.RequiredById == option.Id && pd.DependsOnId == target.Id);
+
+            if(dep == null) return;
+            _dbcontext.ProjectDependency.Remove(dep);
+            await _dbcontext.SaveChangesAsync();
+        }
+
         #endregion
 
         #region Business Units

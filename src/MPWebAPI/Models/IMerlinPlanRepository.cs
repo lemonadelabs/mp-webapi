@@ -163,5 +163,7 @@ namespace MPWebAPI.Models
 
         Task SaveChangesAsync();
         Task RemoveProjectPhaseAsync(ProjectPhase phase);
+        Task RemoveProjectOptionAsync(ProjectOption option);
+        Task RemoveProjectDependencyAsync(ProjectOption option, ProjectOption target);
     }    
 }
