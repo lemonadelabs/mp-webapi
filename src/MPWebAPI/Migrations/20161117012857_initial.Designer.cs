@@ -8,30 +8,33 @@ using MPWebAPI.Models;
 namespace MPWebAPI.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20160908020401_schema_update")]
-    partial class schema_update
+    [Migration("20161117012857_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.0.0-rtm-21431");
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
+                .HasAnnotation("ProductVersion", "1.1.0-rtm-22752");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRole", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
                     b.Property<string>("Name")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<string>("NormalizedName")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
+                        .IsUnique()
                         .HasName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
@@ -103,8 +106,6 @@ namespace MPWebAPI.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("AspNetUserRoles");
                 });
 
@@ -136,11 +137,7 @@ namespace MPWebAPI.Migrations
 
                     b.Property<int>("ProjectBenefitId");
 
-                    b.Property<float>("RiskBias");
-
                     b.Property<float>("Value");
-
-                    b.Property<float>("Weight");
 
                     b.HasKey("Id");
 
@@ -164,6 +161,10 @@ namespace MPWebAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired();
+
+                    b.Property<float>("RiskBias");
+
+                    b.Property<float>("Weight");
 
                     b.HasKey("Id");
 
@@ -223,15 +224,11 @@ namespace MPWebAPI.Migrations
 
                     b.Property<int>("FinancialResourcePartitionId");
 
-                    b.Property<int?>("StaffResourceId");
-
                     b.Property<decimal>("Value");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FinancialResourcePartitionId");
-
-                    b.HasIndex("StaffResourceId");
 
                     b.ToTable("FinancialAdjustment");
                 });
@@ -241,10 +238,12 @@ namespace MPWebAPI.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("EndDate");
+                    b.Property<DateTime?>("EndDate");
 
                     b.Property<string>("Name")
                         .IsRequired();
+
+                    b.Property<bool>("Recurring");
 
                     b.Property<int>("ResourceScenarioId");
 
@@ -322,8 +321,6 @@ namespace MPWebAPI.Migrations
 
                     b.HasKey("FinancialResourceCategoryId", "FinancialTransactionId");
 
-                    b.HasIndex("FinancialResourceCategoryId");
-
                     b.HasIndex("FinancialTransactionId");
 
                     b.ToTable("FinancialTransactionResourceCategory");
@@ -333,6 +330,8 @@ namespace MPWebAPI.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Active");
 
                     b.Property<string>("Description");
 
@@ -353,15 +352,18 @@ namespace MPWebAPI.Migrations
 
             modelBuilder.Entity("MPWebAPI.Models.MerlinPlanUser", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccessFailedCount");
+
+                    b.Property<bool>("Active");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
                     b.Property<string>("Email")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
 
@@ -378,10 +380,10 @@ namespace MPWebAPI.Migrations
                     b.Property<string>("NickName");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<string>("NormalizedUserName")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<int>("OrganisationId");
 
@@ -398,7 +400,7 @@ namespace MPWebAPI.Migrations
                     b.Property<bool>("TwoFactorEnabled");
 
                     b.Property<string>("UserName")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
 
@@ -455,8 +457,6 @@ namespace MPWebAPI.Migrations
                     b.HasKey("FinancialResourcePartitionId", "FinancialResourceCategoryId");
 
                     b.HasIndex("FinancialResourceCategoryId");
-
-                    b.HasIndex("FinancialResourcePartitionId");
 
                     b.ToTable("PartitionResourceCategory");
                 });
@@ -528,15 +528,27 @@ namespace MPWebAPI.Migrations
                     b.ToTable("Portfolio");
                 });
 
+            modelBuilder.Entity("MPWebAPI.Models.PortfolioTag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("PortfolioId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PortfolioId");
+
+                    b.ToTable("PortfolioTag");
+                });
+
             modelBuilder.Entity("MPWebAPI.Models.PortfolioUser", b =>
                 {
-                    b.Property<int>("PlanId");
+                    b.Property<int>("PortfolioId");
 
                     b.Property<string>("UserId");
 
-                    b.HasKey("PlanId", "UserId");
-
-                    b.HasIndex("PlanId");
+                    b.HasKey("PortfolioId", "UserId");
 
                     b.HasIndex("UserId");
 
@@ -565,8 +577,6 @@ namespace MPWebAPI.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<int?>("OwnerId");
-
                     b.Property<int?>("OwningBusinessUnitId");
 
                     b.Property<string>("Reference");
@@ -585,8 +595,6 @@ namespace MPWebAPI.Migrations
 
                     b.HasIndex("ImpactedBusinessUnitId");
 
-                    b.HasIndex("OwnerId");
-
                     b.HasIndex("OwningBusinessUnitId");
 
                     b.ToTable("Project");
@@ -599,7 +607,7 @@ namespace MPWebAPI.Migrations
 
                     b.Property<bool>("Achieved");
 
-                    b.Property<float>("AchievedValue");
+                    b.Property<float?>("AchievedValue");
 
                     b.Property<DateTime>("Date");
 
@@ -627,8 +635,6 @@ namespace MPWebAPI.Migrations
 
                     b.HasIndex("BenefitCategoryId");
 
-                    b.HasIndex("ProjectBenefitId");
-
                     b.ToTable("ProjectBenefitBenefitCategory");
                 });
 
@@ -637,7 +643,9 @@ namespace MPWebAPI.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("PlanId");
+                    b.Property<int?>("OwnerId");
+
+                    b.Property<int>("PortfolioId");
 
                     b.Property<int>("ProjectOptionId");
 
@@ -645,11 +653,26 @@ namespace MPWebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PlanId");
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("PortfolioId");
 
                     b.HasIndex("ProjectOptionId");
 
                     b.ToTable("ProjectConfig");
+                });
+
+            modelBuilder.Entity("MPWebAPI.Models.ProjectConfigPortfolioTag", b =>
+                {
+                    b.Property<int>("PortfolioTagId");
+
+                    b.Property<int>("ProjectConfigId");
+
+                    b.HasKey("PortfolioTagId", "ProjectConfigId");
+
+                    b.HasIndex("ProjectConfigId");
+
+                    b.ToTable("ProjectConfigPortfolioTag");
                 });
 
             modelBuilder.Entity("MPWebAPI.Models.ProjectDependency", b =>
@@ -659,8 +682,6 @@ namespace MPWebAPI.Migrations
                     b.Property<int>("RequiredById");
 
                     b.HasKey("DependsOnId", "RequiredById");
-
-                    b.HasIndex("DependsOnId");
 
                     b.HasIndex("RequiredById");
 
@@ -676,8 +697,6 @@ namespace MPWebAPI.Migrations
                     b.HasKey("ProjectId", "FinancialResourceCategoryId");
 
                     b.HasIndex("FinancialResourceCategoryId");
-
-                    b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectFinancialResourceCategory");
                 });
@@ -710,14 +729,18 @@ namespace MPWebAPI.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<DateTime>("EndDate");
+                    b.Property<DateTime?>("EndDate");
+
+                    b.Property<DateTime>("EstimatedEndDate");
+
+                    b.Property<DateTime>("EstimatedStartDate");
 
                     b.Property<string>("Name")
                         .IsRequired();
 
                     b.Property<int>("ProjectOptionId");
 
-                    b.Property<DateTime>("StartDate");
+                    b.Property<DateTime?>("StartDate");
 
                     b.HasKey("Id");
 
@@ -733,8 +756,6 @@ namespace MPWebAPI.Migrations
                     b.Property<string>("UserId");
 
                     b.HasKey("ProjectId", "UserId");
-
-                    b.HasIndex("ProjectId");
 
                     b.HasIndex("UserId");
 
@@ -787,8 +808,6 @@ namespace MPWebAPI.Migrations
                     b.Property<string>("UserId");
 
                     b.HasKey("ResourceScenarioId", "UserId");
-
-                    b.HasIndex("ResourceScenarioId");
 
                     b.HasIndex("UserId");
 
@@ -846,17 +865,41 @@ namespace MPWebAPI.Migrations
                     b.ToTable("RiskProfile");
                 });
 
+            modelBuilder.Entity("MPWebAPI.Models.StaffAdjustment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Actual");
+
+                    b.Property<bool>("Additive");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<int>("StaffResourceId");
+
+                    b.Property<float>("Value");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StaffResourceId");
+
+                    b.ToTable("StaffAdjustment");
+                });
+
             modelBuilder.Entity("MPWebAPI.Models.StaffResource", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("EndDate");
+                    b.Property<DateTime?>("EndDate");
 
                     b.Property<float?>("FteOutput");
 
                     b.Property<string>("Name")
                         .IsRequired();
+
+                    b.Property<bool>("Recurring");
 
                     b.Property<int>("ResourceScenarioId");
 
@@ -888,19 +931,17 @@ namespace MPWebAPI.Migrations
                     b.ToTable("StaffResourceCategory");
                 });
 
-            modelBuilder.Entity("MPWebAPI.Models.StaffResourceProject", b =>
+            modelBuilder.Entity("MPWebAPI.Models.StaffResourceProjectConfig", b =>
                 {
                     b.Property<int>("StaffResourceId");
 
-                    b.Property<int>("ProjectId");
+                    b.Property<int>("ProjectConfigId");
 
-                    b.HasKey("StaffResourceId", "ProjectId");
+                    b.HasKey("StaffResourceId", "ProjectConfigId");
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex("ProjectConfigId");
 
-                    b.HasIndex("StaffResourceId");
-
-                    b.ToTable("StaffResourceProject");
+                    b.ToTable("StaffResourceProjectConfig");
                 });
 
             modelBuilder.Entity("MPWebAPI.Models.StaffResourceStaffResourceCategory", b =>
@@ -912,8 +953,6 @@ namespace MPWebAPI.Migrations
                     b.HasKey("StaffResourceId", "StaffResourceCategoryId");
 
                     b.HasIndex("StaffResourceCategoryId");
-
-                    b.HasIndex("StaffResourceId");
 
                     b.ToTable("StaffResourceStaffResourceCategory");
                 });
@@ -931,11 +970,19 @@ namespace MPWebAPI.Migrations
 
                     b.Property<int>("ProjectPhaseId");
 
+                    b.Property<int>("StaffResourceCategoryId");
+
+                    b.Property<int?>("StaffResourceId");
+
                     b.Property<int>("Value");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectPhaseId");
+
+                    b.HasIndex("StaffResourceCategoryId");
+
+                    b.HasIndex("StaffResourceId");
 
                     b.ToTable("StaffTransaction");
                 });
@@ -950,14 +997,13 @@ namespace MPWebAPI.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("UserGroup");
                 });
 
             modelBuilder.Entity("OpenIddict.OpenIddictApplication", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ClientId");
 
@@ -981,22 +1027,20 @@ namespace MPWebAPI.Migrations
 
             modelBuilder.Entity("OpenIddict.OpenIddictAuthorization", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Scope");
 
-                    b.Property<string>("UserId");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("OpenIddictAuthorizations");
                 });
 
             modelBuilder.Entity("OpenIddict.OpenIddictScope", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Description");
 
@@ -1007,7 +1051,8 @@ namespace MPWebAPI.Migrations
 
             modelBuilder.Entity("OpenIddict.OpenIddictToken", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ApplicationId");
 
@@ -1015,15 +1060,11 @@ namespace MPWebAPI.Migrations
 
                     b.Property<string>("Type");
 
-                    b.Property<string>("UserId");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationId");
 
                     b.HasIndex("AuthorizationId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("OpenIddictTokens");
                 });
@@ -1107,10 +1148,6 @@ namespace MPWebAPI.Migrations
                         .WithMany("Adjustments")
                         .HasForeignKey("FinancialResourcePartitionId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("MPWebAPI.Models.StaffResource")
-                        .WithMany("Adjustments")
-                        .HasForeignKey("StaffResourceId");
                 });
 
             modelBuilder.Entity("MPWebAPI.Models.FinancialResource", b =>
@@ -1222,11 +1259,19 @@ namespace MPWebAPI.Migrations
                         .HasForeignKey("GroupId");
                 });
 
+            modelBuilder.Entity("MPWebAPI.Models.PortfolioTag", b =>
+                {
+                    b.HasOne("MPWebAPI.Models.Portfolio", "Portfolio")
+                        .WithMany("PortfolioTags")
+                        .HasForeignKey("PortfolioId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("MPWebAPI.Models.PortfolioUser", b =>
                 {
-                    b.HasOne("MPWebAPI.Models.Portfolio", "Plan")
+                    b.HasOne("MPWebAPI.Models.Portfolio", "Portfolio")
                         .WithMany("ShareUser")
-                        .HasForeignKey("PlanId")
+                        .HasForeignKey("PortfolioId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("MPWebAPI.Models.MerlinPlanUser", "User")
@@ -1248,10 +1293,6 @@ namespace MPWebAPI.Migrations
                     b.HasOne("MPWebAPI.Models.BusinessUnit", "ImpactedBusinessUnit")
                         .WithMany("ProjectsImpacting")
                         .HasForeignKey("ImpactedBusinessUnitId");
-
-                    b.HasOne("MPWebAPI.Models.StaffResource", "Owner")
-                        .WithMany("ProjectsOwned")
-                        .HasForeignKey("OwnerId");
 
                     b.HasOne("MPWebAPI.Models.BusinessUnit", "OwningBusinessUnit")
                         .WithMany("ProjectsOwned")
@@ -1281,14 +1322,32 @@ namespace MPWebAPI.Migrations
 
             modelBuilder.Entity("MPWebAPI.Models.ProjectConfig", b =>
                 {
-                    b.HasOne("MPWebAPI.Models.Portfolio", "Plan")
+                    b.HasOne("MPWebAPI.Models.StaffResource", "Owner")
+                        .WithMany("ProjectsOwned")
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("MPWebAPI.Models.Portfolio", "Portfolio")
                         .WithMany("Projects")
-                        .HasForeignKey("PlanId")
+                        .HasForeignKey("PortfolioId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("MPWebAPI.Models.ProjectOption", "ProjectOption")
                         .WithMany()
                         .HasForeignKey("ProjectOptionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("MPWebAPI.Models.ProjectConfigPortfolioTag", b =>
+                {
+                    b.HasOne("MPWebAPI.Models.PortfolioTag", "PortfolioTag")
+                        .WithMany("Projects")
+                        .HasForeignKey("PortfolioTagId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MPWebAPI.Models.ProjectConfig", "ProjectConfig")
+                        .WithMany()
+                        .HasForeignKey("ProjectConfigId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -1395,6 +1454,14 @@ namespace MPWebAPI.Migrations
                         .HasForeignKey("RiskCategoryId");
                 });
 
+            modelBuilder.Entity("MPWebAPI.Models.StaffAdjustment", b =>
+                {
+                    b.HasOne("MPWebAPI.Models.StaffResource", "StaffResource")
+                        .WithMany("Adjustments")
+                        .HasForeignKey("StaffResourceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("MPWebAPI.Models.StaffResource", b =>
                 {
                     b.HasOne("MPWebAPI.Models.ResourceScenario", "ResourceScenario")
@@ -1411,11 +1478,11 @@ namespace MPWebAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("MPWebAPI.Models.StaffResourceProject", b =>
+            modelBuilder.Entity("MPWebAPI.Models.StaffResourceProjectConfig", b =>
                 {
-                    b.HasOne("MPWebAPI.Models.Project", "Project")
+                    b.HasOne("MPWebAPI.Models.ProjectConfig", "ProjectConfig")
                         .WithMany("Managers")
-                        .HasForeignKey("ProjectId")
+                        .HasForeignKey("ProjectConfigId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("MPWebAPI.Models.StaffResource", "StaffResource")
@@ -1443,6 +1510,15 @@ namespace MPWebAPI.Migrations
                         .WithMany("StaffResources")
                         .HasForeignKey("ProjectPhaseId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MPWebAPI.Models.StaffResourceCategory", "Category")
+                        .WithMany()
+                        .HasForeignKey("StaffResourceCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MPWebAPI.Models.StaffResource", "StaffResource")
+                        .WithMany()
+                        .HasForeignKey("StaffResourceId");
                 });
 
             modelBuilder.Entity("MPWebAPI.Models.UserGroup", b =>
@@ -1458,13 +1534,6 @@ namespace MPWebAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("OpenIddict.OpenIddictAuthorization", b =>
-                {
-                    b.HasOne("MPWebAPI.Models.MerlinPlanUser")
-                        .WithMany("Authorizations")
-                        .HasForeignKey("UserId");
-                });
-
             modelBuilder.Entity("OpenIddict.OpenIddictToken", b =>
                 {
                     b.HasOne("OpenIddict.OpenIddictApplication")
@@ -1474,10 +1543,6 @@ namespace MPWebAPI.Migrations
                     b.HasOne("OpenIddict.OpenIddictAuthorization")
                         .WithMany("Tokens")
                         .HasForeignKey("AuthorizationId");
-
-                    b.HasOne("MPWebAPI.Models.MerlinPlanUser")
-                        .WithMany("Tokens")
-                        .HasForeignKey("UserId");
                 });
         }
     }

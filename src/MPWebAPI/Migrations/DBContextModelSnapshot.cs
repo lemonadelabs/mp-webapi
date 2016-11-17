@@ -8,30 +8,32 @@ using MPWebAPI.Models;
 namespace MPWebAPI.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20161115225914_nullible_phase_dates")]
-    partial class nullible_phase_dates
+    partial class DBContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.0.1");
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
+                .HasAnnotation("ProductVersion", "1.1.0-rtm-22752");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRole", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
                     b.Property<string>("Name")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<string>("NormalizedName")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
+                        .IsUnique()
                         .HasName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
@@ -102,8 +104,6 @@ namespace MPWebAPI.Migrations
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("AspNetUserRoles");
                 });
@@ -320,8 +320,6 @@ namespace MPWebAPI.Migrations
 
                     b.HasKey("FinancialResourceCategoryId", "FinancialTransactionId");
 
-                    b.HasIndex("FinancialResourceCategoryId");
-
                     b.HasIndex("FinancialTransactionId");
 
                     b.ToTable("FinancialTransactionResourceCategory");
@@ -353,7 +351,8 @@ namespace MPWebAPI.Migrations
 
             modelBuilder.Entity("MPWebAPI.Models.MerlinPlanUser", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccessFailedCount");
 
@@ -363,7 +362,7 @@ namespace MPWebAPI.Migrations
                         .IsConcurrencyToken();
 
                     b.Property<string>("Email")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
 
@@ -380,10 +379,10 @@ namespace MPWebAPI.Migrations
                     b.Property<string>("NickName");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<string>("NormalizedUserName")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<int>("OrganisationId");
 
@@ -400,7 +399,7 @@ namespace MPWebAPI.Migrations
                     b.Property<bool>("TwoFactorEnabled");
 
                     b.Property<string>("UserName")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
 
@@ -457,8 +456,6 @@ namespace MPWebAPI.Migrations
                     b.HasKey("FinancialResourcePartitionId", "FinancialResourceCategoryId");
 
                     b.HasIndex("FinancialResourceCategoryId");
-
-                    b.HasIndex("FinancialResourcePartitionId");
 
                     b.ToTable("PartitionResourceCategory");
                 });
@@ -552,8 +549,6 @@ namespace MPWebAPI.Migrations
 
                     b.HasKey("PortfolioId", "UserId");
 
-                    b.HasIndex("PortfolioId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("PortfolioUser");
@@ -639,8 +634,6 @@ namespace MPWebAPI.Migrations
 
                     b.HasIndex("BenefitCategoryId");
 
-                    b.HasIndex("ProjectBenefitId");
-
                     b.ToTable("ProjectBenefitBenefitCategory");
                 });
 
@@ -676,8 +669,6 @@ namespace MPWebAPI.Migrations
 
                     b.HasKey("PortfolioTagId", "ProjectConfigId");
 
-                    b.HasIndex("PortfolioTagId");
-
                     b.HasIndex("ProjectConfigId");
 
                     b.ToTable("ProjectConfigPortfolioTag");
@@ -690,8 +681,6 @@ namespace MPWebAPI.Migrations
                     b.Property<int>("RequiredById");
 
                     b.HasKey("DependsOnId", "RequiredById");
-
-                    b.HasIndex("DependsOnId");
 
                     b.HasIndex("RequiredById");
 
@@ -707,8 +696,6 @@ namespace MPWebAPI.Migrations
                     b.HasKey("ProjectId", "FinancialResourceCategoryId");
 
                     b.HasIndex("FinancialResourceCategoryId");
-
-                    b.HasIndex("ProjectId");
 
                     b.ToTable("ProjectFinancialResourceCategory");
                 });
@@ -769,8 +756,6 @@ namespace MPWebAPI.Migrations
 
                     b.HasKey("ProjectId", "UserId");
 
-                    b.HasIndex("ProjectId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("ProjectUser");
@@ -822,8 +807,6 @@ namespace MPWebAPI.Migrations
                     b.Property<string>("UserId");
 
                     b.HasKey("ResourceScenarioId", "UserId");
-
-                    b.HasIndex("ResourceScenarioId");
 
                     b.HasIndex("UserId");
 
@@ -957,8 +940,6 @@ namespace MPWebAPI.Migrations
 
                     b.HasIndex("ProjectConfigId");
 
-                    b.HasIndex("StaffResourceId");
-
                     b.ToTable("StaffResourceProjectConfig");
                 });
 
@@ -971,8 +952,6 @@ namespace MPWebAPI.Migrations
                     b.HasKey("StaffResourceId", "StaffResourceCategoryId");
 
                     b.HasIndex("StaffResourceCategoryId");
-
-                    b.HasIndex("StaffResourceId");
 
                     b.ToTable("StaffResourceStaffResourceCategory");
                 });
@@ -1017,14 +996,13 @@ namespace MPWebAPI.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("UserGroup");
                 });
 
             modelBuilder.Entity("OpenIddict.OpenIddictApplication", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ClientId");
 
@@ -1048,7 +1026,8 @@ namespace MPWebAPI.Migrations
 
             modelBuilder.Entity("OpenIddict.OpenIddictAuthorization", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Scope");
 
@@ -1059,7 +1038,8 @@ namespace MPWebAPI.Migrations
 
             modelBuilder.Entity("OpenIddict.OpenIddictScope", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Description");
 
@@ -1070,7 +1050,8 @@ namespace MPWebAPI.Migrations
 
             modelBuilder.Entity("OpenIddict.OpenIddictToken", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ApplicationId");
 
