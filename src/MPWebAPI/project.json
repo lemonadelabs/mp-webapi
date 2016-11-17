@@ -35,7 +35,9 @@
     "Npgsql.EntityFrameworkCore.PostgreSQL.Design": "1.1.0-preview1-final"
   },
 
-  "tools": {  },
+  "tools": {
+    "Microsoft.EntityFrameworkCore.Tools.DotNet": "1.1.0-preview4"
+  },
   
   "frameworks": {
     "netcoreapp1.1": {
