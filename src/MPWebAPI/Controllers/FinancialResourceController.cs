@@ -16,16 +16,13 @@ namespace MPWebAPI.Controllers
         
         private readonly IMerlinPlanRepository _repository;
         private readonly IMerlinPlanBL _businessLogic;
-        //private readonly ILogger _logger;
 
         public FinancialResourceController(
             IMerlinPlanRepository repo,
-            IMerlinPlanBL mpbl/*, 
-            ILoggerFactory loggerFactory*/)
+            IMerlinPlanBL mpbl)
         {
             _repository = repo;
             _businessLogic = mpbl;
-            //_logger = loggerFactory.CreateLogger<FinancialResourceCategory>();
         }
 
         [HttpGet]
@@ -127,6 +124,8 @@ namespace MPWebAPI.Controllers
         public class PartitionUpdateRequest : IPartitionUpdate
         {
             public int Id { get; set; }
+            public string[] Categories { get; set; }
+
             [Required]
             public decimal Adjustment { get; set; }
             public bool Actual { get; set; }

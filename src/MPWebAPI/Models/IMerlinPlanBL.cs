@@ -77,6 +77,7 @@ namespace MPWebAPI.Models
     public interface IPartitionUpdate
     {
         int Id { get; set; }
+        string[] Categories { get; set; }
         decimal Adjustment { get; set; }
         bool Actual { get; set; }
     } 

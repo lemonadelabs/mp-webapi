@@ -461,7 +461,6 @@ namespace MPWebAPI.Models
             foreach (var partition in ps)
             {
                 // First validate that the partitions exist
-                
                 if (_respository.FinancialResourcePartitions.FirstOrDefault(frp => frp.Id == partition.Id) == null)
                 {
                     result.AddError("Id", $"The a partition with id {partition.Id} could not be found");
@@ -472,6 +471,13 @@ namespace MPWebAPI.Models
                 {
                     result.AddError("Actual", $"Can't add actuals to a non approved project. Partition with id {partition.Id}");
                 }
+
+                // If categories are to be changed, make sure that a category doesn't already exist with those categories
+                if (partition.Categories == null) continue;
+
+                
+
+
             }
 
             if (!result.Succeeded) return result;

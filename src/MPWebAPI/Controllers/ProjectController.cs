@@ -223,7 +223,6 @@ namespace MPWebAPI.Controllers
             );
         }
 
-        // TODO: Test this with updating dependencies etc.
         [HttpPut("option")]
         [ValidateModel]
         public async Task<IActionResult> UpdateProjectOption([FromBody] ProjectOptionViewModel viewModel)
