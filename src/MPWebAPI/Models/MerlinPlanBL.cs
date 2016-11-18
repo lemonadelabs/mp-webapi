@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-//using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace MPWebAPI.Models
@@ -474,10 +474,18 @@ namespace MPWebAPI.Models
 
                 // If categories are to be changed, make sure that a category doesn't already exist with those categories
                 if (partition.Categories == null) continue;
+                var catHashset = partition.Categories.ToImmutableHashSet();
+                foreach (var resourcePartition in resource.Partitions)
+                {
+                    if(resourcePartition.Id == partition.Id) continue;
 
-                
-
-
+                    var partitionCatHashset =
+                        resourcePartition.Categories.Select(c => c.FinancialResourceCategory.Name).ToImmutableHashSet();
+                    if (catHashset.SetEquals(partitionCatHashset))
+                    {
+                        result.AddError("Categories", $"Partion with id {resourcePartition.Id} already exists with this category set.");
+                    }
+                }
             }
 
             if (!result.Succeeded) return result;
@@ -515,6 +523,54 @@ namespace MPWebAPI.Models
                     adjustment.Value = partition.Adjustment;
                     adjustment.Actual = partition.Actual;
                 }
+
+                // Update Categories
+                if(partition.Categories == null) continue;
+
+                var updatedCategoryHash = partition.Categories.ToImmutableHashSet();
+
+                var categoryHash = p.Categories
+                    .Select(c => c.FinancialResourceCategory.Name)
+                    .ToImmutableHashSet();
+
+                // Delete
+                var catsToDelete = categoryHash
+                    .Where(c => !updatedCategoryHash.Contains(c))
+                    .Select(cat => p.Categories.Single(x => x.FinancialResourceCategory.Name == cat))
+                    .Select(y => y.FinancialResourceCategory)
+                    .ToList();
+
+                await _respository.RemoveCategoriesFromFinancialPartitionAsync(p, catsToDelete);
+
+                // Add
+                var catsToAdd = updatedCategoryHash.Where(c => !categoryHash.Contains(c)).ToList();
+
+                // Check for existing
+                var addList = new List<FinancialResourceCategory>();
+                foreach (var cat in catsToAdd)
+                {
+                    var newCat =
+                        _respository.FinancialResourceCategories
+                            .Where(frc => frc.GroupId == resource.ResourceScenario.Group.Id)
+                            .SingleOrDefault(rc => rc.Name == cat);
+
+                    if (newCat == null)
+                    {
+                        newCat = new FinancialResourceCategory()
+                        {
+                            Name = cat,
+                            Group = resource.ResourceScenario.Group
+                        };
+
+                        await
+                            AddFinancialResourceCategoriesAsync(resource.ResourceScenario.Group,
+                                new List<FinancialResourceCategory> {newCat});
+                    }
+
+                    addList.Add(newCat);
+                }
+
+                await _respository.AddCategoriesToFinancialPartitionAsync(p, addList);
             }
             await _respository.SaveChangesAsync();
             return result;
