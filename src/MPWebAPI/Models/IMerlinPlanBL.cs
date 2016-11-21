@@ -42,7 +42,7 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> DeleteFinancialResourcePartitionAsync(FinancialResourcePartition partition);
         Task<MerlinPlanBLResult> UpdateFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<IPartitionUpdate> partitions);
         Task<MerlinPlanBLResult> CopyFinancialResourcesAsync(IEnumerable<IResourceCopyRequest> requests);
-        Task<MerlinPlanBLResult> CopyResourceScenariosAsync(IEnumerable<IScenarioCopyRequest> requests);
+        Task<MerlinPlanBLResult> CopyResourceScenariosAsync(IEnumerable<IDocumentCopyRequest> requests);
 
         #endregion
 
@@ -66,13 +66,26 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> AddProjectAsync(Project project);
         Task<MerlinPlanBLResult> AddProjectPhaseAsync(ProjectPhase phase);
         Task<MerlinPlanBLResult> DeleteProjectPhaseAsync(ProjectPhase phase);
+        Task<MerlinPlanBLResult> CopyProjectAsync(IEnumerable<IDocumentCopyRequest> requests);
+        Task<MerlinPlanBLResult> UpdateProjectAsync(IEnumerable<IProjectUpdate> requests);
 
-        #endregion
+            #endregion
 
         Task<MerlinPlanBLResult> DeleteProjectOptionAsync(ProjectOption option);
     }
 
     #region Data Object Interfaces
+
+    public interface IProjectUpdate
+    {
+        int Id { get; set; }
+        string Name { get; set; }
+        string Summary { get; set; }
+        string Reference { get; set; }
+        string[] Categories { get; set; }
+        string OwningBusinessUnit { get; set; }
+        string ImpactedBusinessUnit { get; set; }
+    }
 
     public interface IPartitionUpdate
     {
@@ -96,7 +109,7 @@ namespace MPWebAPI.Models
         string Name { get; set; }
     }
 
-    public interface IScenarioCopyRequest
+    public interface IDocumentCopyRequest
     {
         int Id { get; set; }
         int Group { get; set; }

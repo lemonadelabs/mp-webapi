@@ -20,7 +20,7 @@ namespace MPWebAPI.Controllers
             public IEnumerable<string> Users { get; set; }
         }
 
-        public class ResourceScenarioCopyRequest : IScenarioCopyRequest
+        public class ResourceScenarioCopyRequest : IDocumentCopyRequest
         {
             [Required]
             public int Id { get; set; }

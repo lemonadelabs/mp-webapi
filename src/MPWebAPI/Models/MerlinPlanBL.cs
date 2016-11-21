@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Remotion.Linq.Parsing.Structure.IntermediateModel;
 
 namespace MPWebAPI.Models
 {
@@ -662,7 +663,7 @@ namespace MPWebAPI.Models
 
         #region Resource Scenarios
 
-        public async Task<MerlinPlanBLResult> CopyResourceScenariosAsync(IEnumerable<IScenarioCopyRequest> requests)
+        public async Task<MerlinPlanBLResult> CopyResourceScenariosAsync(IEnumerable<IDocumentCopyRequest> requests)
         {
             var result = new MerlinPlanBLResult();
             var copyRequests = requests.ToList();
@@ -962,6 +963,164 @@ namespace MPWebAPI.Models
         {
             await _respository.RemoveProjectPhaseAsync(phase);
             return new MerlinPlanBLResult();
+        }
+
+        // TODO: Finish this endpoint once update project endpoint is done
+        public async Task<MerlinPlanBLResult> CopyProjectAsync(IEnumerable<IDocumentCopyRequest> requests)
+        {
+            var result = new MerlinPlanBLResult();
+
+            var copyRequests = requests.ToList();
+            
+            // Additional Model validation
+            foreach (var request in copyRequests)
+            {
+                if (_respository.Projects.All(p => p.Id != request.Id))
+                {
+                    result.AddError("Id", $"The resource with id {request.Id} could not be found.");
+                }
+
+                if (_respository.Groups.All(g => g.Id != request.Group))
+                {
+                    result.AddError("Group", $"The group with id {request.Group} could not be found.");
+                }
+
+                if (_respository.Users.All(u => u.Id != request.User))
+                {
+                    result.AddError("User", $"The user with id {request.User} could not be found.");
+                }
+            }
+
+            if (!result.Succeeded) return result;
+
+            foreach (var request in copyRequests)
+            {
+                var project = _respository.Projects.Single(p => p.Id == request.Id);
+
+                // Do the copy
+                var newProject = new Project()
+                {
+                    Name = project.Name,
+                    Creator = _respository.Users.Single(u => u.Id == request.User),
+                    Group = _respository.Groups.Single(g => g.Id == request.Group),
+                    ImpactedBusinessUnit = project.ImpactedBusinessUnit,
+                    OwningBusinessUnit = project.OwningBusinessUnit,
+                    Reference = project.Reference,
+                    Summary = project.Summary,
+                };
+
+                await _respository.AddProjectAsync(newProject);
+
+                // Add related project data
+                var frcs = project.FinancialResourceCategories
+                    .Select(frc => new ProjectFinancialResourceCategory
+                    {
+                        FinancialResourceCategory = frc.FinancialResourceCategory,
+                        Project = newProject
+                    }).ToList();
+            }
+
+            return result;
+        }
+
+        public async Task<MerlinPlanBLResult> UpdateProjectAsync(IEnumerable<IProjectUpdate> requests)
+        {
+            var result = new MerlinPlanBLResult();
+
+            var updateRequests = requests.ToList();
+
+            // validate requests
+            foreach (var request in updateRequests)
+            {
+                // Check for existance
+                if (_respository.Projects.All(p => p.Id != request.Id))
+                {
+                    result.AddError("Id", $"A project with id: {request.Id} can't be found.");
+                }
+
+                // Check financial resource category existance
+                if(request.Categories == null) continue;
+
+                foreach (var category in request.Categories)
+                {
+                    var project = _respository.Projects.SingleOrDefault(p => p.Id == request.Id);
+                    if(project == null) continue;
+                    if (_respository.FinancialResourceCategories
+                            .Where(frc => frc.GroupId == project.Group.Id)
+                            .All(frc => frc.Name != category)
+                            )
+                    {
+                        result.AddError("Categories", $"There is no category in this project's group with the name {category}");
+                    }
+                }
+
+                var proj = _respository.Projects.SingleOrDefault(pr => pr.Id == request.Id);
+
+                if(proj == null) continue;
+
+                // Validate owning and impacted business units
+                if (_respository.BusinessUnits.Where(bu => bu.OrganisationId == proj.Group.OrganisationId).All(bu => bu.Name != request.ImpactedBusinessUnit))
+                {
+                    result.AddError("ImpactedBusinessUnit", $"The business unit {request.ImpactedBusinessUnit} could not be found");
+                }
+
+                if (_respository.BusinessUnits.Where(bu => bu.OrganisationId == proj.Group.OrganisationId).All(bu => bu.Name != request.OwningBusinessUnit))
+                {
+                    result.AddError("OwningBusinessUnit", $"The business unit {request.OwningBusinessUnit} could not be found");
+                }
+            }
+
+            if (!result.Succeeded) return result;
+
+            // update projects
+            foreach (var request in updateRequests)
+            {
+                var project = _respository.Projects.Single(p => p.Id == request.Id);
+                project.Name = request.Name;
+                project.Summary = request.Summary;
+                project.Reference = request.Reference;
+                project.ImpactedBusinessUnit =
+                    _respository.BusinessUnits.Single(bu => bu.Name == request.ImpactedBusinessUnit);
+                project.OwningBusinessUnit =
+                    _respository.BusinessUnits.Single(bu => bu.Name == request.OwningBusinessUnit);
+
+                
+                if(request.Categories == null) continue;
+                
+                // Update categories
+                var updatedCategoryIds = request.Categories
+                        .Select(c => _respository.FinancialResourceCategories
+                            .Where(frc => frc.GroupId == project.Group.Id)
+                            .Single(frc => frc.Name == c))
+                        .Select(frc => frc.Id)
+                        .ToImmutableHashSet();
+
+                var currentCategoryIds =
+                    project.FinancialResourceCategories
+                    .Select(frc => frc.FinancialResourceCategoryId)
+                    .ToImmutableHashSet();
+
+                var catsToDelete =
+                    project.FinancialResourceCategories.Where(
+                        frc => !updatedCategoryIds.Contains(frc.FinancialResourceCategoryId));
+
+                var catIdsToAdd = updatedCategoryIds.Where(cId => !currentCategoryIds.Contains(cId));
+
+                // Delete
+                foreach (var category in catsToDelete)
+                {
+                    project.FinancialResourceCategories.Remove(category);
+                }
+
+                // Add
+                await
+                    _respository.AddFinancialResourceCategoriesToProjectAsync(project,
+                        catIdsToAdd.Select(cId => _respository.FinancialResourceCategories.Single(frc => frc.Id == cId)));
+
+            }
+            await _respository.SaveChangesAsync();
+            result.SetData(updateRequests.Select(r => _respository.Projects.Single(p => p.Id == r.Id)).ToList());
+            return result;
         }
 
         public async Task<MerlinPlanBLResult> DeleteProjectOptionAsync(ProjectOption option)

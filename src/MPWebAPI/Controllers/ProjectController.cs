@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,10 @@ namespace MPWebAPI.Controllers
 
         [HttpGet]
         public IActionResult GetAll() => Ok(_repository.Projects.Select(p => new ProjectViewModel(p)));
+
+        [HttpGet("{id}")]
+        [ValidateProjectExists]
+        public IActionResult Get(int id) => Ok(new ProjectViewModel(_repository.Projects.Single(p => p.Id == id)));
 
         [HttpGet("group/{id}")]
         [ValidateGroupExists]
@@ -245,6 +250,28 @@ namespace MPWebAPI.Controllers
             return BadRequest(result.Errors);
         }
 
+        
+        public class ProjectUpdateRequest : IProjectUpdate
+        {
+            [Required]
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public string Summary { get; set; }
+            public string Reference { get; set; }
+            public string[] Categories { get; set; }
+            public string OwningBusinessUnit { get; set; }
+            public string ImpactedBusinessUnit { get; set; }
+        }
+
+        [HttpPut]
+        [ValidateModel]
+        public async Task<IActionResult> UpdateProject([FromBody] ProjectUpdateRequest[] requests)
+        {
+            var result = await _businesLogic.UpdateProjectAsync(requests);
+            if (result.Succeeded)
+                return Ok(result.GetData<IEnumerable<Project>>().Select(p => new ProjectViewModel(p)));
+            return BadRequest(result.Errors);
+        }
 
         [HttpPost("{id}/option")]
         [ValidateProjectExists]
@@ -288,5 +315,18 @@ namespace MPWebAPI.Controllers
 
             return Ok(new ProjectOptionViewModel(newOption));
         }
+
+
+        //[HttpPost("copy")]
+        //[ValidateModel]
+        //public async Task<IActionResult> CopyProject()
+        //{
+            
+        //}
+
+
     }
+
+   
+    
 }

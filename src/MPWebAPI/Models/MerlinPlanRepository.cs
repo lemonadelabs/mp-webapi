@@ -567,7 +567,17 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+        public async Task AddFinancialResourceCategoriesToProjectAsync(Project project, IEnumerable<FinancialResourceCategory> categories)
+        {
+            var pfrcs = categories.Select(frc => new ProjectFinancialResourceCategory
+            {
+                FinancialResourceCategory = frc,
+                Project = project
+            });
 
+            project.FinancialResourceCategories.AddRange(pfrcs);
+            await _dbcontext.SaveChangesAsync();
+        }
 
         #endregion
 
@@ -622,15 +632,15 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+        #endregion
+
+        #region Project Phases
+
         public async Task AddProjectPhaseAsync(ProjectPhase phase)
         {
             _dbcontext.ProjectPhase.Add(phase);
             await _dbcontext.SaveChangesAsync();
         }
-
-        #endregion
-
-        #region Project Phases
 
         public IEnumerable<ProjectPhase> ProjectPhases
         {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -101,7 +100,6 @@ namespace MPWebAPI.ViewModels
 
         [Required]
         public int Group { get; set; }
-
 
         public class UserDetails
         {

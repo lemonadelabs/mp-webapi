@@ -141,6 +141,9 @@ namespace MPWebAPI.Models
         Task AddProjectAsync(Project project);
         Task RemoveProjectAsync(Project project);
 
+        Task AddFinancialResourceCategoriesToProjectAsync(Project project,
+            IEnumerable<FinancialResourceCategory> categories);
+
         #endregion
 
         #region Project Option
