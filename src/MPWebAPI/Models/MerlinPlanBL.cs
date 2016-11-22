@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using Remotion.Linq.Parsing.Structure.IntermediateModel;
 
 namespace MPWebAPI.Models
 {
@@ -68,17 +67,14 @@ namespace MPWebAPI.Models
     {
         private readonly IMerlinPlanRepository _respository;
         private readonly IOptions<MerlinPlanBLOptions> _options;
-        //private readonly ILogger _logger;
-        
+
         public MerlinPlanBL(
             IOptions<MerlinPlanBLOptions> options, 
-            IMerlinPlanRepository mprepo/*,
-            ILoggerFactory loggerFactory*/
+            IMerlinPlanRepository mprepo
             )
         {
             _respository = mprepo;
             _options = options;
-            //_logger = loggerFactory.CreateLogger<MerlinPlanBL>();
         }
 
         #region Organisations
@@ -249,8 +245,9 @@ namespace MPWebAPI.Models
         /// creates a default partition for it.
         /// </summary>
         /// <param name="resource"></param>
+        /// <param name="defaultPartitionValue"></param>
         /// <returns></returns>
-        public async Task<MerlinPlanBLResult> AddFinancialResourceAsync(FinancialResource resource)
+        public async Task<MerlinPlanBLResult> AddFinancialResourceAsync(FinancialResource resource, decimal? defaultPartitionValue = null)
         {
             await _respository.AddFinancialResourceAsync(resource);
             // Add default partition
@@ -265,7 +262,7 @@ namespace MPWebAPI.Models
             {
                 FinancialResourcePartition = fp,
                 Date = resource.StartDate,
-                Value = 0,
+                Value = defaultPartitionValue ?? 0,
                 Actual = false,
                 Additive = false,
             };
@@ -965,7 +962,7 @@ namespace MPWebAPI.Models
             return new MerlinPlanBLResult();
         }
 
-        // TODO: Finish this endpoint once update project endpoint is done
+        // TODO: Add initial value to add financial resource endpoint
         public async Task<MerlinPlanBLResult> CopyProjectAsync(IEnumerable<IDocumentCopyRequest> requests)
         {
             var result = new MerlinPlanBLResult();
@@ -998,9 +995,9 @@ namespace MPWebAPI.Models
                 var project = _respository.Projects.Single(p => p.Id == request.Id);
 
                 // Do the copy
-                var newProject = new Project()
+                var newProject = new Project
                 {
-                    Name = project.Name,
+                    Name = request.Name ?? $"{project.Name} Copy",
                     Creator = _respository.Users.Single(u => u.Id == request.User),
                     Group = _respository.Groups.Single(g => g.Id == request.Group),
                     ImpactedBusinessUnit = project.ImpactedBusinessUnit,
@@ -1018,8 +1015,90 @@ namespace MPWebAPI.Models
                         FinancialResourceCategory = frc.FinancialResourceCategory,
                         Project = newProject
                     }).ToList();
-            }
 
+                newProject.FinancialResourceCategories.AddRange(frcs);
+
+                // Clone options
+                foreach (var option in project.Options)
+                {
+                    var newOption = new ProjectOption
+                    {
+                        Complexity = option.Complexity,
+                        Description = option.Description,
+                        Priority = option.Priority,
+                        Project = newProject
+                    };
+
+                    await _respository.AddProjectOptionAsync(newOption);
+
+                    // Add phases
+                    foreach (var phase in option.Phases)
+                    {
+                        var newPhase = new ProjectPhase
+                        {
+                            Description = phase.Description,
+                            EndDate = phase.EndDate,
+                            EstimatedEndDate = phase.EstimatedEndDate,
+                            EstimatedStartDate = phase.EstimatedStartDate,
+                            Name = phase.Name,
+                            ProjectOption = newOption,
+                            StartDate = phase.StartDate
+                        };
+
+                        await _respository.AddProjectPhaseAsync(newPhase);
+
+                        // Add financial transactions
+                        foreach (var ft in phase.FinancialResources)
+                        {
+                            var newFinancialTransation = new FinancialTransaction
+                            {
+                                Actual = ft.Actual,
+                                Additive = ft.Actual,
+                                Date = ft.Date,
+                                ProjectPhase = newPhase,
+                                Reference = ft.Reference,
+                                Value = ft.Value
+                            };
+
+                            var ftrcs = ft.Categories.Select(f => new FinancialTransactionResourceCategory
+                            {
+                                FinancialResourceCategory = f.FinancialResourceCategory,
+                                FinancialTransaction = newFinancialTransation
+                            });
+
+                            newFinancialTransation.Categories.AddRange(ftrcs);
+                            newPhase.FinancialResources.Add(newFinancialTransation);
+                        }
+
+                        foreach (var staffResource in phase.StaffResources)
+                        {
+                            var newStaffTransaction = new StaffTransaction
+                            {
+                                Actual = staffResource.Actual,
+                                Additive = staffResource.Additive,
+                                Date = staffResource.Date,
+                                ProjectPhase = newPhase,
+                                StaffResource = staffResource.StaffResource,
+                                Category = staffResource.Category,
+                                Value = staffResource.Value
+                            };
+
+                            newPhase.StaffResources.Add(newStaffTransaction);
+                        }
+
+                        await _respository.SaveChangesAsync();
+                    }
+
+                    // TODO: Add dependencies
+
+                    // TODO: Add benefits
+
+                    // TODO: Add risk profile
+                }
+
+                await _respository.SaveChangesAsync();
+
+            }
             return result;
         }
 

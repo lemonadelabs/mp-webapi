@@ -35,7 +35,7 @@ namespace MPWebAPI.Models
         #region Financial Resources
 
         Task<MerlinPlanBLResult> DeleteFinancialResourceCategoryAsync(FinancialResourceCategory frc);
-        Task<MerlinPlanBLResult> AddFinancialResourceAsync(FinancialResource resource);
+        Task<MerlinPlanBLResult> AddFinancialResourceAsync(FinancialResource resource, decimal? defaultPartitionValue = null);
         Task<MerlinPlanBLResult> AddFinancialResourceCategoriesAsync(Group group, IEnumerable<FinancialResourceCategory> categories);
         Task<MerlinPlanBLResult> AddFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<IPartitionRequest> partitions);
         Task<MerlinPlanBLResult> UpdateFinancialResourceAsync(FinancialResource resource);

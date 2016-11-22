@@ -1,9 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-//using Microsoft.Extensions.Logging;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
 using MPWebAPI.Filters;
@@ -33,20 +33,40 @@ namespace MPWebAPI.Controllers
             [Required]
             public string User { get; set; }
         }
+
+        public sealed class NewFinancialResourceRequest : ViewModel
+        {
+            public int ResourceScenarioId { get; set; }
+
+            [Required]
+            public string Name { get; set; }
+
+            [Required]
+            public DateTime StartDate { get; set; }
+            public DateTime? EndDate { get; set; }
+            public bool Recurring { get; set; }
+            public decimal? DefaultPartitionValue { get; set; }
+
+            public NewFinancialResourceRequest(FinancialResource model)
+            {
+                MapToViewModelAsync(model);
+            }
+
+            public NewFinancialResourceRequest()
+            {
+            }
+        }
         
         private readonly IMerlinPlanRepository _repository;
         private readonly IMerlinPlanBL _businessLogic;
-        //private readonly ILogger _logger;
-        
+
         public ResourceScenarioController(
             IMerlinPlanRepository repository, 
-            IMerlinPlanBL businessLogic/*,
-            ILoggerFactory loggerFactory*/
+            IMerlinPlanBL businessLogic
             )
         {
             _repository = repository;
             _businessLogic = businessLogic;
-            //_logger = loggerFactory.CreateLogger<ResourceScenarioController>();
         }
         
         [HttpGet]
@@ -273,16 +293,17 @@ namespace MPWebAPI.Controllers
             );
         }
 
+
         [HttpPost("{id}/financialresource")]
         [ValidateResourceScenarioExists]
         [ValidateModel]
-        public async Task<IActionResult> AddFinancialResource(int id, [FromBody] FinancialResourceViewModel viewModel)
+        public async Task<IActionResult> AddFinancialResource(int id, [FromBody] NewFinancialResourceRequest viewModel)
         {
             var fr = new FinancialResource();
             viewModel.ResourceScenarioId = id;
             await viewModel.MapToModel(fr);
             
-            var result = await _businessLogic.AddFinancialResourceAsync(fr);
+            var result = await _businessLogic.AddFinancialResourceAsync(fr, viewModel.DefaultPartitionValue);
             
             if (result.Succeeded)
             {

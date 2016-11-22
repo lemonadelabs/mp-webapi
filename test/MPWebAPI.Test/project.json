@@ -8,10 +8,11 @@
       "version": "0.1.0",
       "target": "project"
     },
-    "xunit": "2.2.0-beta3-build3402",
+    "xunit": "2.2.0-beta4-build3444",
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "Moq": "4.6.38-alpha",
-    "Microsoft.AspNetCore.TestHost": "1.1.0"
+    "Microsoft.AspNetCore.TestHost": "1.1.0",
+    "Microsoft.DotNet.InternalAbstractions": "1.0.0"
   },
 
   "publishOptions": {
