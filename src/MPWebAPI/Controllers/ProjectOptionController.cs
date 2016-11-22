@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using MPWebAPI.Filters;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
 
@@ -21,6 +22,12 @@ namespace MPWebAPI.Controllers
         [HttpGet]
         public IActionResult GetAll() => Ok(_repository.ProjectOptions.Select(po => new ProjectOptionViewModel(po)));
 
-
+        [HttpGet("{id}/benefit")]
+        [ValidateProjectOptionExists]
+        public IActionResult GetOptionBenefits(int id)
+        {
+            var option = _repository.ProjectOptions.Single(po => po.Id == id);
+            return Ok(option.Benefits.Select(b => new ProjectBenefitViewModel(b)));
+        }
     }
 }

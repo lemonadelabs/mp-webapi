@@ -590,6 +590,9 @@ namespace MPWebAPI.Models
                 return _dbcontext.ProjectOption
                     .Include(po => po.Benefits)
                     .ThenInclude(pb => pb.Alignments)
+                    .Include(po => po.Benefits)
+                    .ThenInclude(b => b.Categories)
+                    .ThenInclude(pbc => pbc.BenefitCategory)
                     .Include(po => po.Dependencies)
                     .ThenInclude(pd => pd.RequiredBy)
                     .Include(po => po.Dependencies)
