@@ -159,6 +159,8 @@ namespace MPWebAPI.Models
         IEnumerable<ProjectOption> ProjectOptions { get; }
         Task AddProjectOptionAsync(ProjectOption option);
         Task AddProjectDependencyAsync(ProjectOption source, ProjectOption target);
+        Task AddProjectBenefitAsync(ProjectBenefit benefit);
+        Task RemoveProjectBenefitAsync(ProjectBenefit benefit);
 
         #endregion
 

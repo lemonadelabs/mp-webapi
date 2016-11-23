@@ -45,16 +45,13 @@ Run `dotnet ef database update` to apply the current migrations.
 ### Run the application
 Run `dotnet run` from inside the `/src/MPWebAPI` directory. If the project needs to compile it will do that before running. The Kestral server will start on `http://localhost:5000`
 
-### View the api docs
-Direct your browser to `https://documenter.getpostman.com/collection/view/788789-ff23004d-9eee-01d3-fa28-e5110f8b2490#intro` 
-
 ## Update procedure
 1. Pull from the repo
 2. From inside the /src/MPWebAPI folder, run `dotnet ef database update` (This is only necessary if the update has a new migration)
 3. From inside the /src/MPWebAPI folder, run `dotnet run`
 
 ## API Documentation
-[https://documenter.getpostman.com/view/788789/merlin-plan-web-api/2LNYSK](https://documenter.getpostman.com/view/788789/merlin-plan-web-api/2LNYSK)
+[https://documenter.getpostman.com/collection/view/788789-ff23004d-9eee-01d3-fa28-e5110f8b2490](https://documenter.getpostman.com/collection/view/788789-ff23004d-9eee-01d3-fa28-e5110f8b2490K)
 
 
 

@@ -621,6 +621,8 @@ namespace MPWebAPI.Models
                     .Include(po => po.Phases)
                     .ThenInclude(pp => pp.StaffResources)
                     .ThenInclude(sr => sr.Category)
+                    .Include(po => po.Project)
+                    .ThenInclude(pr => pr.Group)
                     .ToList();
             }
         }
@@ -645,6 +647,18 @@ namespace MPWebAPI.Models
                 RequiredBy = dependee
             });
 
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task AddProjectBenefitAsync(ProjectBenefit benefit)
+        {
+            _dbcontext.ProjectBenefit.Add(benefit);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveProjectBenefitAsync(ProjectBenefit benefit)
+        {
+            _dbcontext.ProjectBenefit.Remove(benefit);
             await _dbcontext.SaveChangesAsync();
         }
 

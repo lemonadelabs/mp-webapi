@@ -1273,6 +1273,18 @@ namespace MPWebAPI.Models
             return result;
         }
 
+        public async Task<MerlinPlanBLResult> AddProjectBenefitAsync(ProjectBenefit benefit)
+        {
+            await _respository.AddProjectBenefitAsync(benefit);
+            return new MerlinPlanBLResult();
+        }
+
+        public async Task<MerlinPlanBLResult> DeleteProjectBenefitAsync(ProjectBenefit benefit)
+        {
+            await _respository.RemoveProjectBenefitAsync(benefit);
+            return new MerlinPlanBLResult();
+        }
+
         #endregion
 
 
