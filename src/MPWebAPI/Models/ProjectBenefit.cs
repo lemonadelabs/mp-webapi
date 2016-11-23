@@ -10,7 +10,7 @@ namespace MPWebAPI.Models
         public string Description { get; set; }
         public bool Achieved { get; set; }
         public float? AchievedValue { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
 
         public List<Alignment> Alignments { get; set; }
         public List<ProjectBenefitBenefitCategory> Categories { get; set; }

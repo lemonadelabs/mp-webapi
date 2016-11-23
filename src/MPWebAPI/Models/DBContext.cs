@@ -7,7 +7,7 @@ namespace MPWebAPI.Models
 {
     public class DBContext : OpenIddictDbContext<MerlinPlanUser>
     {
-        public DBContext(DbContextOptions<DBContext> options) :base(options)
+        public DBContext(DbContextOptions options) :base(options)
         {
         }
 
@@ -381,7 +381,7 @@ namespace MPWebAPI.Models
                 .HasOne(pb => pb.ProjectOption)
                 .WithMany(po => po.Benefits)
                 .HasForeignKey(pb => pb.ProjectOptionId);
-            
+
             builder.Entity<ProjectBenefitBenefitCategory>()
                 .HasKey(pbc => new {pbc.ProjectBenefitId, pbc.BenefitCategoryId});
             

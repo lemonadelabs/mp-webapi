@@ -20,7 +20,7 @@ namespace MPWebAPI.ViewModels
 
         public bool Achieved { get; set; }
         public float? AchievedValue { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
 
         public string[] Categories { get; set; }
 

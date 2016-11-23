@@ -962,7 +962,6 @@ namespace MPWebAPI.Models
             return new MerlinPlanBLResult();
         }
 
-        // TODO: Add initial value to add financial resource endpoint
         public async Task<MerlinPlanBLResult> CopyProjectAsync(IEnumerable<IDocumentCopyRequest> requests)
         {
             var result = new MerlinPlanBLResult();
