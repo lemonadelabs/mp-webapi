@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
 using MPWebAPI.Filters;
@@ -107,12 +108,9 @@ namespace MPWebAPI.Controllers
             {
                 return Ok();    
             }
-            else
-            {
-                return BadRequest(result.Errors);
-            }
-            
-        }    
+
+            return BadRequest(result.Errors);
+        }
 
 
         [HttpPut("{childId}/group/{parentId}")]
@@ -174,6 +172,41 @@ namespace MPWebAPI.Controllers
             if (result.Succeeded)
             {
                 return Ok(frcs.Select(frc => new FinancialResourceCategoryViewModel(frc)));
+            }
+            return BadRequest(result.Errors);
+        }
+
+        [HttpGet("{id}/category/benefit")]
+        [ValidateGroupExists]
+        public IActionResult GetBenefitCategories(int id)
+        {
+            return Ok(
+                _repository.BenefitCategories.Where(bc => bc.GroupId == id)
+                    .Select(bc => new BenefitCategoryViewModel(bc))
+                    .ToList());
+        }
+
+
+
+        [HttpPost("{id}/category/benefit")]
+        [ValidateGroupExists]
+        [ValidateModel]
+        public async Task<IActionResult> CreateBenefitCategories(int id, [FromBody] BenefitCategoryViewModel[] request)
+        {
+            var group = _repository.Groups.Single(g => g.Id == id);
+            var bcs = new List<BenefitCategory>();
+            foreach (var bc in request)
+            {
+                var newBC = new BenefitCategory();
+                await bc.MapToModel(newBC);
+                newBC.GroupId = id;
+                bcs.Add(newBC);
+            }
+
+            var result = await _businessLogic.AddBenefitCategoriesAsync(group, bcs);
+            if (result.Succeeded)
+            {
+                return Ok(bcs.Select(bc => new BenefitCategoryViewModel(bc)));
             }
             return BadRequest(result.Errors);
         }

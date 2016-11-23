@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
 using MPWebAPI.Filters;
@@ -39,7 +40,6 @@ namespace MPWebAPI.Controllers
             return BadRequest(result.Errors);
         }
 
-
         [HttpGet("financialresource/{id}")]
         [ValidateFinancialResourceCategoryExists]
         public IActionResult GetFinancialResourceCategory(int id)
@@ -62,6 +62,30 @@ namespace MPWebAPI.Controllers
             {
                 return Ok(id);
             }
+            return BadRequest(result.Errors);
+        }
+
+        [HttpGet("benefit/{id}")]
+        public IActionResult GetBenefit(int id)
+        {
+            var cat = _repository.BenefitCategories.SingleOrDefault(bc => bc.Id == id);
+            if (cat == null)
+            {
+                return NotFound(id);
+            }
+            return Ok(new BenefitCategoryViewModel(cat));
+        }
+
+        [HttpDelete("benefit/{id}")]
+        public async Task<IActionResult> DeleteBenefitCategory(int id)
+        {
+            var cat = _repository.BenefitCategories.SingleOrDefault(bc => bc.Id == id);
+            if (cat == null)
+            {
+                return NotFound(id);
+            }
+            var result = await _businessLogic.DeleteBenefitCategoryAsync(cat);
+            if (result.Succeeded) return Ok(id);
             return BadRequest(result.Errors);
         }
     }

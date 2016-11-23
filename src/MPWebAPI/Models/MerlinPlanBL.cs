@@ -1231,6 +1231,48 @@ namespace MPWebAPI.Models
             return result;
         }
 
+        public async Task<MerlinPlanBLResult> AddBenefitCategoriesAsync(Group group, IEnumerable<BenefitCategory> categories)
+        {
+            var categoryList = categories.ToList();
+            var result = new MerlinPlanBLResult();
+            foreach (var category in categoryList)
+            {
+                if (group.BenefitCategories.Any(frc => frc.Name == category.Name))
+                {
+                    result.AddError("Name", $"The Benefit Category Name {category.Name} is already used in this group");
+                }
+            }
+
+            if (!result.Succeeded) return result;
+            {
+                foreach (var category in categoryList)
+                {
+                    await _respository.AddBenefitCategoryAsync(category);
+                }
+            }
+            return result;
+        }
+
+        public async Task<MerlinPlanBLResult> DeleteBenefitCategoryAsync(BenefitCategory category)
+        {
+            var result = new MerlinPlanBLResult();
+
+             // Disalow if there are any project options using the category
+            if (category.ProjectBenefits.Count > 0)
+            {
+                var optionIds = category.ProjectBenefits.Select(pbbc => pbbc.ProjectBenefit.ProjectOptionId);
+                foreach (var optionId in optionIds)
+                {
+                    result.AddError("ProjectBenefit", $"Cannot delete benefit category because project option with id {optionId} has a benefit using it.");
+                }
+            }
+
+            if (!result.Succeeded) return result;
+
+            await _respository.RemoveBenefitCategoryAsync(category);
+            return result;
+        }
+
         #endregion
 
 

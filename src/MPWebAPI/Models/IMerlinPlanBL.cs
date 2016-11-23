@@ -26,14 +26,11 @@ namespace MPWebAPI.Models
         #endregion
 
         #region Groups
-
         Task<MerlinPlanBLResult> ParentGroupAsync(Group child, Group parent);
         Task<MerlinPlanBLResult> UnparentGroupAsync(Group group);
-
         #endregion
 
         #region Financial Resources
-
         Task<MerlinPlanBLResult> DeleteFinancialResourceCategoryAsync(FinancialResourceCategory frc);
         Task<MerlinPlanBLResult> AddFinancialResourceAsync(FinancialResource resource, decimal? defaultPartitionValue = null);
         Task<MerlinPlanBLResult> AddFinancialResourceCategoriesAsync(Group group, IEnumerable<FinancialResourceCategory> categories);
@@ -43,35 +40,33 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> UpdateFinancialResourcePartitionsAsync(FinancialResource resource, IEnumerable<IPartitionUpdate> partitions);
         Task<MerlinPlanBLResult> CopyFinancialResourcesAsync(IEnumerable<IResourceCopyRequest> requests);
         Task<MerlinPlanBLResult> CopyResourceScenariosAsync(IEnumerable<IDocumentCopyRequest> requests);
-
         #endregion
 
         #region Staff Resources
-
         Task<MerlinPlanBLResult> UpdateStaffResourceAsync(StaffResource resource);
         Task<MerlinPlanBLResult> CopyStaffResourcesAsync(IEnumerable<IResourceCopyRequest> requests);
-
         #endregion
 
         #region Business Units
-
         Task<MerlinPlanBLResult> AddBusinessUnitAsync(BusinessUnit businessUnit);
         Task<MerlinPlanBLResult> DeleteBusinessUnitAsync(BusinessUnit businessUnit);
-
         #endregion
 
         #region Projects
-
         Task<MerlinPlanBLResult> DeleteProjectAsync(Project project);
         Task<MerlinPlanBLResult> AddProjectAsync(Project project);
-        Task<MerlinPlanBLResult> AddProjectPhaseAsync(ProjectPhase phase);
-        Task<MerlinPlanBLResult> DeleteProjectPhaseAsync(ProjectPhase phase);
         Task<MerlinPlanBLResult> CopyProjectAsync(IEnumerable<IDocumentCopyRequest> requests);
         Task<MerlinPlanBLResult> UpdateProjectAsync(IEnumerable<IProjectUpdate> requests);
+        #endregion
 
-            #endregion
-
+        #region Project Options
+        Task<MerlinPlanBLResult> AddProjectPhaseAsync(ProjectPhase phase);
+        Task<MerlinPlanBLResult> DeleteProjectPhaseAsync(ProjectPhase phase);
         Task<MerlinPlanBLResult> DeleteProjectOptionAsync(ProjectOption option);
+        Task<MerlinPlanBLResult> AddBenefitCategoriesAsync(Group group, IEnumerable<BenefitCategory> categories);
+        Task<MerlinPlanBLResult> DeleteBenefitCategoryAsync(BenefitCategory category);
+        #endregion
+
     }
 
     #region Data Object Interfaces

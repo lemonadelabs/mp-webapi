@@ -128,6 +128,14 @@ namespace MPWebAPI.Models
 
         #endregion
 
+        #region Benefit Categories
+
+        IEnumerable<BenefitCategory> BenefitCategories { get; }
+        Task AddBenefitCategoryAsync(BenefitCategory category);
+        Task RemoveBenefitCategoryAsync(BenefitCategory category);
+
+        #endregion
+
         #region Project
 
         IEnumerable<Project> Projects { get; }

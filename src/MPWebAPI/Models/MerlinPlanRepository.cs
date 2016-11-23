@@ -34,6 +34,7 @@ namespace MPWebAPI.Models
                 return _dbcontext.Group
                     .Include(g => g.ResourceScenarios)
                     .Include(g => g.FinancialResourceCategories)
+                    .Include(g => g.BenefitCategories)
                     .ToList();
             }
         }
@@ -482,6 +483,18 @@ namespace MPWebAPI.Models
 
         #region Project
 
+        public async Task AddBenefitCategoryAsync(BenefitCategory category)
+        {
+            _dbcontext.BenefitCategory.Add(category);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveBenefitCategoryAsync(BenefitCategory category)
+        {
+            _dbcontext.BenefitCategory.Remove(category);
+            await _dbcontext.SaveChangesAsync();
+        }
+
         public IEnumerable<Project> Projects
         {
             get
@@ -711,6 +724,18 @@ namespace MPWebAPI.Models
             if (businessUnit == null) return;
             _dbcontext.BusinessUnit.Remove(businessUnit);
             await _dbcontext.SaveChangesAsync();
+        }
+
+        public IEnumerable<BenefitCategory> BenefitCategories
+        {
+            get
+            {
+                return _dbcontext.BenefitCategory
+                    .Include(bc => bc.Group)
+                    .Include(bc => bc.ProjectBenefits)
+                    .ThenInclude(pbbc => pbbc.ProjectBenefit)
+                    .ToList();
+            }
         }
 
         #endregion

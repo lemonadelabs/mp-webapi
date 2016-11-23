@@ -50,6 +50,37 @@ namespace MPWebAPI.ViewModels
         public int OrganisationId { get; set; }
     }
 
+    public sealed class BenefitCategoryViewModel : ViewModel
+    {
+        public BenefitCategoryViewModel(BenefitCategory model)
+        {
+            MapToViewModelAsync(model);
+        }
+
+        public BenefitCategoryViewModel()
+        {
+        }
+
+        public override Task<ViewModelMapResult> MapToViewModelAsync(object model, IMerlinPlanRepository repo = null)
+        {
+            var bc = (BenefitCategory) model;
+            base.MapToViewModelAsync(model, repo);
+            Group = new GroupData
+            {
+                Id = bc.GroupId,
+                Name = bc.Group.Name
+            };
+            return Task.FromResult(new ViewModelMapResult());
+        }
+
+        public int Id { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public GroupData Group { get; set; }
+    }
+
     public class GroupData
     {
         public int Id { get; set; }
