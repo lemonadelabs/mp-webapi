@@ -57,5 +57,13 @@ namespace MPWebAPI.Controllers
             if (result.Succeeded) return Ok(new ProjectBenefitViewModel(newBenefit));
             return BadRequest(result.Errors);
         }
+
+        [HttpGet("{id}/alignment")]
+        public IActionResult GetAlignment(int id)
+        {
+            var benefit = _repository.ProjectBenefits.SingleOrDefault(b => b.Id == id);
+            if(benefit == null) return NotFound(id);
+            return Ok(benefit.Alignments.Select(a => new AlignmentViewModel(a)));
+        }
     }
 }

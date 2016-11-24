@@ -12,16 +12,13 @@ namespace MPWebAPI.Models
     {
         private readonly DBContext _dbcontext;
         private readonly UserManager<MerlinPlanUser> _userManager;
-        //private readonly ILogger _logger;
-        
+
         public MerlinPlanRepository(
             DBContext dbcontext,
-            UserManager<MerlinPlanUser> userManager/*,
-            ILoggerFactory loggerFactory*/
+            UserManager<MerlinPlanUser> userManager
             )
         {
             _dbcontext = dbcontext;
-            //_logger = loggerFactory.CreateLogger("MerlinPlanRepository");
             _userManager = userManager;
         }
 
