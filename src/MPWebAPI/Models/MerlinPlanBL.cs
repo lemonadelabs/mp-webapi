@@ -1287,8 +1287,29 @@ namespace MPWebAPI.Models
 
         public async Task<MerlinPlanBLResult> DeleteAlignmentCategoryAsync(AlignmentCategory category)
         {
+            var result = new MerlinPlanBLResult();
+
+            // we need to check that there are no benefit alignments currently using this category
+            foreach (var a in category.Alignments)
+            {
+                result.AddError("Alignment", $"Cannot delete alignment category because project option with id {a.ProjectBenefit.ProjectOptionId} has a benefit with id {a.ProjectBenefitId} using it.");
+            }
+            if (!result.Succeeded) return result;
             await _respository.RemoveAlignmentCategoryAsync(category);
-            return new MerlinPlanBLResult();
+            return result;
+        }
+
+        public async Task<MerlinPlanBLResult> DeleteRiskCategoryAsync(RiskCategory category)
+        {
+            var result = new MerlinPlanBLResult();
+            // we need to check that there are no risk profiles currently using this category
+            foreach (var riskProfile in category.RiskProfiles)
+            {
+                result.AddError("RiskProfile", $"Cannot delete risk category because project option with id {riskProfile.ProjectOptionId} has a riskprofile with id {riskProfile.Id} using it.");
+            }
+            if (!result.Succeeded) return result;
+            await _respository.RemoveRiskCategoryAsync(category);
+            return result;
         }
 
         #endregion

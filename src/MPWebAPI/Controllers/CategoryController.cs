@@ -101,8 +101,9 @@ namespace MPWebAPI.Controllers
         {
             var cat = _repository.AlignmentCategories.SingleOrDefault(ac => ac.Id == id);
             if (cat == null) return NotFound(id);
-            await _businessLogic.DeleteAlignmentCategoryAsync(cat);
-            return Ok(id);
+            var result = await _businessLogic.DeleteAlignmentCategoryAsync(cat);
+            if(result.Succeeded) return Ok(id);
+            return BadRequest(result.Errors);
         }
 
         [HttpGet("risk/{id}")]
@@ -113,6 +114,14 @@ namespace MPWebAPI.Controllers
             return Ok(new RiskCategoryViewModel(cat));
         }
 
-
+        [HttpDelete("risk/{id}")]
+        public async Task<IActionResult> DeleteRisk(int id)
+        {
+            var cat = _repository.RiskCategories.SingleOrDefault(rc => rc.Id == id);
+            if (cat == null) return NotFound(id);
+            var result = await _businessLogic.DeleteRiskCategoryAsync(cat);
+            if(result.Succeeded) return Ok(id);
+            return BadRequest(result.Errors);
+        }
      }
 }

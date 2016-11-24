@@ -491,7 +491,12 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
-        public IEnumerable<AlignmentCategory> AlignmentCategories => _dbcontext.AlignmentCategory.Include(ac => ac.Group).ToList();
+        public IEnumerable<AlignmentCategory> AlignmentCategories => _dbcontext.AlignmentCategory
+            .Include(ac => ac.Group)
+            .Include(ac => ac.Alignments)
+            .ThenInclude(a => a.ProjectBenefit)
+            .ToList();
+
 
         public async Task AddAlignmentCategoryAsync(AlignmentCategory category)
         {
@@ -690,6 +695,8 @@ namespace MPWebAPI.Models
             {
                 return _dbcontext.RiskCategory
                     .Include(rc => rc.Group)
+                    .Include(rc => rc.RiskProfiles)
+                    .ThenInclude(rp => rp.ProjectOption)
                     .ToList();
             }
         }
