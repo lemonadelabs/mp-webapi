@@ -104,5 +104,15 @@ namespace MPWebAPI.Controllers
             await _businessLogic.DeleteAlignmentCategoryAsync(cat);
             return Ok(id);
         }
-    }
+
+        [HttpGet("risk/{id}")]
+        public IActionResult GetRisk(int id)
+        {
+            var cat = _repository.RiskCategories.SingleOrDefault(rc => rc.Id == id);
+            if (cat == null) return NotFound(id);
+            return Ok(new RiskCategoryViewModel(cat));
+        }
+
+
+     }
 }

@@ -137,9 +137,19 @@ namespace MPWebAPI.Models
         #endregion
 
         #region Alignment Categories
+
         IEnumerable<AlignmentCategory> AlignmentCategories { get; }
         Task AddAlignmentCategoryAsync(AlignmentCategory category);
         Task RemoveAlignmentCategoryAsync(AlignmentCategory category);
+
+        #endregion
+
+        #region Risk Categories
+
+        IEnumerable<RiskCategory> RiskCategories { get; }
+        Task AddRiskCategoryAsync(RiskCategory category);
+        Task RemoveRiskCategoryAsync(RiskCategory category);
+
         #endregion
 
         #region Project

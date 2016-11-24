@@ -81,6 +81,40 @@ namespace MPWebAPI.ViewModels
         public GroupData Group { get; set; }
     }
 
+
+    public sealed class RiskCategoryViewModel : ViewModel
+    {
+        public RiskCategoryViewModel(RiskCategory model)
+        {
+            MapToViewModelAsync(model);
+        }
+
+        public RiskCategoryViewModel()
+        {
+        }
+
+
+        public override Task<ViewModelMapResult> MapToViewModelAsync(object model, IMerlinPlanRepository repo = null)
+        {
+            var rc = (RiskCategory) model;
+            base.MapToViewModelAsync(model, repo);
+            Group = new GroupData
+            {
+                Id = rc.GroupId,
+                Name = rc.Group.Name
+            };
+            return Task.FromResult(new ViewModelMapResult());
+        }
+
+        public int Id { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public float Bias { get; set; }
+        public GroupData Group { get; set; }
+    }
+
     public sealed class AlignmentCategoryViewModel : ViewModel
     {
         public AlignmentCategoryViewModel(AlignmentCategory model)

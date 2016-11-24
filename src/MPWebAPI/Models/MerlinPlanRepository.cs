@@ -505,6 +505,7 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+
         public IEnumerable<Project> Projects
         {
             get
@@ -682,6 +683,29 @@ namespace MPWebAPI.Models
                     .ToList();
             }
         }
+
+        public IEnumerable<RiskCategory> RiskCategories
+        {
+            get
+            {
+                return _dbcontext.RiskCategory
+                    .Include(rc => rc.Group)
+                    .ToList();
+            }
+        }
+
+        public async Task AddRiskCategoryAsync(RiskCategory category)
+        {
+            _dbcontext.RiskCategory.Add(category);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveRiskCategoryAsync(RiskCategory category)
+        {
+            _dbcontext.RiskCategory.Remove(category);
+            await _dbcontext.SaveChangesAsync();
+        }
+
 
         #endregion
 
