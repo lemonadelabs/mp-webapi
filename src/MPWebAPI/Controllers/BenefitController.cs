@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
@@ -20,6 +21,15 @@ namespace MPWebAPI.Controllers
         [HttpGet]
         public IActionResult Get() => Ok(_repository.ProjectBenefits.Select(pb => new ProjectBenefitViewModel(pb)));
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var benefit = _repository.ProjectBenefits.SingleOrDefault(b => b.Id == id);
+            if(benefit == null) return NotFound(id);
 
+            var result = await _businessLogic.DeleteProjectBenefitAsync(benefit);
+            if (result.Succeeded) return Ok(id);
+            return BadRequest(result.Errors);
+        }
     }
 }
