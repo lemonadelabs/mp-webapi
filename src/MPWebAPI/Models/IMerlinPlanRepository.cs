@@ -170,6 +170,10 @@ namespace MPWebAPI.Models
 
         #endregion
 
+        #region Project Benefit
+        IEnumerable<ProjectBenefit> ProjectBenefits { get; }
+        #endregion
+
         #region Portfolio
         IEnumerable<Portfolio> Portfolios { get; }
         #endregion

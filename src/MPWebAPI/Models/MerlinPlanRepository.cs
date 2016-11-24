@@ -672,6 +672,19 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+        public IEnumerable<ProjectBenefit> ProjectBenefits
+        {
+            get
+            {
+                return _dbcontext.ProjectBenefit
+                    .Include(b => b.Alignments)
+                    .ThenInclude(a => a.AlignmentCategory)
+                    .Include(b => b.Categories)
+                    .ThenInclude(pbbc => pbbc.BenefitCategory)
+                    .ToList();
+            }
+        }
+
         public IEnumerable<ProjectPhase> ProjectPhases
         {
             get
