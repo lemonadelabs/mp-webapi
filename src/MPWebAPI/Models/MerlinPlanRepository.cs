@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-//using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 
 namespace MPWebAPI.Models
@@ -673,6 +672,17 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+        public IEnumerable<RiskProfile> RiskProfiles
+        {
+            get
+            {
+                return _dbcontext.RiskProfile
+                    .Include(rp => rp.ProjectOption)
+                    .Include(rp => rp.RiskCategory)
+                    .ToList();
+            }
+        }
+
         #endregion
 
         #region Project Phases
@@ -694,6 +704,12 @@ namespace MPWebAPI.Models
                     .ThenInclude(pbbc => pbbc.BenefitCategory)
                     .ToList();
             }
+        }
+
+        public Task AddRiskProfileAsync(RiskProfile profile)
+        {
+            // TODO: Add this!
+            throw new NotImplementedException();
         }
 
         public IEnumerable<ProjectPhase> ProjectPhases

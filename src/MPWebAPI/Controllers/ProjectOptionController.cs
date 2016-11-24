@@ -31,8 +31,15 @@ namespace MPWebAPI.Controllers
             return Ok(option.Benefits.Select(b => new ProjectBenefitViewModel(b)));
         }
 
-
-
-
+        [HttpGet("{id}/riskprofile")]
+        [ValidateProjectOptionExists]
+        public IActionResult GetRiskProfile(int id)
+        {
+            return Ok(
+                _repository.RiskProfiles
+                    .Where(rp => rp.ProjectOptionId == id)
+                    .Select(rp => new RiskProfileViewModel(rp))
+            );
+        }
     }
 }

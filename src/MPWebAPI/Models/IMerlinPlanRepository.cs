@@ -170,18 +170,30 @@ namespace MPWebAPI.Models
 
         #endregion
 
+        #region Risk Profile
+
+        IEnumerable<RiskProfile> RiskProfiles { get; }
+        Task AddRiskProfileAsync(RiskProfile profile);
+
+        #endregion
+
         #region Project Phase
+
         IEnumerable<ProjectPhase> ProjectPhases { get; }
         Task AddProjectPhaseAsync(ProjectPhase phase);
 
         #endregion
 
         #region Project Benefit
+
         IEnumerable<ProjectBenefit> ProjectBenefits { get; }
+
         #endregion
 
         #region Portfolio
+
         IEnumerable<Portfolio> Portfolios { get; }
+
         #endregion
 
         Task SaveChangesAsync();
