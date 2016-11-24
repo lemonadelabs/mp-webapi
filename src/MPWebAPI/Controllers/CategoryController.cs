@@ -87,5 +87,22 @@ namespace MPWebAPI.Controllers
             if (result.Succeeded) return Ok(id);
             return BadRequest(result.Errors);
         }
+
+        [HttpGet("alignment/{id}")]
+        public IActionResult GetAlignment(int id)
+        {
+            var cat = _repository.AlignmentCategories.SingleOrDefault(ac => ac.Id == id);
+            if (cat == null) return NotFound(id);
+            return Ok(new AlignmentCategoryViewModel(cat));
+        }
+
+        [HttpDelete("alignment/{id}")]
+        public async Task<IActionResult> DeleteAlignment(int id)
+        {
+            var cat = _repository.AlignmentCategories.SingleOrDefault(ac => ac.Id == id);
+            if (cat == null) return NotFound(id);
+            await _businessLogic.DeleteAlignmentCategoryAsync(cat);
+            return Ok(id);
+        }
     }
 }

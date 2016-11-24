@@ -1285,6 +1285,12 @@ namespace MPWebAPI.Models
             return new MerlinPlanBLResult();
         }
 
+        public async Task<MerlinPlanBLResult> DeleteAlignmentCategoryAsync(AlignmentCategory category)
+        {
+            await _respository.RemoveAlignmentCategoryAsync(category);
+            return new MerlinPlanBLResult();
+        }
+
         #endregion
 
 

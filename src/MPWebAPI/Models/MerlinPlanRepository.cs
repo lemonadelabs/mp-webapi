@@ -495,6 +495,20 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+        public IEnumerable<AlignmentCategory> AlignmentCategories => _dbcontext.AlignmentCategory.Include(ac => ac.Group).ToList();
+
+        public async Task AddAlignmentCategoryAsync(AlignmentCategory category)
+        {
+            _dbcontext.AlignmentCategory.Add(category);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveAlignmentCategoryAsync(AlignmentCategory category)
+        {
+            _dbcontext.AlignmentCategory.Remove(category);
+            await _dbcontext.SaveChangesAsync();
+        }
+
         public IEnumerable<Project> Projects
         {
             get
