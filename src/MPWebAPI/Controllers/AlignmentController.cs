@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
@@ -19,5 +20,20 @@ namespace MPWebAPI.Controllers
 
         [HttpGet]
         public IActionResult GetAll() => Ok(_repository.Alignments.Select(a => new AlignmentViewModel(a)));
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var alignment = _repository.Alignments.SingleOrDefault(a => a.Id == id);
+            if (alignment == null) return NotFound(id);
+            await _repository.RemoveAlignment(alignment);
+            return Ok(id);
+        }
+
+
+
+
+
+
     }
 }

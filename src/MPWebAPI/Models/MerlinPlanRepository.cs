@@ -742,10 +742,22 @@ namespace MPWebAPI.Models
             .Include(a => a.ProjectBenefit)
             .ToList();
 
-        public Task AddRiskProfileAsync(RiskProfile profile)
+        public async Task RemoveAlignment(Alignment alignment)
         {
-            // TODO: Add this!
-            throw new NotImplementedException();
+            _dbcontext.Alignment.Remove(alignment);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task AddAlignment(Alignment alignment)
+        {
+            _dbcontext.Alignment.Add(alignment);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task AddRiskProfileAsync(RiskProfile profile)
+        {
+            _dbcontext.RiskProfile.Add(profile);
+            await _dbcontext.SaveChangesAsync();
         }
 
         public IEnumerable<ProjectPhase> ProjectPhases
