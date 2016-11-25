@@ -737,6 +737,11 @@ namespace MPWebAPI.Models
             }
         }
 
+        public IEnumerable<Alignment> Alignments => _dbcontext.Alignment
+            .Include(a => a.AlignmentCategory)
+            .Include(a => a.ProjectBenefit)
+            .ToList();
+
         public Task AddRiskProfileAsync(RiskProfile profile)
         {
             // TODO: Add this!

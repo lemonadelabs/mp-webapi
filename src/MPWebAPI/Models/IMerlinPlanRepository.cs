@@ -200,6 +200,12 @@ namespace MPWebAPI.Models
 
         #endregion
 
+        #region Alignment
+
+        IEnumerable<Alignment> Alignments { get; }
+
+        #endregion
+
         #region Portfolio
 
         IEnumerable<Portfolio> Portfolios { get; }
