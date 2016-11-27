@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MPWebAPI.Filters;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
 
@@ -26,14 +27,19 @@ namespace MPWebAPI.Controllers
         {
             var alignment = _repository.Alignments.SingleOrDefault(a => a.Id == id);
             if (alignment == null) return NotFound(id);
-            await _repository.RemoveAlignment(alignment);
+            await _repository.RemoveAlignmentAsync(alignment);
             return Ok(id);
         }
 
-
-
-
-
-
+        [HttpPost]
+        [ValidateModel]
+        public async Task<IActionResult> Create([FromBody] AlignmentViewModel viewModel)
+        {
+            var newAlignment = new Alignment();
+            var mapResult = await viewModel.MapToModel(newAlignment, _repository);
+            if (!mapResult.Succeeded) return BadRequest(mapResult.Errors);
+            await _repository.AddAlignmentAsync(newAlignment);
+            return Ok(new AlignmentViewModel(newAlignment));
+        }
     }
 }

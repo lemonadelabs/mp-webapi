@@ -203,8 +203,8 @@ namespace MPWebAPI.Models
         #region Alignment
 
         IEnumerable<Alignment> Alignments { get; }
-        Task RemoveAlignment(Alignment alignment);
-        Task AddAlignment(Alignment alignment);
+        Task RemoveAlignmentAsync(Alignment alignment);
+        Task AddAlignmentAsync(Alignment alignment);
 
         #endregion
 

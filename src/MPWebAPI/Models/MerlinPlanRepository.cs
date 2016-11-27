@@ -742,13 +742,13 @@ namespace MPWebAPI.Models
             .Include(a => a.ProjectBenefit)
             .ToList();
 
-        public async Task RemoveAlignment(Alignment alignment)
+        public async Task RemoveAlignmentAsync(Alignment alignment)
         {
             _dbcontext.Alignment.Remove(alignment);
             await _dbcontext.SaveChangesAsync();
         }
 
-        public async Task AddAlignment(Alignment alignment)
+        public async Task AddAlignmentAsync(Alignment alignment)
         {
             _dbcontext.Alignment.Add(alignment);
             await _dbcontext.SaveChangesAsync();
