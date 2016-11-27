@@ -59,7 +59,10 @@ namespace MPWebAPI.ViewModels
         public int Id { get; set; }
 
         public float Value { get; set; }
+
+        [Required]
         public DateTime Date { get; set; }
+
         public bool Actual { get; set; }
 
         [Required]
@@ -80,6 +83,4 @@ namespace MPWebAPI.ViewModels
             public string Name { get; set; }
         }
     }
-
-
 }

@@ -41,5 +41,17 @@ namespace MPWebAPI.Controllers
             await _repository.AddAlignmentAsync(newAlignment);
             return Ok(new AlignmentViewModel(newAlignment));
         }
+
+        [HttpPut]
+        [ValidateModel]
+        public async Task<IActionResult> Update([FromBody] AlignmentViewModel viewModel)
+        {
+            var alignment = _repository.Alignments.SingleOrDefault(a => a.Id == viewModel.Id);
+            if (alignment == null) return NotFound(viewModel.Id);
+            var mapResult = await viewModel.MapToModel(alignment, _repository);
+            if (!mapResult.Succeeded) return BadRequest(mapResult.Errors);
+            await _repository.SaveChangesAsync();
+            return Ok(new AlignmentViewModel(alignment));
+        }
     }
 }
