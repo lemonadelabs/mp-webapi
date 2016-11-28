@@ -70,6 +70,7 @@ namespace MPWebAPI.ViewModels
 
         public class AlignmentCategoryData
         {
+            [Required]
             public int Id { get; set; }
             public string Name { get; set; }
         }
@@ -79,6 +80,7 @@ namespace MPWebAPI.ViewModels
 
         public class ProjectBenefitData
         {
+            [Required]
             public int Id { get; set; }
             public string Name { get; set; }
         }

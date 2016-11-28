@@ -10,12 +10,10 @@ namespace MPWebAPI.Controllers
     [Route("api/[Controller]")]
     public class AlignmentController : Controller
     {
-        private readonly IMerlinPlanBL _businessLogic;
         private readonly IMerlinPlanRepository _repository;
 
-        public AlignmentController(IMerlinPlanBL mpbl, IMerlinPlanRepository repo)
+        public AlignmentController(IMerlinPlanRepository repo)
         {
-            _businessLogic = mpbl;
             _repository = repo;
         }
 

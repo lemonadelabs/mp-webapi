@@ -184,6 +184,7 @@ namespace MPWebAPI.Models
 
         IEnumerable<RiskProfile> RiskProfiles { get; }
         Task AddRiskProfileAsync(RiskProfile profile);
+        Task RemoveRiskProfileAsync(RiskProfile profile);
 
         #endregion
 

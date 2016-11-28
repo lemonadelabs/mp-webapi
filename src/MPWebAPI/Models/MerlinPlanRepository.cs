@@ -760,6 +760,12 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+        public async Task RemoveRiskProfileAsync(RiskProfile profile)
+        {
+            _dbcontext.RiskProfile.Remove(profile);
+            await _dbcontext.SaveChangesAsync();
+        }
+
         public IEnumerable<ProjectPhase> ProjectPhases
         {
             get
