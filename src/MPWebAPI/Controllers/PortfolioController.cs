@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using MPWebAPI.Models;
+using MPWebAPI.ViewModels;
 
 namespace MPWebAPI.Controllers
 {
@@ -14,5 +16,13 @@ namespace MPWebAPI.Controllers
             _repository = repo;
             _businessLogic = mpbl;
         }
+
+        [HttpGet]
+        public IActionResult GetAll() => Ok(_repository.Portfolios.Select(p => new PortfolioViewModel(p)));
+
+
+
+
+
     }
 }
