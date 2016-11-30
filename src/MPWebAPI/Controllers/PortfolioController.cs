@@ -28,7 +28,12 @@ namespace MPWebAPI.Controllers
             return Ok(_repository.Portfolios.Where(p => p.Group.Id == id).Select(pr => new PortfolioViewModel(pr)));
         }
 
-        
+        [HttpGet("user/{id}")]
+        [ValidateUserExists]
+        public IActionResult GetAllForUser(string id)
+        {
+            return Ok(_repository.Portfolios.Where(p => p.Creator.Id == id).Select(pf => new PortfolioViewModel(pf)));
+        }
 
 
 
