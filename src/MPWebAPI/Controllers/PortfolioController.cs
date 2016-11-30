@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using MPWebAPI.Filters;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
 
@@ -20,6 +21,14 @@ namespace MPWebAPI.Controllers
         [HttpGet]
         public IActionResult GetAll() => Ok(_repository.Portfolios.Select(p => new PortfolioViewModel(p)));
 
+        [HttpGet("group/{id}")]
+        [ValidateGroupExists]
+        public IActionResult GetAllForGroup(int id)
+        {
+            return Ok(_repository.Portfolios.Where(p => p.Group.Id == id).Select(pr => new PortfolioViewModel(pr)));
+        }
+
+        
 
 
 
