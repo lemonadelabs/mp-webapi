@@ -22,6 +22,14 @@ namespace MPWebAPI.Controllers
             public IEnumerable<string> Users { get; set; }
         }
 
+        public class ProjectCopyRequest : IDocumentCopyRequest
+        {
+            public int Id { get; set; }
+            public int Group { get; set; }
+            public string Name { get; set; }
+            public string User { get; set; }
+        }
+
         public ProjectController(IMerlinPlanRepository repo, IMerlinPlanBL mpbl)
         {
             _businesLogic = mpbl;
@@ -317,12 +325,14 @@ namespace MPWebAPI.Controllers
         }
 
 
-        //[HttpPost("copy")]
-        //[ValidateModel]
-        //public async Task<IActionResult> CopyProject()
-        //{
-            
-        //}
+        [HttpPost("copy")]
+        [ValidateModel]
+        public async Task<IActionResult> CopyProject([FromBody] ProjectCopyRequest[] requests)
+        {
+            var result = await _businesLogic.CopyProjectAsync(requests);
+            if (!result.Succeeded) return BadRequest(result.Errors);
+            return Ok(result.GetData<IEnumerable<Project>>().Select(p => new ProjectViewModel(p)));
+        }
 
 
     }

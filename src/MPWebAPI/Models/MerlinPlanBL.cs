@@ -989,6 +989,8 @@ namespace MPWebAPI.Models
 
             if (!result.Succeeded) return result;
 
+            var resultData = new List<Project>();
+
             foreach (var request in copyRequests)
             {
                 var project = _respository.Projects.Single(p => p.Id == request.Id);
@@ -1015,10 +1017,12 @@ namespace MPWebAPI.Models
                         Project = newProject
                     }).ToList();
 
-                newProject.FinancialResourceCategories.AddRange(frcs);
+                newProject.FinancialResourceCategories = new List<ProjectFinancialResourceCategory>(frcs);
+
+                var projectOptions = _respository.ProjectOptions.Where(po => po.ProjectId == project.Id).ToList();
 
                 // Clone options
-                foreach (var option in project.Options)
+                foreach (var option in projectOptions)
                 {
                     var newOption = new ProjectOption
                     {
@@ -1046,9 +1050,12 @@ namespace MPWebAPI.Models
 
                         await _respository.AddProjectPhaseAsync(newPhase);
 
+                        newPhase.FinancialResources = new List<FinancialTransaction>();
+
                         // Add financial transactions
                         foreach (var ft in phase.FinancialResources)
                         {
+
                             var newFinancialTransation = new FinancialTransaction
                             {
                                 Actual = ft.Actual,
@@ -1065,10 +1072,11 @@ namespace MPWebAPI.Models
                                 FinancialTransaction = newFinancialTransation
                             });
 
-                            newFinancialTransation.Categories.AddRange(ftrcs);
+                            newFinancialTransation.Categories = new List<FinancialTransactionResourceCategory>(ftrcs);
                             newPhase.FinancialResources.Add(newFinancialTransation);
                         }
 
+                        newPhase.StaffResources = new List<StaffTransaction>();
                         foreach (var staffResource in phase.StaffResources)
                         {
                             var newStaffTransaction = new StaffTransaction
@@ -1088,16 +1096,65 @@ namespace MPWebAPI.Models
                         await _respository.SaveChangesAsync();
                     }
 
-                    // TODO: Add dependencies
+                    var deps = option.RequiredBy.ToArray();
 
-                    // TODO: Add benefits
+                    foreach (var dependency in deps)
+                    {
+                        await _respository.AddProjectDependencyAsync(dependency.RequiredBy, newOption);
+                    }
 
-                    // TODO: Add risk profile
+                    foreach (var benefit in option.Benefits)
+                    {
+                        var newBenefit = new ProjectBenefit
+                        {
+                            Achieved = benefit.Achieved,
+                            AchievedValue = benefit.AchievedValue,
+                            Date = benefit.Date,
+                            Description = benefit.Description,
+                            Name = benefit.Name,
+                            ProjectOption = newOption
+                        };
+
+                        newBenefit.Alignments = benefit.Alignments
+                            .Select(a => new Alignment
+                            {
+                                Actual = a.Actual,
+                                AlignmentCategory = a.AlignmentCategory,
+                                Date = a.Date,
+                                ProjectBenefit = newBenefit,
+                                Value = a.Value,
+                                AlignmentCategoryId = a.AlignmentCategoryId,
+                                ProjectBenefitId = newBenefit.Id
+
+                            })
+                            .ToList();
+
+                        newBenefit.Categories = benefit.Categories.Select(bc => new ProjectBenefitBenefitCategory
+                        {
+                            BenefitCategory = bc.BenefitCategory,
+                            ProjectBenefit = newBenefit,
+                            BenefitCategoryId = bc.BenefitCategoryId
+                        }).ToList();
+
+                        await AddProjectBenefitAsync(newBenefit);
+                    }
+
+                    newOption.RiskProfile = option.RiskProfile.Select(rp => new RiskProfile
+                    {
+                        Actual = rp.Actual,
+                        Date = rp.Date,
+                        Impact = rp.Impact,
+                        Mitigation = rp.Mitigation,
+                        Probability = rp.Probability,
+                        ProjectOption = newOption,
+                        Residual = rp.Residual,
+                        RiskCategoryId = rp.RiskCategoryId
+                    }).ToList();
                 }
-
                 await _respository.SaveChangesAsync();
-
+                resultData.Add(newProject);
             }
+            result.SetData(resultData);
             return result;
         }
 

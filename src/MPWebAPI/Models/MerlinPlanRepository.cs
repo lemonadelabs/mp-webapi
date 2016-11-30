@@ -639,6 +639,8 @@ namespace MPWebAPI.Models
                     .ThenInclude(sr => sr.Category)
                     .Include(po => po.Project)
                     .ThenInclude(pr => pr.Group)
+                    .Include(po => po.RiskProfile)
+                    .ThenInclude(rp => rp.RiskCategory)
                     .ToList();
             }
         }
