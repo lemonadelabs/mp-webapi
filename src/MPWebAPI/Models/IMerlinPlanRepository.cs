@@ -64,6 +64,21 @@ namespace MPWebAPI.Models
 
         #endregion
 
+        #region Portfolio
+
+        IEnumerable<Portfolio> Portfolios { get; }
+        Task<IEnumerable<Portfolio>> GetUserSharedPortfoliosForUserAsync(MerlinPlanUser user);
+        Task<IEnumerable<Portfolio>> GetGroupSharedPortfoliosForUserAsync(MerlinPlanUser user);
+        Task<IEnumerable<Portfolio>> GetOrganisationSharedPortfoliosAsync(Organisation org);
+        Task SharePortfolioWithGroupAsync(Portfolio portfolio, bool share);
+        Task SharePortfolioWithOrgAsync(Portfolio portfolio, bool share);
+        Task SharePortfolioWithUserAsync(Portfolio portfolio, MerlinPlanUser user);
+        Task UnsharePortfolioWithUserAsync(Portfolio portfolio, MerlinPlanUser user);
+        Task AddPortfolioAsync(Portfolio portfolio);
+        Task RemovePortfolioAsync(Portfolio portfolio);
+
+        #endregion
+
         // Financial Resources
         #region Financial Resources
 
@@ -175,8 +190,10 @@ namespace MPWebAPI.Models
         IEnumerable<ProjectOption> ProjectOptions { get; }
         Task AddProjectOptionAsync(ProjectOption option);
         Task AddProjectDependencyAsync(ProjectOption source, ProjectOption target);
+        Task RemoveProjectDependencyAsync(ProjectOption option, ProjectOption target);
         Task AddProjectBenefitAsync(ProjectBenefit benefit);
         Task RemoveProjectBenefitAsync(ProjectBenefit benefit);
+        Task RemoveProjectOptionAsync(ProjectOption option);
 
         #endregion
 
@@ -192,6 +209,7 @@ namespace MPWebAPI.Models
 
         IEnumerable<ProjectPhase> ProjectPhases { get; }
         Task AddProjectPhaseAsync(ProjectPhase phase);
+        Task RemoveProjectPhaseAsync(ProjectPhase phase);
 
         #endregion
 
@@ -209,15 +227,8 @@ namespace MPWebAPI.Models
 
         #endregion
 
-        #region Portfolio
 
-        IEnumerable<Portfolio> Portfolios { get; }
-
-        #endregion
 
         Task SaveChangesAsync();
-        Task RemoveProjectPhaseAsync(ProjectPhase phase);
-        Task RemoveProjectOptionAsync(ProjectOption option);
-        Task RemoveProjectDependencyAsync(ProjectOption option, ProjectOption target);
-    }    
+    }
 }

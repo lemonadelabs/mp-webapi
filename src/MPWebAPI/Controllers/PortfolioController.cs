@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MPWebAPI.Filters;
 using MPWebAPI.Models;
@@ -30,9 +32,55 @@ namespace MPWebAPI.Controllers
 
         [HttpGet("user/{id}")]
         [ValidateUserExists]
-        public IActionResult GetAllForUser(string id)
+        public IActionResult GetAllByUser(string id)
         {
             return Ok(_repository.Portfolios.Where(p => p.Creator.Id == id).Select(pf => new PortfolioViewModel(pf)));
+        }
+
+        [HttpGet("useraccess/{id}")]
+        [ValidateUserExists]
+        public async Task<IActionResult> GetAllForUser(string id)
+        {
+            var user = _repository.Users.Single(u => u.Id == id);
+            var userShare = await _repository.GetUserSharedPortfoliosForUserAsync(user);
+            var groupShare = await _repository.GetGroupSharedPortfoliosForUserAsync(user);
+            var allShare = await _repository.GetOrganisationSharedPortfoliosAsync(user.Organisation);
+            var owned = _repository.Portfolios.Where(rs => rs.Creator.Id == id);
+
+            var groupSharedScenarios = AccessibleDocumentViewModel<PortfolioViewModel>.DocumentsByGroup(groupShare.ToList());
+            var orgSharedScenarios = AccessibleDocumentViewModel<PortfolioViewModel>.DocumentsByGroup(allShare.ToList());
+
+            var userSharedScenarios = new List<AccessibleDocumentViewModel<PortfolioViewModel>.UserShared>();
+            foreach (var rs in userShare)
+            {
+                var u = userSharedScenarios.FirstOrDefault(uss => uss.User.UserName == rs.Creator.UserName);
+                if (u != null)
+                {
+                    u.Documents.Add(new PortfolioViewModel(rs));
+                }
+                else
+                {
+                    var uvm = new UserViewModel();
+                    await uvm.MapToViewModelAsync(rs.Creator, _repository);
+                    var newuss = new AccessibleDocumentViewModel<PortfolioViewModel>.UserShared
+                    {
+                        User = uvm,
+                        Documents = new List<PortfolioViewModel>(
+                            new[] { new PortfolioViewModel(rs) })
+                    };
+                    userSharedScenarios.Add(newuss);
+                }
+            }
+
+            return Ok(
+                new AccessibleDocumentViewModel<PortfolioViewModel>
+                {
+                    Created = owned.Select(o => new PortfolioViewModel(o)).ToList(),
+                    GroupShare = groupSharedScenarios,
+                    OrgShare = orgSharedScenarios,
+                    UserShare = userSharedScenarios
+                }
+            );
         }
 
 

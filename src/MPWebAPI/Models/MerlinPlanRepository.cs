@@ -324,6 +324,8 @@ namespace MPWebAPI.Models
             }
         }
 
+
+
         public async Task AddFinancialResourceAsync(FinancialResource resource)
         {
             _dbcontext.FinancialResource.Add(resource);
@@ -868,6 +870,69 @@ namespace MPWebAPI.Models
                     .ThenInclude(po => po.Project)
                     .ToList();
             }
+        }
+
+        public Task<IEnumerable<Portfolio>> GetUserSharedPortfoliosForUserAsync(MerlinPlanUser user)
+        {
+            return Task.FromResult(Portfolios.Where(p => p.ShareUser.Select(su => su.UserId).Contains(user.Id)));
+        }
+
+        public Task<IEnumerable<Portfolio>> GetGroupSharedPortfoliosForUserAsync(MerlinPlanUser user)
+        {
+            return
+                Task.FromResult(
+                    Portfolios.Where(p => p.ShareGroup && user.Groups.Select(ug => ug.GroupId).Contains(p.Group.Id)));
+        }
+
+        public Task<IEnumerable<Portfolio>> GetOrganisationSharedPortfoliosAsync(Organisation org)
+        {
+            return Task.FromResult(Portfolios.Where(p => p.ShareAll && p.Group.OrganisationId == org.Id));
+        }
+
+        public async Task SharePortfolioWithGroupAsync(Portfolio portfolio, bool share)
+        {
+            portfolio.ShareGroup = share;
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task SharePortfolioWithOrgAsync(Portfolio portfolio, bool share)
+        {
+            portfolio.ShareAll = share;
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task SharePortfolioWithUserAsync(Portfolio portfolio, MerlinPlanUser user)
+        {
+            // check that we are not already sharing.
+            if (portfolio.ShareUser.Select(su => su.UserId).Contains(user.Id)) return;
+
+            portfolio.ShareUser.Add(new PortfolioUser
+            {
+                PortfolioId = portfolio.Id,
+                UserId = user.Id
+            });
+
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task UnsharePortfolioWithUserAsync(Portfolio portfolio, MerlinPlanUser user)
+        {
+            var portfolioUser = portfolio.ShareUser.SingleOrDefault(su => su.UserId == user.Id);
+            if(portfolioUser == null) return;
+            portfolio.ShareUser.Remove(portfolioUser);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task AddPortfolioAsync(Portfolio portfolio)
+        {
+            _dbcontext.Portfolio.Add(portfolio);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemovePortfolioAsync(Portfolio portfolio)
+        {
+            _dbcontext.Remove(portfolio);
+            await _dbcontext.SaveChangesAsync();
         }
 
         #endregion
