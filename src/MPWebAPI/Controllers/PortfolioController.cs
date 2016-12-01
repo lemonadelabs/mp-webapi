@@ -189,5 +189,15 @@ namespace MPWebAPI.Controllers
             if (result.Succeeded) return Ok(new PortfolioViewModel(newPortfolio));
             return BadRequest(result.Errors);
         }
+
+        [HttpDelete("{id}")]
+        [ValidatePortfolioExists]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var portfolio = _repository.Portfolios.Single(p => p.Id == id);
+            var result = await _businessLogic.DeletePortfolioAsync(portfolio);
+            if (result.Succeeded) return Ok(id);
+            return BadRequest(result.Errors);
+        }
     }
 }

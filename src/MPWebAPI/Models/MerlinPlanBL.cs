@@ -1371,15 +1371,24 @@ namespace MPWebAPI.Models
 
         #region Portfolios
 
-        public Task<MerlinPlanBLResult> DeletePortfolioAsync(Portfolio portfolio)
+        public async Task<MerlinPlanBLResult> DeletePortfolioAsync(Portfolio portfolio)
         {
-            throw new NotImplementedException();
+            var result = new MerlinPlanBLResult();
+            if(portfolio.Approved) result.AddError("Approved", "Approved portfolios cannot be deleted.");
+            if (!result.Succeeded) return result;
+            await _respository.RemovePortfolioAsync(portfolio);
+            return result;
         }
 
         public async Task<MerlinPlanBLResult> AddPortfolioAsync(Portfolio portfolio)
         {
             await _respository.AddPortfolioAsync(portfolio);
             return new MerlinPlanBLResult();
+        }
+
+        public Task<MerlinPlanBLResult> UpdatePortfolioAsync(Portfolio portfolio)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

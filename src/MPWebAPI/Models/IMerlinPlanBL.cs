@@ -74,6 +74,7 @@ namespace MPWebAPI.Models
         #region Portfolios
         Task<MerlinPlanBLResult> DeletePortfolioAsync(Portfolio portfolio);
         Task<MerlinPlanBLResult> AddPortfolioAsync(Portfolio portfolio);
+        Task<MerlinPlanBLResult> UpdatePortfolioAsync(Portfolio portfolio);
         #endregion
 
     }
