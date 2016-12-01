@@ -69,7 +69,11 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> DeleteProjectBenefitAsync(ProjectBenefit benefit);
         Task<MerlinPlanBLResult> DeleteAlignmentCategoryAsync(AlignmentCategory category);
         Task<MerlinPlanBLResult> DeleteRiskCategoryAsync(RiskCategory category);
+        #endregion
 
+        #region Portfolios
+        Task<MerlinPlanBLResult> DeletePortfolioAsync(Portfolio portfolio);
+        Task<MerlinPlanBLResult> AddPortfolioAsync(Portfolio portfolio);
         #endregion
 
     }

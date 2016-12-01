@@ -177,5 +177,17 @@ namespace MPWebAPI.Controllers
             }
             return Ok();
         }
+
+        [HttpPost]
+        [ValidateModel]
+        public async Task<IActionResult> Create([FromBody] PortfolioViewModel viewModel)
+        {
+            var newPortfolio = new Portfolio();
+            var mapResult = await viewModel.MapToModel(newPortfolio, _repository);
+            if (!mapResult.Succeeded) return BadRequest(mapResult.Errors);
+            var result = await _businessLogic.AddPortfolioAsync(newPortfolio);
+            if (result.Succeeded) return Ok(new PortfolioViewModel(newPortfolio));
+            return BadRequest(result.Errors);
+        }
     }
 }

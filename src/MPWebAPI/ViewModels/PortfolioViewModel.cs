@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using MPWebAPI.Models;
 
@@ -31,6 +32,17 @@ namespace MPWebAPI.ViewModels
                 FirstName = portfolio.Creator.FirstName,
                 LastName = portfolio.Creator.LastName
             };
+            return Task.FromResult(new ViewModelMapResult());
+        }
+
+        public override Task<ViewModelMapResult> MapToModel(object model, IMerlinPlanRepository repo = null)
+        {
+            if(repo == null) throw new ArgumentNullException(nameof(repo));
+            var portfolio = (Portfolio) model;
+            base.MapToModel(model, repo);
+            portfolio.ApprovedBy = repo.Users.SingleOrDefault(u => u.UserName == ApprovedBy);
+            portfolio.Group = repo.Groups.SingleOrDefault(g => g.Id == Group);
+            portfolio.Creator = repo.Users.SingleOrDefault(u => u.Id == Creator);
             return Task.FromResult(new ViewModelMapResult());
         }
 
