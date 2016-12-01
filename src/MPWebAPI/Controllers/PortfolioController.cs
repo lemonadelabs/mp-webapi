@@ -14,6 +14,11 @@ namespace MPWebAPI.Controllers
         private readonly IMerlinPlanRepository _repository;
         private readonly IMerlinPlanBL _businessLogic;
 
+        public class UserList
+        {
+            public IEnumerable<string> Users { get; set; }
+        }
+
         public PortfolioController(IMerlinPlanBL mpbl, IMerlinPlanRepository repo)
         {
             _repository = repo;
@@ -84,7 +89,93 @@ namespace MPWebAPI.Controllers
         }
 
 
+        [HttpPut("{id}/group/share")]
+        [ValidatePortfolioExists]
+        public async Task<IActionResult> GroupShare(int id)
+        {
+            var portfolio = _repository.Portfolios.Single(p => p.Id == id);
+            await _repository.SharePortfolioWithGroupAsync(portfolio, true);
+            return Ok(new PortfolioViewModel(portfolio));
+        }
+
+        [HttpPut("{id}/group/unshare")]
+        [ValidatePortfolioExists]
+        public async Task<IActionResult> GroupUnshare(int id)
+        {
+            var portfolio = _repository.Portfolios.Single(p => p.Id == id);
+            await _repository.SharePortfolioWithGroupAsync(portfolio, false);
+            return Ok(new PortfolioViewModel(portfolio));
+        }
+
+        [HttpPut("{id}/share")]
+        [ValidatePortfolioExists]
+        public async Task<IActionResult> Share(int id)
+        {
+            var portfolio = _repository.Portfolios.Single(p => p.Id == id);
+            await _repository.SharePortfolioWithOrgAsync(portfolio, true);
+            return Ok(new PortfolioViewModel(portfolio));
+        }
+
+        [HttpPut("{id}/unshare")]
+        [ValidatePortfolioExists]
+        public async Task<IActionResult> Unshare(int id)
+        {
+            var portfolio = _repository.Portfolios.Single(p => p.Id == id);
+            await _repository.SharePortfolioWithOrgAsync(portfolio, false);
+            return Ok(new PortfolioViewModel(portfolio));
+        }
 
 
+        [HttpPut("{id}/user/share")]
+        [ValidatePortfolioExists]
+        public async Task<IActionResult> ShareWithUser(int id, [FromBody] UserList userNameList)
+        {
+            var ps = _repository.Portfolios.Single(r => r.Id == id);
+            var users = new List<MerlinPlanUser>();
+            foreach (var userName in userNameList.Users)
+            {
+                var u = await _repository.FindUserByUserNameAsync(userName);
+                if (u != null)
+                {
+                    users.Add(u);
+                }
+                else
+                {
+                    return BadRequest(new {Users = $"User {userName} does not exist."});
+                }
+            }
+
+            foreach (var user in users)
+            {
+                await _repository.SharePortfolioWithUserAsync(ps, user);
+            }
+            return Ok();
+        }
+
+        [HttpPut("{id}/user/unshare")]
+        [ValidatePortfolioExists]
+        public async Task<IActionResult> UnshareWithUser(int id, [FromBody] UserList userNameList)
+        {
+            var ps = _repository.Portfolios.Single(r => r.Id == id);
+            var users = new List<MerlinPlanUser>();
+            foreach (var userName in userNameList.Users)
+            {
+                var u = await _repository.FindUserByUserNameAsync(userName);
+                if (u != null)
+                {
+                    users.Add(u);
+                }
+                else
+                {
+                    return BadRequest(new {Users = $"User {userName} does not exist."});
+                }
+            }
+
+            foreach (var user in users)
+            {
+                await _repository.UnsharePortfolioWithUserAsync(ps, user);
+            }
+            return Ok();
+        }
     }
 }

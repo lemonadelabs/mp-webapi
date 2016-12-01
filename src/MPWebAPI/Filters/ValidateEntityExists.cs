@@ -45,6 +45,44 @@ namespace MPWebAPI.Filters
         }
     }
 
+    public class ValidatePortfolioExistsAttribute : TypeFilterAttribute
+    {
+        public ValidatePortfolioExistsAttribute() : base(typeof(ValidatePortfolioExists))
+        {
+        }
+
+        private class ValidatePortfolioExists : IAsyncActionFilter
+        {
+            private readonly IMerlinPlanRepository _repository;
+
+            public ValidatePortfolioExists(IMerlinPlanRepository mprepo)
+            {
+                _repository = mprepo;
+            }
+
+            public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+            {
+                if (context.ActionArguments.ContainsKey("id"))
+                {
+                    var id = context.ActionArguments["id"] as int?;
+                    if (id.HasValue)
+                    {
+                        if (await _repository.Portfolios.ToAsyncEnumerable().All(o => o.Id != id.Value))
+                        {
+                            context.Result = new NotFoundObjectResult(id.Value);
+                            return;
+                        }
+                        await next();
+                    }
+                }
+                else
+                {
+                    context.Result = new NotFoundResult();
+                }
+            }
+        }
+    }
+
     public class ValidateProjectOptionExistsAttribute : TypeFilterAttribute
     {
         public ValidateProjectOptionExistsAttribute() : base(typeof(ValidateProjectOptionExists))

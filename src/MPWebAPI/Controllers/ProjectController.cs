@@ -141,7 +141,7 @@ namespace MPWebAPI.Controllers
 
 
         [HttpPut("{id}/user/share")]
-        [ValidateResourceScenarioExists]
+        [ValidateProjectExists]
         public async Task<IActionResult> ShareWithUser(int id, [FromBody] UserList userNameList)
         {
             var ps = _repository.Projects.Single(r => r.Id == id);
@@ -167,7 +167,7 @@ namespace MPWebAPI.Controllers
         }
 
         [HttpPut("{id}/user/unshare")]
-        [ValidateResourceScenarioExists]
+        [ValidateProjectExists]
         public async Task<IActionResult> UnshareWithUser(int id, [FromBody] UserList userNameList)
         {
             var ps = _repository.Projects.Single(r => r.Id == id);
