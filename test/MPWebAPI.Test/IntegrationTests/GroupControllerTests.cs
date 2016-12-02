@@ -29,7 +29,7 @@ namespace MPWebAPI.Test.IntegrationTests
             var gr = response.JSONData.FirstOrDefault();
             Assert.NotNull(gr);
             Assert.Equal("EPMO", gr.Name);
-            Assert.Equal(HttpStatusCode.OK, response.response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.Response.StatusCode);
         }
 
         [Fact]
@@ -38,7 +38,7 @@ namespace MPWebAPI.Test.IntegrationTests
              var response = await _fixture.GetJSONResult<GroupViewModel>("/api/group/1");
              Assert.NotNull(response.JSONData);
              Assert.Equal("EPMO", response.JSONData.Name);
-             Assert.Equal(HttpStatusCode.OK, response.response.StatusCode);
+             Assert.Equal(HttpStatusCode.OK, response.Response.StatusCode);
         }
 
         [Theory]
@@ -50,7 +50,7 @@ namespace MPWebAPI.Test.IntegrationTests
         {
             var response = await _fixture.GetJSONResult<GroupViewModel>($"/api/group/{id}");
             Assert.Null(response.JSONData);
-            Assert.Equal(HttpStatusCode.NotFound, response.response.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.Response.StatusCode);
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace MPWebAPI.Test.IntegrationTests
             Assert.NotNull(response.JSONData);
             var u = response.JSONData.FirstOrDefault(us => us.UserName == "friedrich@don.govt.nz");
             Assert.Equal("EPMO", u.Groups.First().Name);
-            Assert.Equal(HttpStatusCode.OK, response.response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.Response.StatusCode);
         }
 
         [Theory]
@@ -72,7 +72,7 @@ namespace MPWebAPI.Test.IntegrationTests
         {
             var response = await _fixture.GetJSONResult<List<UserViewModel>>($"/api/group/{id}/user");
             Assert.Null(response.JSONData);
-            Assert.Equal(HttpStatusCode.NotFound, response.response.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.Response.StatusCode);
         }
 
         [Fact]
@@ -86,7 +86,7 @@ namespace MPWebAPI.Test.IntegrationTests
             Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
             var getResponse = await _fixture.GetJSONResult<GroupViewModel>("/api/group/3");
             Assert.NotNull(getResponse.JSONData);
-            Assert.Equal(HttpStatusCode.OK, getResponse.response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, getResponse.Response.StatusCode);
             Assert.Equal("New Group", getResponse.JSONData.Name);
         }
 
@@ -116,8 +116,7 @@ namespace MPWebAPI.Test.IntegrationTests
             var user = await _fixture.DBContext.Users.FirstOrDefaultAsync(u => u.UserName == "sam@lemonadelabs.io");
             Assert.NotNull(user);
             Assert.False(await _fixture.DBContext.UserGroup.AnyAsync(ug => ug.GroupId == 2 && ug.UserId == user.Id));
-            var ur = new GroupController.UserRequest();
-            ur.Users = new List<string> {user.Id};
+            var ur = new GroupController.UserRequest {Users = new List<string> {user.Id}};
             var postResponse = await _fixture.Client.PutAsJsonAsync("/api/group/2/adduser", ur);
             Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
             Assert.True(await _fixture.DBContext.UserGroup.AnyAsync(ug => ug.UserId == user.Id && ug.GroupId == 2));
@@ -129,8 +128,7 @@ namespace MPWebAPI.Test.IntegrationTests
             var user = await _fixture.DBContext.Users.FirstOrDefaultAsync(u => u.UserName == "sam@lemonadelabs.io");
             Assert.NotNull(user);
             Assert.True(await _fixture.DBContext.UserGroup.AnyAsync(ug => ug.GroupId == 1 && ug.UserId == user.Id));
-            var ur = new GroupController.UserRequest();
-            ur.Users = new List<string> {user.Id};
+            var ur = new GroupController.UserRequest {Users = new List<string> {user.Id}};
             var postResponse = await _fixture.Client.PutAsJsonAsync("/api/group/1/removeuser", ur);
             Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
             Assert.False(await _fixture.DBContext.UserGroup.AnyAsync(ug => ug.UserId == user.Id && ug.GroupId == 1));

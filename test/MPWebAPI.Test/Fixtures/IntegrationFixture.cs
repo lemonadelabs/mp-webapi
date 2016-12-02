@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -28,20 +29,50 @@ namespace MPWebAPI.Test.Fixtures
         
         public struct JSONResult<T>
         {
-            public HttpResponseMessage response;
+            public HttpResponseMessage Response;
             public T JSONData;
         }
 
-        public async Task<JSONResult<T>> GetJSONResult<T>(string emdpoint)
+        public enum RequestMethod
         {
-             var response = await Client.GetAsync(emdpoint);
-             T data = default(T);
+            Get,
+            Put,
+            Post,
+            Delete
+        }
+
+        public async Task<JSONResult<T>> GetJSONResult<T>(string endpoint, RequestMethod method = RequestMethod.Get, object requestData = null)
+        {
+             HttpResponseMessage response;
+
+            switch (method)
+            {
+               case RequestMethod.Get:
+                    response = await Client.GetAsync(endpoint);
+                    break;
+               case RequestMethod.Post:
+                    response = await Client.PostAsJsonAsync(endpoint, requestData);
+                    break;
+               case RequestMethod.Put:
+                    response = await Client.PutAsJsonAsync(endpoint, requestData);
+                    break;
+                case RequestMethod.Delete:
+                    response = await Client.DeleteAsync(endpoint);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(method), method, null);
+            }
+
+             var data = default(T);
              try
              {
-                 data = JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+                 if (response != null)
+                 {
+                     data = JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+                 }
              }
              catch (JsonSerializationException) {}
-             return new JSONResult<T> {response = response, JSONData = data};
+             return new JSONResult<T> {Response = response, JSONData = data};
         }
 
         public async Task InitializeAsync()

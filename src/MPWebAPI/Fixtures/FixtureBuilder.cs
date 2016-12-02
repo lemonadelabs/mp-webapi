@@ -282,15 +282,19 @@ namespace MPWebAPI.Fixtures
 
         public async Task AddFixture(string fixtureFile, bool flushDb = false)
         {
+
+            var basePath = new DirectoryInfo(AppContext.BaseDirectory).Parent.Parent.Parent;
+
             var fixturePath = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                Path.Combine("Fixtures", fixtureFile));
+                basePath.FullName,
+                Path.Combine("Fixtures", fixtureFile)
+            );
 
             string fixtureJSON;
 
             try
             {
-                using (StreamReader sr = new StreamReader(File.OpenRead(fixturePath)))
+                using (var sr = new StreamReader(File.OpenRead(fixturePath)))
                 {
                     fixtureJSON = sr.ReadToEnd();
                 }

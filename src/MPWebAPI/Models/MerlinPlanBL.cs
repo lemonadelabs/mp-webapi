@@ -404,13 +404,13 @@ namespace MPWebAPI.Models
                     partition.Adjustments.Count <= 1
                     )
                 {
-                    var newAdjustment = new FinancialAdjustment()
+                    var newAdjustment = new FinancialAdjustment
                     {
                         FinancialResourcePartition = partition,
                         Date = resource.EndDate.Value,
                         Actual = false,
                         Additive = false,
-                        Value = 0,
+                        Value = 0
                     };
                     partition.Adjustments.Add(newAdjustment);
                 }
