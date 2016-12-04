@@ -4,7 +4,9 @@ using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNet.Security.OpenIdConnect.Server;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace MPWebAPI.Models
@@ -392,6 +394,10 @@ namespace MPWebAPI.Models
             {
                 // Handle updating the start date
                 var first = partition.Adjustments.OrderBy(a => a.Date).FirstOrDefault();
+                var last = partition.Adjustments.Count >= 2
+                    ? partition.Adjustments.OrderByDescending(a => a.Date).FirstOrDefault()
+                    : null;
+
                 if (first != null && first.Date != resource.StartDate)
                 {
                     first.Date = resource.StartDate;
@@ -417,7 +423,6 @@ namespace MPWebAPI.Models
                 else if (!resource.EndDate.HasValue && partition.Adjustments.Count >= 2)
                 {
                     // We need to remove the end transaction as the enddate has been nullified.
-                    var last = partition.Adjustments.OrderByDescending(a => a.Date).FirstOrDefault();
                     if (last != null)
                     {
                         partition.Adjustments.Remove(last);
@@ -425,7 +430,6 @@ namespace MPWebAPI.Models
                 }
                 else if(resource.EndDate.HasValue && partition.Adjustments.Count >= 2)
                 {
-                    var last = partition.Adjustments.OrderByDescending(a => a.Date).FirstOrDefault();
                     if (last != null && last.Date != resource.EndDate.Value)
                     {
                         last.Date = resource.EndDate.Value;
