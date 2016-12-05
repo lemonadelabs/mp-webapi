@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -197,6 +199,39 @@ namespace MPWebAPI.Controllers
             var portfolio = _repository.Portfolios.Single(p => p.Id == id);
             var result = await _businessLogic.DeletePortfolioAsync(portfolio);
             if (result.Succeeded) return Ok(id);
+            return BadRequest(result.Errors);
+        }
+
+        public class PortfolioUpdateRequest : IValidatableObject, IPortfolioUpdate
+        {
+            [Required]
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public DateTime? StartYear { get; set; }
+            public DateTime? EndYear { get; set; }
+
+            [Range(0, int.MaxValue)]
+            public int? TimeScale { get; set; }
+
+            public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+            {
+                // Enddate must be later than start date
+                if (EndYear < StartYear)
+                {
+                    yield return new ValidationResult(
+                        "EndYear should not be before StartYear",
+                        new [] {"EndYear"}
+                    );
+                }
+            }
+        }
+
+        [HttpPut]
+        [ValidateModel]
+        public async Task<IActionResult> Update([FromBody] PortfolioUpdateRequest[] requests)
+        {
+            var result = await _businessLogic.UpdatePortfolioAsync(requests);
+            if (result.Succeeded) return Ok(result.GetData<IEnumerable<Portfolio>>().Select(p => new PortfolioViewModel(p)));
             return BadRequest(result.Errors);
         }
     }

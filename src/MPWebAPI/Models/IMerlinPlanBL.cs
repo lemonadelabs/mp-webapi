@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -74,12 +75,21 @@ namespace MPWebAPI.Models
         #region Portfolios
         Task<MerlinPlanBLResult> DeletePortfolioAsync(Portfolio portfolio);
         Task<MerlinPlanBLResult> AddPortfolioAsync(Portfolio portfolio);
-        Task<MerlinPlanBLResult> UpdatePortfolioAsync(Portfolio portfolio);
+        Task<MerlinPlanBLResult> UpdatePortfolioAsync(IEnumerable<IPortfolioUpdate> requests);
         #endregion
 
     }
 
     #region Data Object Interfaces
+
+    public interface IPortfolioUpdate
+    {
+        int Id { get; set; }
+        string Name { get; set; }
+        DateTime? StartYear { get; set; }
+        DateTime? EndYear { get; set; }
+        int? TimeScale { get; set; }
+    }
 
     public interface IProjectUpdate
     {

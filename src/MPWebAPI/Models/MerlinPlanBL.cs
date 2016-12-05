@@ -4,9 +4,7 @@ using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using AspNet.Security.OpenIdConnect.Server;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace MPWebAPI.Models
@@ -406,7 +404,7 @@ namespace MPWebAPI.Models
                 // Handle adding or nulling the enddate
                 if (
                     resource.EndDate.HasValue &&
-                    resource.EndDate != resource.StartDate && 
+                    resource.EndDate != resource.StartDate &&
                     partition.Adjustments.Count <= 1
                     )
                 {
@@ -1390,9 +1388,41 @@ namespace MPWebAPI.Models
             return new MerlinPlanBLResult();
         }
 
-        public Task<MerlinPlanBLResult> UpdatePortfolioAsync(Portfolio portfolio)
+        public async Task<MerlinPlanBLResult> UpdatePortfolioAsync(IEnumerable<IPortfolioUpdate> requests)
         {
-            throw new NotImplementedException();
+            var result = new MerlinPlanBLResult();
+
+            var portfolioUpdates = requests.ToList();
+
+            foreach (var portfolio in portfolioUpdates)
+            {
+                var p = _respository.Portfolios.SingleOrDefault(pf => pf.Id == portfolio.Id);
+                if (p == null)
+                {
+                    result.AddError("Id", $"A portfolio matching id {portfolio.Id} was not found.");
+                    continue;
+                }
+
+                if(p.Approved) result.AddError("Approved", $"Portfolio with id {portfolio.Id} is approved and cannot be modified.");
+            }
+
+            if (!result.Succeeded) return result;
+
+            var resultData = new List<Portfolio>();
+
+            foreach (var update in portfolioUpdates)
+            {
+                var portfolio = _respository.Portfolios.Single(p => p.Id == update.Id);
+                portfolio.Name = update.Name ?? portfolio.Name;
+                portfolio.StartYear = update.StartYear ?? portfolio.StartYear;
+                portfolio.EndYear = update.EndYear ?? portfolio.EndYear;
+                portfolio.TimeScale = update.TimeScale ?? portfolio.TimeScale;
+                resultData.Add(portfolio);
+            }
+
+            await _respository.SaveChangesAsync();
+            result.SetData(resultData);
+            return result;
         }
 
         #endregion

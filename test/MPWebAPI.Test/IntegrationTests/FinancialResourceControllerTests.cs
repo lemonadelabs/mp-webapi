@@ -68,14 +68,6 @@ namespace MPWebAPI.Test.IntegrationTests
             var adj = partition.Adjustments.OrderBy(a => a.Date).FirstOrDefault();
 
             Assert.Equal(value, adj.Value);
-
-            // TODO: Finish this!!!!
-            // BUG: Termination adjustment is being set as the start date not the end date in some circumstances.
-            // Check api request
-            // var partitionRequest =
-            //                await
-            // _fixture.GetJSONResult<FinancialResourcePartitionViewModel[]>($"/api/financialresource/{}/partition");
-
         }
     }
 }
