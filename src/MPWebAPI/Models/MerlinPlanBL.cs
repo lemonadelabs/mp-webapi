@@ -1425,6 +1425,8 @@ namespace MPWebAPI.Models
             return result;
         }
 
+
+        // TODO: Test this!
         public async Task<MerlinPlanBLResult> AddProjectToPortfolioAsync(Portfolio portfolio, IEnumerable<IAddProjectToPortfolioRequest> requests)
         {
             var result = new MerlinPlanBLResult();
@@ -1467,9 +1469,9 @@ namespace MPWebAPI.Models
                 // Check that options exist
                 if (
                     _respository.ProjectOptions
-                        .All(po => po.Id != request.Option))
+                        .All(po => po.Id != request.OptionId))
                 {
-                    result.AddError("Option", $"The project option with id {request.Option} cannot be found.");
+                    result.AddError("Option", $"The project option with id {request.OptionId} cannot be found.");
                 }
             }
 
@@ -1479,13 +1481,21 @@ namespace MPWebAPI.Models
 
             foreach (var request in projects)
             {
+                var projectOption = _respository.ProjectOptions.Single(po => po.Id == request.OptionId);
+                var firstPhase = projectOption.Phases.OrderBy(pp => pp.StartDate).First();
+                var firstPhaseStartDate = firstPhase.StartDate ?? firstPhase.EstimatedStartDate;
+                var phaseOffset = request.StartDate - firstPhaseStartDate;
+
+                // If startdate is null then use date of first phase
+                var projectConfigStart = request.StartDate ?? firstPhaseStartDate;
+
                 // Copy properties
                 var newProjectConfig = new ProjectConfig
                 {
                     PortfolioId = portfolio.Id,
-                    StartDate = request.StartDate,
+                    StartDate = projectConfigStart,
                     OwnerId = request.Owner,
-                    ProjectOptionId = request.Option
+                    ProjectOptionId = request.OptionId
                 };
 
                 await _respository.AddProjectConfigAsync(newProjectConfig);
@@ -1509,7 +1519,7 @@ namespace MPWebAPI.Models
 
                 // Create phase configs
                 // Create a default set of phase configs based on the project phases
-                var projectOption = _respository.ProjectOptions.Single(po => po.Id == newProjectConfig.ProjectOptionId);
+                // Work out phase offset
 
                 newProjectConfig.Phases = new List<PhaseConfig>();
                 foreach (var phase in projectOption.Phases)
@@ -1521,6 +1531,12 @@ namespace MPWebAPI.Models
                         ProjectConfigId = newProjectConfig.Id,
                         ProjectPhaseId = phase.Id
                     };
+
+                    if (phaseOffset != null)
+                    {
+                        newPhaseConfig.StartDate += phaseOffset.Value;
+                        newPhaseConfig.EndDate += phaseOffset.Value;
+                    }
 
                     newProjectConfig.Phases.Add(newPhaseConfig);
                 }

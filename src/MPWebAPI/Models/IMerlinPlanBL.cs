@@ -88,10 +88,10 @@ namespace MPWebAPI.Models
     {
         int ProjectId { get; set; }
         string[] Tags { get; set; }
-        DateTime StartDate { get; set; }
+        DateTime? StartDate { get; set; }
         int? Owner { get; set; }
         int[] Managers { get; set; }
-        int Option { get; set; }
+        int OptionId { get; set; }
     }
 
     public interface IPortfolioUpdate

@@ -240,16 +240,13 @@ namespace MPWebAPI.Controllers
             [Required]
             public int ProjectId { get; set; }
 
-            public string[] Tags { get; set; }
-
             [Required]
-            public DateTime StartDate { get; set; }
+            public int OptionId { get; set; }
 
+            public string[] Tags { get; set; }
+            public DateTime? StartDate { get; set; }
             public int? Owner { get; set; }
             public int[] Managers { get; set; }
-
-            [Required]
-            public int Option { get; set; }
         }
 
         [HttpPost("{id}/project")]
