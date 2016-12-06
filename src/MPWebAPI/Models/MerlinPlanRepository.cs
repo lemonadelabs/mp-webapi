@@ -326,6 +326,7 @@ namespace MPWebAPI.Models
 
 
 
+
         public async Task AddFinancialResourceAsync(FinancialResource resource)
         {
             _dbcontext.FinancialResource.Add(resource);
@@ -935,7 +936,136 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+        public IEnumerable<ProjectConfig> ProjectConfigs
+        {
+            get
+            {
+                return _dbcontext.ProjectConfig
+                    .Include(pc => pc.Managers)
+                    .Include(pc => pc.Owner)
+                    .Include(pc => pc.Phases)
+                    .ThenInclude(ppc => ppc.ProjectPhase)
+                    .Include(pc => pc.Portfolio)
+                    .ThenInclude(p => p.PortfolioTags)
+                    .Include(pc => pc.Tags)
+                    .ThenInclude(pcpt => pcpt.PortfolioTag)
+                    .ToList();
+            }
+        }
+
+        public async Task AddProjectConfigAsync(ProjectConfig config)
+        {
+            _dbcontext.ProjectConfig.Add(config);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task AddTagToPortfolioAsync(Portfolio portfolio, string tag)
+        {
+            if(tag == null) return;
+            var normalisedTag = NormaliseTag(tag);
+            if(portfolio.PortfolioTags.Any(pt => pt.Name == normalisedTag)) return;
+            var portfolioTag = new PortfolioTag
+            {
+                Name = normalisedTag,
+                PortfolioId = portfolio.Id
+            };
+            _dbcontext.PortfolioTag.Add(portfolioTag);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveTagFromPortfolioAsync(Portfolio portfolio, string tag)
+        {
+            var portfolioTag = _dbcontext.PortfolioTag.SingleOrDefault(pt => pt.Name == NormaliseTag(tag));
+            if(portfolioTag == null) return;
+            _dbcontext.PortfolioTag.Remove(portfolioTag);
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task AddTagsToProjectConfigAsync(ProjectConfig projectConfig, IEnumerable<string> tags)
+        {
+            var normalisedTags = NormaliseTags(tags);
+            if(projectConfig.Tags == null) projectConfig.Tags = new List<ProjectConfigPortfolioTag>();
+            foreach (var tag in normalisedTags)
+            {
+                // Check tag exists and is not already applied
+                var portfolioTag = projectConfig.Portfolio.PortfolioTags.SingleOrDefault(pt => pt.Name == tag);
+                if(portfolioTag == null) continue;
+                if(projectConfig.Tags.Any(pt => pt.PortfolioTag.Name == tag)) continue;
+
+                // add tag
+                projectConfig.Tags.Add(new ProjectConfigPortfolioTag
+                {
+                    PortfolioTagId = portfolioTag.Id,
+                    ProjectConfigId = projectConfig.Id
+                });
+            }
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveTagsFromProjectConfigAsync(ProjectConfig projectConfig, IEnumerable<string> tags)
+        {
+            if(projectConfig.Tags == null) return;
+            var normalisedTags = NormaliseTags(tags);
+
+            foreach (var tag in normalisedTags)
+            {
+                // Check that the tag is actually appied to the porject config
+                var t = projectConfig.Tags.SingleOrDefault(tg => tg.PortfolioTag.Name == tag);
+                if(t == null) continue;
+
+                projectConfig.Tags.Remove(t);
+                await _dbcontext.SaveChangesAsync();
+            }
+        }
+
+        public async Task AddManagersToProjectConfigAsync(ProjectConfig projectConfig, IEnumerable<int> staffResources)
+        {
+            var managers = staffResources.Select(sr => StaffResources.SingleOrDefault(s => s.Id == sr)).ToList();
+            if (projectConfig.Managers == null) projectConfig.Managers = new List<StaffResourceProjectConfig>();
+
+            foreach (var manager in managers)
+            {
+                if(manager == null) continue;
+
+                if (projectConfig.Managers.Any(m => m.StaffResourceId == manager.Id)) continue;
+
+                projectConfig.Managers.Add(new StaffResourceProjectConfig
+                {
+                    ProjectConfigId = projectConfig.Id,
+                    StaffResourceId = manager.Id
+                });
+            }
+            await _dbcontext.SaveChangesAsync();
+        }
+
+        public async Task RemoveManagersFromProjectConfigAsync(ProjectConfig projectConfig, IEnumerable<int> staffResources)
+        {
+            if (projectConfig.Managers == null) return;
+            var managers = staffResources.Select(sr => StaffResources.SingleOrDefault(s => s.Id == sr)).ToList();
+
+            foreach (var manager in managers)
+            {
+                if(manager == null) continue;
+                var mpc = projectConfig.Managers.SingleOrDefault(m => m.StaffResourceId == manager.Id);
+                if(mpc == null) continue;
+                projectConfig.Managers.Remove(mpc);
+            }
+
+            await _dbcontext.SaveChangesAsync();
+        }
+
         #endregion
+
+        private static IEnumerable<string> NormaliseTags(IEnumerable<string> tags)
+        {
+            return tags?.Select(NormaliseTag);
+        }
+
+        private static string NormaliseTag(string tag)
+        {
+            return tag.ToLowerInvariant().Trim();
+        }
+
 
         public async Task SaveChangesAsync()
         {

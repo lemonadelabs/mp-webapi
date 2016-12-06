@@ -1425,8 +1425,111 @@ namespace MPWebAPI.Models
             return result;
         }
 
+        public async Task<MerlinPlanBLResult> AddProjectToPortfolioAsync(Portfolio portfolio, IEnumerable<IAddProjectToPortfolioRequest> requests)
+        {
+            var result = new MerlinPlanBLResult();
+
+            var projects = requests.ToArray();
+
+            // Validation
+            foreach (var request in projects)
+            {
+                // Check that project exists
+                if (_respository.Projects.All(p => p.Id != request.ProjectId))
+                {
+                    result.AddError("ProjectId", $"A project with an id of {request.ProjectId} cannot be found.");
+                }
+
+                // Check that owner exists
+                if (
+                    request.Owner != null &&
+                    _respository.StaffResources
+                        .All(sr => sr.Id != request.Owner)
+                    )
+                {
+                    result.AddError("Owner", $"A staff resource with an id of {request.Owner} cannot be found");
+                }
+
+                // Check that managers exist
+                if (request.Managers != null)
+                {
+                    foreach (var manager in request.Managers)
+                    {
+                        if (
+                            _respository.StaffResources
+                                .All(sr => sr.Id != manager))
+                        {
+                            result.AddError("Managers", $"The manager with staff resource id of {manager} could not be found.");
+                        }
+                    }
+                }
+
+                // Check that options exist
+                if (
+                    _respository.ProjectOptions
+                        .All(po => po.Id != request.Option))
+                {
+                    result.AddError("Option", $"The project option with id {request.Option} cannot be found.");
+                }
+            }
+
+            if (!result.Succeeded) return result;
+
+            var resultData = new List<ProjectConfig>();
+
+            foreach (var request in projects)
+            {
+                // Copy properties
+                var newProjectConfig = new ProjectConfig
+                {
+                    PortfolioId = portfolio.Id,
+                    StartDate = request.StartDate,
+                    OwnerId = request.Owner,
+                    ProjectOptionId = request.Option
+                };
+
+                await _respository.AddProjectConfigAsync(newProjectConfig);
+
+                // Add managers
+                newProjectConfig.Managers = request.Managers.Select(m => new StaffResourceProjectConfig
+                {
+                    ProjectConfigId = newProjectConfig.Id,
+                    StaffResourceId = m
+                }).ToList();
+
+                foreach (var tag in request.Tags)
+                {
+                    if (portfolio.PortfolioTags.All(pt => pt.Name != tag))
+                    {
+                        await _respository.AddTagToPortfolioAsync(portfolio, tag);
+                    }
+                }
+
+                await _respository.AddTagsToProjectConfigAsync(newProjectConfig, request.Tags);
+
+                // Create phase configs
+                // Create a default set of phase configs based on the project phases
+                var projectOption = _respository.ProjectOptions.Single(po => po.Id == newProjectConfig.ProjectOptionId);
+
+                newProjectConfig.Phases = new List<PhaseConfig>();
+                foreach (var phase in projectOption.Phases)
+                {
+                    var newPhaseConfig = new PhaseConfig
+                    {
+                        StartDate = phase.StartDate ?? phase.EstimatedStartDate,
+                        EndDate = phase.EndDate ?? phase.EstimatedEndDate,
+                        ProjectConfigId = newProjectConfig.Id,
+                        ProjectPhaseId = phase.Id
+                    };
+
+                    newProjectConfig.Phases.Add(newPhaseConfig);
+                }
+                await _respository.SaveChangesAsync();
+                resultData.Add(newProjectConfig);
+            }
+            result.SetData(resultData);
+            return result;
+        }
         #endregion
-
-
     }
 }

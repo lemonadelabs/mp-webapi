@@ -22,6 +22,8 @@ namespace MPWebAPI.Models
         
         public int ProjectOptionId { get; set; }
         public ProjectOption ProjectOption { get; set; }
+
+        public List<ProjectConfigPortfolioTag> Tags { get; set; }
     }
 
     public class StaffResourceProjectConfig

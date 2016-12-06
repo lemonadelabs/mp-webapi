@@ -79,6 +79,19 @@ namespace MPWebAPI.Models
 
         #endregion
 
+        #region Project Config
+
+        IEnumerable<ProjectConfig> ProjectConfigs { get; }
+        Task AddProjectConfigAsync(ProjectConfig config);
+        Task AddTagToPortfolioAsync(Portfolio portfolio, string tag);
+        Task RemoveTagFromPortfolioAsync(Portfolio portfolio, string tag);
+        Task AddTagsToProjectConfigAsync(ProjectConfig projectConfig, IEnumerable<string> tags);
+        Task RemoveTagsFromProjectConfigAsync(ProjectConfig projectConfig, IEnumerable<string> tags);
+        Task AddManagersToProjectConfigAsync(ProjectConfig projectConfig, IEnumerable<int> staffResources);
+        Task RemoveManagersFromProjectConfigAsync(ProjectConfig projectConfig, IEnumerable<int> staffResources);
+
+        #endregion
+
         // Financial Resources
         #region Financial Resources
 

@@ -20,8 +20,6 @@ namespace MPWebAPI.Models
         public List<ProjectConfig> ProjectsOwned { get; set; }
         public List<StaffResourceProjectConfig> ProjectsManaged { get; set; }
         public MerlinPlanUser UserData { get; set; }
-
-
     }
 
     public class StaffResourceStaffResourceCategory

@@ -234,5 +234,35 @@ namespace MPWebAPI.Controllers
             if (result.Succeeded) return Ok(result.GetData<IEnumerable<Portfolio>>().Select(p => new PortfolioViewModel(p)));
             return BadRequest(result.Errors);
         }
+
+        public class AddProjectRequest : IAddProjectToPortfolioRequest
+        {
+            [Required]
+            public int ProjectId { get; set; }
+
+            public string[] Tags { get; set; }
+
+            [Required]
+            public DateTime StartDate { get; set; }
+
+            public int? Owner { get; set; }
+            public int[] Managers { get; set; }
+
+            [Required]
+            public int Option { get; set; }
+        }
+
+        [HttpPost("{id}/project")]
+        [ValidatePortfolioExists]
+        public async Task<IActionResult> AddProjects(int id, [FromBody] IEnumerable<IAddProjectToPortfolioRequest> requests)
+        {
+            var result =
+                await
+                    _businessLogic.AddProjectToPortfolioAsync(_repository.Portfolios.Single(p => p.Id == id), requests);
+            if (result.Succeeded)
+                return Ok(result.GetData<IEnumerable<ProjectConfig>>().Select(pc => new ProjectConfigViewModel(pc)));
+            return BadRequest(result.Errors);
+        }
+
     }
 }

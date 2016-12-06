@@ -298,7 +298,7 @@ namespace MPWebAPI.Models
             
             builder.Entity<ProjectConfigPortfolioTag>()
                 .HasOne(pcpt => pcpt.ProjectConfig)
-                .WithMany()
+                .WithMany(pc => pc.Tags)
                 .HasForeignKey(pcpt => pcpt.ProjectConfigId);
             
             builder.Entity<ProjectConfigPortfolioTag>()

@@ -76,11 +76,23 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> DeletePortfolioAsync(Portfolio portfolio);
         Task<MerlinPlanBLResult> AddPortfolioAsync(Portfolio portfolio);
         Task<MerlinPlanBLResult> UpdatePortfolioAsync(IEnumerable<IPortfolioUpdate> requests);
+        Task<MerlinPlanBLResult> AddProjectToPortfolioAsync(Portfolio portfolio, IEnumerable<IAddProjectToPortfolioRequest> requests);
+
         #endregion
 
     }
 
     #region Data Object Interfaces
+
+    public interface IAddProjectToPortfolioRequest
+    {
+        int ProjectId { get; set; }
+        string[] Tags { get; set; }
+        DateTime StartDate { get; set; }
+        int? Owner { get; set; }
+        int[] Managers { get; set; }
+        int Option { get; set; }
+    }
 
     public interface IPortfolioUpdate
     {
