@@ -990,7 +990,7 @@ namespace MPWebAPI.Models
                 // Check tag exists and is not already applied
                 var portfolioTag = projectConfig.Portfolio.PortfolioTags.SingleOrDefault(pt => pt.Name == tag);
                 if(portfolioTag == null) continue;
-                if(projectConfig.Tags.Any(pt => pt.PortfolioTag.Name == tag)) continue;
+                if(projectConfig.Tags.Any(pt => pt.PortfolioTagId == portfolioTag.Id)) continue;
 
                 // add tag
                 projectConfig.Tags.Add(new ProjectConfigPortfolioTag

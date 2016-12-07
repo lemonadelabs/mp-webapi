@@ -244,14 +244,14 @@ namespace MPWebAPI.Controllers
             public int OptionId { get; set; }
 
             public string[] Tags { get; set; }
-            public DateTime? StartDate { get; set; }
+            public DateTime? EstimatedStartDate { get; set; }
             public int? Owner { get; set; }
             public int[] Managers { get; set; }
         }
 
         [HttpPost("{id}/project")]
         [ValidatePortfolioExists]
-        public async Task<IActionResult> AddProjects(int id, [FromBody] IEnumerable<IAddProjectToPortfolioRequest> requests)
+        public async Task<IActionResult> AddProjects(int id, [FromBody] AddProjectRequest[] requests)
         {
             var result =
                 await

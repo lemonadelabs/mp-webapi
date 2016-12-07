@@ -88,7 +88,7 @@ namespace MPWebAPI.Models
     {
         int ProjectId { get; set; }
         string[] Tags { get; set; }
-        DateTime? StartDate { get; set; }
+        DateTime? EstimatedStartDate { get; set; }
         int? Owner { get; set; }
         int[] Managers { get; set; }
         int OptionId { get; set; }

@@ -610,7 +610,7 @@ namespace MPWebAPI.Models
                     .First(fr => fr.Id == resourceCopyRequest.Id);
 
                 // Duplicate resource
-                var newResource = new FinancialResource()
+                var newResource = new FinancialResource
                 {
                     StartDate = resource.StartDate,
                     EndDate = resource.EndDate,
@@ -1043,8 +1043,8 @@ namespace MPWebAPI.Models
                         {
                             Description = phase.Description,
                             EndDate = phase.EndDate,
-                            EstimatedEndDate = phase.EstimatedEndDate,
-                            EstimatedStartDate = phase.EstimatedStartDate,
+                            DesiredEndDate = phase.DesiredEndDate,
+                            DesiredStartDate = phase.DesiredStartDate,
                             Name = phase.Name,
                             ProjectOption = newOption,
                             StartDate = phase.StartDate
@@ -1426,7 +1426,6 @@ namespace MPWebAPI.Models
         }
 
 
-        // TODO: Test this!
         public async Task<MerlinPlanBLResult> AddProjectToPortfolioAsync(Portfolio portfolio, IEnumerable<IAddProjectToPortfolioRequest> requests)
         {
             var result = new MerlinPlanBLResult();
@@ -1483,11 +1482,15 @@ namespace MPWebAPI.Models
             {
                 var projectOption = _respository.ProjectOptions.Single(po => po.Id == request.OptionId);
                 var firstPhase = projectOption.Phases.OrderBy(pp => pp.StartDate).First();
-                var firstPhaseStartDate = firstPhase.StartDate ?? firstPhase.EstimatedStartDate;
-                var phaseOffset = request.StartDate - firstPhaseStartDate;
+
+                // Use the phases actual start date over desired if it exists
+                var firstPhaseStartDate = firstPhase.StartDate ?? firstPhase.DesiredStartDate;
+
+                // The difference between the estimated start date if it exists
+                var phaseOffset = request.EstimatedStartDate - firstPhaseStartDate;
 
                 // If startdate is null then use date of first phase
-                var projectConfigStart = request.StartDate ?? firstPhaseStartDate;
+                var projectConfigStart = request.EstimatedStartDate ?? firstPhaseStartDate;
 
                 // Copy properties
                 var newProjectConfig = new ProjectConfig
@@ -1526,8 +1529,8 @@ namespace MPWebAPI.Models
                 {
                     var newPhaseConfig = new PhaseConfig
                     {
-                        StartDate = phase.StartDate ?? phase.EstimatedStartDate,
-                        EndDate = phase.EndDate ?? phase.EstimatedEndDate,
+                        StartDate = phase.StartDate ?? phase.DesiredStartDate,
+                        EndDate = phase.EndDate ?? phase.DesiredEndDate,
                         ProjectConfigId = newProjectConfig.Id,
                         ProjectPhaseId = phase.Id
                     };

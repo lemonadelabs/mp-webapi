@@ -20,10 +20,10 @@ namespace MPWebAPI.ViewModels
         public string Description { get; set; }
 
         [Required]
-        public DateTime EstimatedStartDate { get; set; }
+        public DateTime DesiredStartDate { get; set; }
 
         [Required]
-        public DateTime EstimatedEndDate { get; set; }
+        public DateTime DesiredEndDate { get; set; }
 
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
