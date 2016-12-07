@@ -9,7 +9,7 @@ using MPWebAPI.ViewModels;
 namespace MPWebAPI.Controllers
 {
     [Route("api/[controller]")]
-    public class OrganisationController : MerlinPlanController
+    public class OrganisationController : ControllerBase
     {
         private readonly IMerlinPlanRepository _mprepo;
         private readonly IMerlinPlanBL _mpbl;

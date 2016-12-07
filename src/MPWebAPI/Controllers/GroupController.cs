@@ -9,7 +9,7 @@ using MPWebAPI.Filters;
 namespace MPWebAPI.Controllers
 {
     [Route("api/[controller]")]
-    public class GroupController : MerlinPlanController
+    public class GroupController : ControllerBase
     {
         private readonly IMerlinPlanRepository _repository;
         private readonly IMerlinPlanBL _businessLogic;

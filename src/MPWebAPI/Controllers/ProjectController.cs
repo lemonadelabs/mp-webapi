@@ -12,7 +12,7 @@ using UserShared = MPWebAPI.ViewModels.AccessibleDocumentViewModel<MPWebAPI.View
 namespace MPWebAPI.Controllers
 {
     [Route("api/[Controller]")]
-    public class ProjectController : Controller
+    public class ProjectController : ControllerBase
     {
         private readonly IMerlinPlanBL _businesLogic;
         private readonly IMerlinPlanRepository _repository;

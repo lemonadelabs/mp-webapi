@@ -13,7 +13,7 @@ using UserShared = MPWebAPI.ViewModels.AccessibleDocumentViewModel<MPWebAPI.View
 namespace MPWebAPI.Controllers
 {
     [Route("api/[controller]")]
-    public class ResourceScenarioController : Controller
+    public class ResourceScenarioController : ControllerBase
     {
         public class UserList
         {

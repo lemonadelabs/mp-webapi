@@ -11,7 +11,7 @@ using MPWebAPI.ViewModels;
 namespace MPWebAPI.Controllers
 {
     [Route("api/[Controller]")]
-    public class PortfolioController : Controller
+    public class PortfolioController : ControllerBase
     {
         private readonly IMerlinPlanRepository _repository;
         private readonly IMerlinPlanBL _businessLogic;

@@ -9,7 +9,7 @@ using MPWebAPI.ViewModels;
 namespace MPWebAPI.Controllers
 {
     [Route("api/[Controller]")]
-    public class StaffResourceController : Controller
+    public class StaffResourceController : ControllerBase
     {
         private readonly IMerlinPlanBL _businessLogic;
         private readonly IMerlinPlanRepository _repository;

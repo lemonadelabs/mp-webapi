@@ -1465,13 +1465,23 @@ namespace MPWebAPI.Models
                     }
                 }
 
-                // Check that options exist
+                // Check that options exist and that option is part of specified project.
                 if (
                     _respository.ProjectOptions
+                        .Where(po => po.ProjectId == request.ProjectId)
                         .All(po => po.Id != request.OptionId))
                 {
-                    result.AddError("Option", $"The project option with id {request.OptionId} cannot be found.");
+                    result.AddError("OptionId", $"The project option with id {request.OptionId} cannot be found or is not an option in project with id {request.ProjectId}.");
                 }
+
+                /*
+                    Check Dependencies.
+                    Project cannot be added to a portfolio that
+                    a) does not have its dependencies and
+                    b) the dependencies are after
+                 */
+
+
             }
 
             if (!result.Succeeded) return result;

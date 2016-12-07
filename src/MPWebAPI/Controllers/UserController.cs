@@ -13,7 +13,7 @@ using System.Net;
 namespace MPWebAPI.Controllers
 {
     [Route("api/[controller]")]
-    public class UserController : MerlinPlanController
+    public class UserController : ControllerBase
     {
         // Post request models
         public class Register

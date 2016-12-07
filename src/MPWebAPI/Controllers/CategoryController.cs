@@ -8,7 +8,7 @@ using MPWebAPI.Filters;
 namespace MPWebAPI.Controllers
 {
     [Route("api/[controller]")]
-    public class CategoryController : Controller
+    public class CategoryController : ControllerBase
     {
         private readonly IMerlinPlanRepository _repository;
         private readonly IMerlinPlanBL _businessLogic;

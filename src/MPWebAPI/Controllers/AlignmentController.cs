@@ -8,7 +8,7 @@ using MPWebAPI.ViewModels;
 namespace MPWebAPI.Controllers
 {
     [Route("api/[Controller]")]
-    public class AlignmentController : Controller
+    public class AlignmentController : ControllerBase
     {
         private readonly IMerlinPlanRepository _repository;
 

@@ -10,7 +10,7 @@ using MPWebAPI.ViewModels;
 namespace MPWebAPI.Controllers
 {
     [Route("api/[Controller]")]
-    public class ProjectPhaseController : Controller
+    public class ProjectPhaseController : ControllerBase
     {
 
         private readonly IMerlinPlanBL _businessLogic;

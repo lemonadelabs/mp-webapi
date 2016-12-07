@@ -8,7 +8,7 @@ using MPWebAPI.ViewModels;
 namespace MPWebAPI.Controllers
 {
     [Route("api/[Controller]")]
-    public class BenefitController : Controller
+    public class BenefitController : ControllerBase
     {
         private readonly IMerlinPlanBL _businessLogic;
         private readonly IMerlinPlanRepository _repository;
