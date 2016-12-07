@@ -1473,15 +1473,6 @@ namespace MPWebAPI.Models
                 {
                     result.AddError("OptionId", $"The project option with id {request.OptionId} cannot be found or is not an option in project with id {request.ProjectId}.");
                 }
-
-                /*
-                    Check Dependencies.
-                    Project cannot be added to a portfolio that
-                    a) does not have its dependencies and
-                    b) the dependencies are after
-                 */
-
-
             }
 
             if (!result.Succeeded) return result;
