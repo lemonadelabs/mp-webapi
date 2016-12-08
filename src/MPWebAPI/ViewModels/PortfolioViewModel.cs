@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using MPWebAPI.Models;
 
@@ -22,6 +23,7 @@ namespace MPWebAPI.ViewModels
         {
             base.MapToViewModelAsync(model, repo);
             ApprovedBy = model.ApprovedBy?.UserName;
+            Tags = model.PortfolioTags?.Select(pt => pt.Name).ToArray() ?? new string[] {};
             return Task.FromResult(new ViewModelMapResult());
         }
 
@@ -38,6 +40,8 @@ namespace MPWebAPI.ViewModels
 
         public bool Approved { get; set; }
         public string ApprovedBy { get; set; }
+
+        public string[] Tags { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

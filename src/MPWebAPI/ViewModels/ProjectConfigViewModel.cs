@@ -32,6 +32,8 @@ namespace MPWebAPI.ViewModels
         [Required]
         public int ProjectOptionId { get; set; }
 
+        public string[] Tags { get; set; }
+
         public class UserInfo
         {
             public string FirstName { get; set; }
@@ -60,6 +62,8 @@ namespace MPWebAPI.ViewModels
                 Id = m.StaffResourceId
             })
                 .ToArray();
+
+            Tags = projectConfig.Tags?.Select(tag => tag.PortfolioTag.Name).ToArray() ?? new string[] {};
             return Task.FromResult(new ViewModelMapResult());
         }
     }
