@@ -51,6 +51,11 @@ namespace MPWebAPI.Controllers
         [HttpGet]
         public IActionResult GetAll() => Ok(_repository.Portfolios.Select(p => new PortfolioViewModel(p)));
 
+        [HttpGet("{id}")]
+        [ValidatePortfolioExists]
+        public IActionResult Get(int id) => Ok(new PortfolioViewModel(_repository.Portfolios.Single(p => p.Id == id)));
+
+
         [HttpGet("group/{id}")]
         [ValidateGroupExists]
         public IActionResult GetAllForGroup(int id)
