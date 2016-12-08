@@ -942,6 +942,7 @@ namespace MPWebAPI.Models
             {
                 return _dbcontext.ProjectConfig
                     .Include(pc => pc.Managers)
+                    .ThenInclude(sr => sr.StaffResource)
                     .Include(pc => pc.Owner)
                     .Include(pc => pc.Phases)
                     .ThenInclude(ppc => ppc.ProjectPhase)

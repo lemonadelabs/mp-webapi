@@ -27,6 +27,14 @@ namespace MPWebAPI.Controllers
             _businessLogic = mpbl;
         }
 
+        [HttpGet("{id}/project")]
+        [ValidatePortfolioExists]
+        public IActionResult GetProjectsForPortfolio(int id)
+        {
+            return Ok(_repository.ProjectConfigs.Where(pc => pc.PortfolioId == id).Select(pc => new ProjectConfigViewModel(pc)));
+        }
+
+
         [HttpGet]
         public IActionResult GetAll() => Ok(_repository.Portfolios.Select(p => new PortfolioViewModel(p)));
 
