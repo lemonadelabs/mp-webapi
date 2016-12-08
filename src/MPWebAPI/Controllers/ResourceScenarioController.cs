@@ -70,10 +70,17 @@ namespace MPWebAPI.Controllers
         }
         
         [HttpGet]
-        public IEnumerable<ResourceScenarioViewModel> Get()
+        public IEnumerable<ResourceScenarioViewModel> GetAll()
         {
             return _repository.ResourceScenarios.Select(
                 rs => new ResourceScenarioViewModel(rs));
+        }
+
+        [HttpGet("{id}")]
+        [ValidateResourceScenarioExists]
+        public IActionResult Get(int id)
+        {
+            return Ok(new ResourceScenarioViewModel(_repository.ResourceScenarios.Single(rs => rs.Id == id)));
         }
 
         [HttpDelete("{id}")]
