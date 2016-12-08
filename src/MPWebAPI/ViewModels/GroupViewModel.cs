@@ -22,17 +22,17 @@ namespace MPWebAPI.ViewModels
         {
             base.MapToViewModelAsync(model, repo);
             var group = (Group) model;
-            Portfolios = group.Portfolios.Select(p => new SharedDocumentDetails
+            Portfolios = group.Portfolios?.Select(p => new SharedDocumentDetails
             {
                 Id = p.Id,
                 Name = p.Name
             }).ToList();
-            ResourceScenarios = group.ResourceScenarios.Select(rs => new SharedDocumentDetails
+            ResourceScenarios = group.ResourceScenarios?.Select(rs => new SharedDocumentDetails
             {
                 Id = rs.Id,
                 Name = rs.Name
             }).ToList();
-            Projects = group.Projects.Select(p => new SharedDocumentDetails
+            Projects = group.Projects?.Select(p => new SharedDocumentDetails
             {
                 Id = p.Id,
                 Name = p.Name
