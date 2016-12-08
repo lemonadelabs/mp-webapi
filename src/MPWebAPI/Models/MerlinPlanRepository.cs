@@ -29,6 +29,8 @@ namespace MPWebAPI.Models
             {
                 return _dbcontext.Group
                     .Include(g => g.ResourceScenarios)
+                    .Include(g => g.Portfolios)
+                    .Include(g => g.Projects)
                     .Include(g => g.FinancialResourceCategories)
                     .Include(g => g.BenefitCategories)
                     .ToList();
