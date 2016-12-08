@@ -565,15 +565,13 @@ namespace MPWebAPI.Models
 
         public async Task ShareProjectWithUserAsync(Project project, MerlinPlanUser user)
         {
-            // Check project is not already shared
-            if(project.ShareUser.Exists(su => su.ProjectId == project.Id && su.UserId == user.Id)) return;
 
-            project.ShareUser.Add(new ProjectUser
+            if(_dbcontext.ProjectUser.Where(pu => pu.ProjectId == project.Id).Any(pu => pu.UserId == user.Id)) return;
+            _dbcontext.ProjectUser.Add(new ProjectUser
             {
-                Project = project,
-                User = user
+                ProjectId = project.Id,
+                UserId = user.Id
             });
-
             await _dbcontext.SaveChangesAsync();
         }
 

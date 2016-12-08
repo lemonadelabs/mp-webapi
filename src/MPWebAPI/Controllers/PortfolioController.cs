@@ -54,10 +54,10 @@ namespace MPWebAPI.Controllers
             var allShare = await _repository.GetOrganisationSharedPortfoliosAsync(user.Organisation);
             var owned = _repository.Portfolios.Where(rs => rs.Creator.Id == id);
 
-            var groupSharedScenarios = AccessibleDocumentViewModel<PortfolioViewModel>.DocumentsByGroup(groupShare.ToList());
-            var orgSharedScenarios = AccessibleDocumentViewModel<PortfolioViewModel>.DocumentsByGroup(allShare.ToList());
+            var groupSharedScenarios = AccessibleDocumentViewModel<PortfolioViewModel, PortfolioUser>.DocumentsByGroup(groupShare.ToList());
+            var orgSharedScenarios = AccessibleDocumentViewModel<PortfolioViewModel, PortfolioUser>.DocumentsByGroup(allShare.ToList());
 
-            var userSharedScenarios = new List<AccessibleDocumentViewModel<PortfolioViewModel>.UserShared>();
+            var userSharedScenarios = new List<AccessibleDocumentViewModel<PortfolioViewModel, PortfolioUser>.UserShared>();
             foreach (var rs in userShare)
             {
                 var u = userSharedScenarios.FirstOrDefault(uss => uss.User.UserName == rs.Creator.UserName);
@@ -69,7 +69,7 @@ namespace MPWebAPI.Controllers
                 {
                     var uvm = new UserViewModel();
                     await uvm.MapToViewModelAsync(rs.Creator, _repository);
-                    var newuss = new AccessibleDocumentViewModel<PortfolioViewModel>.UserShared
+                    var newuss = new AccessibleDocumentViewModel<PortfolioViewModel, PortfolioUser>.UserShared
                     {
                         User = uvm,
                         Documents = new List<PortfolioViewModel>(
@@ -80,7 +80,7 @@ namespace MPWebAPI.Controllers
             }
 
             return Ok(
-                new AccessibleDocumentViewModel<PortfolioViewModel>
+                new AccessibleDocumentViewModel<PortfolioViewModel, PortfolioUser>
                 {
                     Created = owned.Select(o => new PortfolioViewModel(o)).ToList(),
                     GroupShare = groupSharedScenarios,

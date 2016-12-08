@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
 using MPWebAPI.Filters;
-using UserShared = MPWebAPI.ViewModels.AccessibleDocumentViewModel<MPWebAPI.ViewModels.ResourceScenarioViewModel>.UserShared;
+using UserShared = MPWebAPI.ViewModels.AccessibleDocumentViewModel<MPWebAPI.ViewModels.ResourceScenarioViewModel, MPWebAPI.Models.ResourceScenarioUser>.UserShared;
 
 
 namespace MPWebAPI.Controllers
@@ -257,8 +257,8 @@ namespace MPWebAPI.Controllers
             var allShare = await _repository.GetOrganisationSharedResourceScenariosAsync(user.Organisation);
             var owned = _repository.ResourceScenarios.Where(rs => rs.Creator.Id == id);
 
-            var groupSharedScenarios = AccessibleDocumentViewModel<ResourceScenarioViewModel>.DocumentsByGroup(groupShare.ToList());
-            var orgSharedScenarios = AccessibleDocumentViewModel<ResourceScenarioViewModel>.DocumentsByGroup(allShare.ToList());
+            var groupSharedScenarios = AccessibleDocumentViewModel<ResourceScenarioViewModel, ResourceScenarioUser>.DocumentsByGroup(groupShare.ToList());
+            var orgSharedScenarios = AccessibleDocumentViewModel<ResourceScenarioViewModel, ResourceScenarioUser>.DocumentsByGroup(allShare.ToList());
 
             var userSharedScenarios = new List<UserShared>();
             foreach (var rs in userShare)
@@ -283,7 +283,7 @@ namespace MPWebAPI.Controllers
             }
 
             return new JsonResult(
-                new AccessibleDocumentViewModel<ResourceScenarioViewModel>() 
+                new AccessibleDocumentViewModel<ResourceScenarioViewModel, ResourceScenarioUser>()
                 {
                     Created = owned.Select(o => new ResourceScenarioViewModel(o)).ToList(),
                     GroupShare = groupSharedScenarios,

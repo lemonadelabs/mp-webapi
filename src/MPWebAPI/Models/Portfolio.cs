@@ -6,7 +6,7 @@ namespace MPWebAPI.Models
     /// <summary>
     /// A plan is a configuration of projects and project phases in time. 
     /// </summary>
-    public class Portfolio : IMerlinPlanDocument
+    public class Portfolio : IMerlinPlanDocument<PortfolioUser>
     {
         public int Id { get; set; }
         
@@ -48,7 +48,7 @@ namespace MPWebAPI.Models
         public ProjectConfig ProjectConfig { get; set; }
     }
 
-    public class PortfolioUser
+    public class PortfolioUser : IDocumentUser
     {
         public int PortfolioId { get; set; }
         public Portfolio Portfolio { get; set; }

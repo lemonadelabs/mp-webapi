@@ -4,7 +4,7 @@ using MPWebAPI.Models;
 
 namespace MPWebAPI.ViewModels
 {
-    public class AccessibleDocumentViewModel<T> where T : ViewModel, new()
+    public class AccessibleDocumentViewModel<T, TU> where T : ViewModel, new() where TU : IDocumentUser
     {
         public class UserShared
         {
@@ -23,7 +23,7 @@ namespace MPWebAPI.ViewModels
         public List<UserShared> UserShare { get; set; }
         public List<GroupShared> OrgShare { get; set; }
 
-        public static List<GroupShared> DocumentsByGroup(IEnumerable<IMerlinPlanDocument> documents)
+        public static List<GroupShared> DocumentsByGroup(IEnumerable<IMerlinPlanDocument<TU>> documents)
         {
             var groupDocuments = new List<GroupShared>();
             foreach (var vm in documents)

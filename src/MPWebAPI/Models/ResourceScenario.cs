@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MPWebAPI.Models
 {
-    public class ResourceScenario : IMerlinPlanDocument
+    public class ResourceScenario : IMerlinPlanDocument<ResourceScenarioUser>
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -23,7 +23,7 @@ namespace MPWebAPI.Models
         public List<FinancialResource> FinancialResources { get; set; }
     }
 
-    public class ResourceScenarioUser
+    public class ResourceScenarioUser : IDocumentUser
     {
         public int ResourceScenarioId { get; set; }
         public ResourceScenario ResourceScenario { get; set; }

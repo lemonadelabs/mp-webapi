@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using MPWebAPI.Filters;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
-using UserShared = MPWebAPI.ViewModels.AccessibleDocumentViewModel<MPWebAPI.ViewModels.ProjectViewModel>.UserShared;
+using UserShared = MPWebAPI.ViewModels.AccessibleDocumentViewModel<MPWebAPI.ViewModels.ProjectViewModel, MPWebAPI.Models.ProjectUser>.UserShared;
 
 
 namespace MPWebAPI.Controllers
@@ -67,8 +67,8 @@ namespace MPWebAPI.Controllers
             var allShare = _repository.GetOrganisationSharedProjectsAsync(user.Organisation);
             var owned = _repository.Projects.Where(rs => rs.Creator.Id == id);
 
-            var groupSharedProjects = AccessibleDocumentViewModel<ProjectViewModel>.DocumentsByGroup(groupShare.ToList());
-            var orgSharedProjects = AccessibleDocumentViewModel<ProjectViewModel>.DocumentsByGroup(allShare.ToList());
+            var groupSharedProjects = AccessibleDocumentViewModel<ProjectViewModel, ProjectUser>.DocumentsByGroup(groupShare.ToList());
+            var orgSharedProjects = AccessibleDocumentViewModel<ProjectViewModel, ProjectUser>.DocumentsByGroup(allShare.ToList());
 
             var userSharedProjects = new List<UserShared>();
             foreach (var rs in userShare)
@@ -93,7 +93,7 @@ namespace MPWebAPI.Controllers
             }
 
             return new JsonResult(
-                new AccessibleDocumentViewModel<ProjectViewModel>()
+                new AccessibleDocumentViewModel<ProjectViewModel, ProjectUser>()
                 {
                     Created = owned.Select(o => new ProjectViewModel(o)).ToList(),
                     GroupShare = groupSharedProjects,
