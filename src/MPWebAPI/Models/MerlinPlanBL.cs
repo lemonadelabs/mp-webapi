@@ -1550,6 +1550,21 @@ namespace MPWebAPI.Models
             result.SetData(resultData);
             return result;
         }
+
+        public async Task<MerlinPlanBLResult> RemoveProjectFromPortfolioAsync(ProjectConfig projectConfig)
+        {
+            var result = new MerlinPlanBLResult();
+
+            if (projectConfig.Portfolio.Approved)
+            {
+                result.AddError("Approved", "The portfolio that this project belongs to is approved so it cannot be removed.");
+            }
+
+            if (!result.Succeeded) return result;
+            await _respository.RemoveProjectConfigAsync(projectConfig);
+            return result;
+        }
+
         #endregion
     }
 }

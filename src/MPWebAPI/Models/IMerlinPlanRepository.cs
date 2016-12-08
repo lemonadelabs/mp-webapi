@@ -83,6 +83,7 @@ namespace MPWebAPI.Models
 
         IEnumerable<ProjectConfig> ProjectConfigs { get; }
         Task AddProjectConfigAsync(ProjectConfig config);
+        Task RemoveProjectConfigAsync(ProjectConfig config);
         Task AddTagToPortfolioAsync(Portfolio portfolio, string tag);
         Task RemoveTagFromPortfolioAsync(Portfolio portfolio, string tag);
         Task AddTagsToProjectConfigAsync(ProjectConfig projectConfig, IEnumerable<string> tags);

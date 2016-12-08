@@ -960,6 +960,12 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+        public async Task RemoveProjectConfigAsync(ProjectConfig config)
+        {
+            _dbcontext.ProjectConfig.Remove(config);
+            await _dbcontext.SaveChangesAsync();
+        }
+
         public async Task AddTagToPortfolioAsync(Portfolio portfolio, string tag)
         {
             if(tag == null) return;

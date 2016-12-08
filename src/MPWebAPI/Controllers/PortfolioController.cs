@@ -34,6 +34,19 @@ namespace MPWebAPI.Controllers
             return Ok(_repository.ProjectConfigs.Where(pc => pc.PortfolioId == id).Select(pc => new ProjectConfigViewModel(pc)));
         }
 
+        [HttpDelete("{id}/project/{projectId}")]
+        [ValidatePortfolioExists]
+        public async Task<IActionResult> RemoveProjectFromPortfolio(int id, int projectId)
+        {
+            var projectConfig =
+                _repository.ProjectConfigs.SingleOrDefault(pc => pc.PortfolioId == id && pc.Id == projectId);
+            if (projectConfig == null) return NotFound(projectId);
+            var result = await _businessLogic.RemoveProjectFromPortfolioAsync(projectConfig);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+            return Ok(projectId);
+        }
+
 
         [HttpGet]
         public IActionResult GetAll() => Ok(_repository.Portfolios.Select(p => new PortfolioViewModel(p)));
