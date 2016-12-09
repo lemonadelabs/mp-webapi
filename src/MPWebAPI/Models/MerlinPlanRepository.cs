@@ -195,6 +195,7 @@ namespace MPWebAPI.Models
                     .Include(rs => rs.Group)
                     .Include(rs => rs.FinancialResources)
                     .Include(rs => rs.StaffResources)
+                    .Include(rs => rs.ShareUser)
                     .ToList();
             }
         }
