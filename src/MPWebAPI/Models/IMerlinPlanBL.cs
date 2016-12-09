@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using MPWebAPI.ViewModels;
 
 namespace MPWebAPI.Models
 {
@@ -78,6 +79,9 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> UpdatePortfolioAsync(IEnumerable<IPortfolioUpdate> requests);
         Task<MerlinPlanBLResult> AddProjectToPortfolioAsync(Portfolio portfolio, IEnumerable<IAddProjectToPortfolioRequest> requests);
         Task<MerlinPlanBLResult> RemoveProjectFromPortfolioAsync(ProjectConfig projectConfig);
+        Task<MerlinPlanBLResult> UpdatePortfolioProjectAsync(ProjectConfig updatedProjectConfig,
+            ProjectConfig currentProjectConfig);
+
         #endregion
 
     }

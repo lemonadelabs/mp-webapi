@@ -1565,6 +1565,16 @@ namespace MPWebAPI.Models
             return result;
         }
 
+        public Task<MerlinPlanBLResult> UpdatePortfolioProjectAsync(ProjectConfig updatedProjectConfig, ProjectConfig currentProjectConfig)
+        {
+            throw new NotImplementedException();
+        }
+
+//        public Task<MerlinPlanBLResult> UpdatePortfolioProjectAsync(ProjectConfig updatedProjectConfig, ProjectConfig currentProjectConfig)
+//        {
+//
+//        }
+
         #endregion
     }
 }

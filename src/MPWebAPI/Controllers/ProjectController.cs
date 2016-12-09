@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using MPWebAPI.Filters;
 using MPWebAPI.Models;
 using MPWebAPI.ViewModels;
-using UserShared = MPWebAPI.ViewModels.AccessibleDocumentViewModel<MPWebAPI.ViewModels.ProjectViewModel, MPWebAPI.Models.ProjectUser>.UserShared;
 
 
 namespace MPWebAPI.Controllers
@@ -62,43 +61,32 @@ namespace MPWebAPI.Controllers
         public async Task<IActionResult> GetAllForUser(string id)
         {
             var user = _repository.Users.Single(u => u.Id == id);
-            var userShare = _repository.GetUserSharedProjectsForUserAsync(user);
-            var groupShare = _repository.GetGroupShareProjectsForUserAsync(user);
-            var allShare = _repository.GetOrganisationSharedProjectsAsync(user.Organisation);
+            var documents = new List<Project>();
+
+            var userShare = _repository.GetUserSharedProjectsForUser(user);
+            var groupShare = _repository.GetGroupShareProjectsForUser(user);
+            var allShare = _repository.GetOrganisationSharedProjects(user.Organisation);
             var owned = _repository.Projects.Where(rs => rs.Creator.Id == id);
 
-            var groupSharedProjects = AccessibleDocumentViewModel<ProjectViewModel, ProjectUser>.DocumentsByGroup(groupShare.ToList());
-            var orgSharedProjects = AccessibleDocumentViewModel<ProjectViewModel, ProjectUser>.DocumentsByGroup(allShare.ToList());
+            documents.AddRange(userShare.Where(d => !documents.Select(did => did.Id).Contains(d.Id)));
+            documents.AddRange(groupShare.Where(d => !documents.Select(did => did.Id).Contains(d.Id)));
+            documents.AddRange(allShare.Where(d => !documents.Select(did => did.Id).Contains(d.Id)));
+            documents.AddRange(owned.Where(d => !documents.Select(did => did.Id).Contains(d.Id)));
 
-            var userSharedProjects = new List<UserShared>();
-            foreach (var rs in userShare)
+            var groups = new List<Group>();
+            foreach (var document in documents)
             {
-                var u = userSharedProjects.FirstOrDefault(uss => uss.User.UserName == rs.Creator.UserName);
-                if (u != null)
+                if (!groups.Select(g => g.Id).Contains(document.Group.Id))
                 {
-                    u.Documents.Add(new ProjectViewModel(rs));
-                }
-                else
-                {
-                    var uvm = new UserViewModel();
-                    await uvm.MapToViewModelAsync(rs.Creator, _repository);
-                    var newuss = new UserShared
-                    {
-                        User = uvm,
-                        Documents = new List<ProjectViewModel>(
-                            new[] {new ProjectViewModel(rs)})
-                    };
-                    userSharedProjects.Add(newuss);
+                    groups.Add(document.Group);
                 }
             }
 
-            return new JsonResult(
-                new AccessibleDocumentViewModel<ProjectViewModel, ProjectUser>()
+            return Ok(
+                new AccessibleDocumentViewModel<ProjectViewModel>
                 {
-                    Created = owned.Select(o => new ProjectViewModel(o)).ToList(),
-                    GroupShare = groupSharedProjects,
-                    OrgShare = orgSharedProjects,
-                    UserShare = userSharedProjects
+                    Documents = documents.Select(d => new ProjectViewModel(d)).ToList(),
+                    Groups = groups.Select(g => new GroupViewModel(g)).ToList()
                 }
             );
         }

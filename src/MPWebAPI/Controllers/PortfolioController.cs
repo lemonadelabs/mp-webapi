@@ -75,43 +75,32 @@ namespace MPWebAPI.Controllers
         public async Task<IActionResult> GetAllForUser(string id)
         {
             var user = _repository.Users.Single(u => u.Id == id);
+            var documents = new List<Portfolio>();
+
             var userShare = await _repository.GetUserSharedPortfoliosForUserAsync(user);
             var groupShare = await _repository.GetGroupSharedPortfoliosForUserAsync(user);
             var allShare = await _repository.GetOrganisationSharedPortfoliosAsync(user.Organisation);
             var owned = _repository.Portfolios.Where(rs => rs.Creator.Id == id);
 
-            var groupSharedScenarios = AccessibleDocumentViewModel<PortfolioViewModel, PortfolioUser>.DocumentsByGroup(groupShare.ToList());
-            var orgSharedScenarios = AccessibleDocumentViewModel<PortfolioViewModel, PortfolioUser>.DocumentsByGroup(allShare.ToList());
+            documents.AddRange(userShare.Where(d => !documents.Select(did => did.Id).Contains(d.Id)));
+            documents.AddRange(groupShare.Where(d => !documents.Select(did => did.Id).Contains(d.Id)));
+            documents.AddRange(allShare.Where(d => !documents.Select(did => did.Id).Contains(d.Id)));
+            documents.AddRange(owned.Where(d => !documents.Select(did => did.Id).Contains(d.Id)));
 
-            var userSharedScenarios = new List<AccessibleDocumentViewModel<PortfolioViewModel, PortfolioUser>.UserShared>();
-            foreach (var rs in userShare)
+            var groups = new List<Group>();
+            foreach (var document in documents)
             {
-                var u = userSharedScenarios.FirstOrDefault(uss => uss.User.UserName == rs.Creator.UserName);
-                if (u != null)
+                if (!groups.Select(g => g.Id).Contains(document.Group.Id))
                 {
-                    u.Documents.Add(new PortfolioViewModel(rs));
-                }
-                else
-                {
-                    var uvm = new UserViewModel();
-                    await uvm.MapToViewModelAsync(rs.Creator, _repository);
-                    var newuss = new AccessibleDocumentViewModel<PortfolioViewModel, PortfolioUser>.UserShared
-                    {
-                        User = uvm,
-                        Documents = new List<PortfolioViewModel>(
-                            new[] { new PortfolioViewModel(rs) })
-                    };
-                    userSharedScenarios.Add(newuss);
+                    groups.Add(document.Group);
                 }
             }
 
             return Ok(
-                new AccessibleDocumentViewModel<PortfolioViewModel, PortfolioUser>
+                new AccessibleDocumentViewModel<PortfolioViewModel>
                 {
-                    Created = owned.Select(o => new PortfolioViewModel(o)).ToList(),
-                    GroupShare = groupSharedScenarios,
-                    OrgShare = orgSharedScenarios,
-                    UserShare = userSharedScenarios
+                    Documents = documents.Select(d => new PortfolioViewModel(d)).ToList(),
+                    Groups = groups.Select(g => new GroupViewModel(g)).ToList()
                 }
             );
         }
@@ -286,6 +275,13 @@ namespace MPWebAPI.Controllers
                 return Ok(result.GetData<IEnumerable<ProjectConfig>>().Select(pc => new ProjectConfigViewModel(pc)));
             return BadRequest(result.Errors);
         }
+
+//        [HttpPut("{id}/project")]
+//        [ValidatePortfolioExists]
+//        public async Task<IActionResult> UpdateProject(int id, [FromBody] ProjectConfigViewModel viewModel)
+//        {
+//
+//        }
 
     }
 }

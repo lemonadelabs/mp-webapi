@@ -532,7 +532,7 @@ namespace MPWebAPI.Models
             }
         }
 
-        public IEnumerable<Project> GetUserSharedProjectsForUserAsync(MerlinPlanUser user)
+        public IEnumerable<Project> GetUserSharedProjectsForUser(MerlinPlanUser user)
         {
             return 
                 Projects
@@ -540,7 +540,7 @@ namespace MPWebAPI.Models
                     .ToList();
         }
 
-        public IEnumerable<Project> GetGroupShareProjectsForUserAsync(MerlinPlanUser user)
+        public IEnumerable<Project> GetGroupShareProjectsForUser(MerlinPlanUser user)
         {
             return
                 Projects
@@ -548,7 +548,7 @@ namespace MPWebAPI.Models
                     .ToList();
         }
 
-        public IEnumerable<Project> GetOrganisationSharedProjectsAsync(Organisation org)
+        public IEnumerable<Project> GetOrganisationSharedProjects(Organisation org)
         {
             return Projects.Where(p => p.Group.OrganisationId == org.Id && p.ShareAll).ToList();
         }
