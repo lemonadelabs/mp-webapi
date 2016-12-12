@@ -47,7 +47,7 @@ namespace MPWebAPI.ViewModels
         public virtual async Task<ViewModelMapResult> MapToModel(T model, IMerlinPlanRepository repo = null)
         {
             if(repo == null) throw new ArgumentNullException(nameof(repo));
-            var result = await MapToModel(model, repo);
+            var result = await base.MapToModel(model, repo);
             model.Creator = repo.Users.SingleOrDefault(u => u.Id == Creator);
             model.Group = repo.Groups.SingleOrDefault(g => g.Id == Group);
             if (model.Group != null) return result;
