@@ -289,6 +289,5 @@ namespace MPWebAPI.Controllers
             if (!result.Succeeded) return BadRequest(result.Errors);
             return Ok(new ProjectConfigViewModel(projectConfig));
         }
-
     }
 }

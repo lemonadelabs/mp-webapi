@@ -7,7 +7,7 @@ using MPWebAPI.Models;
 
 namespace MPWebAPI.ViewModels
 {
-    public sealed class ProjectConfigViewModel : ViewModel
+    public sealed class ProjectConfigViewModel : ViewModel, IValidatableObject
     {
 
         public ProjectConfigViewModel(ProjectConfig model)
@@ -126,9 +126,18 @@ namespace MPWebAPI.ViewModels
             Tags = projectConfig.Tags?.Select(tag => tag.PortfolioTag.Name).ToArray() ?? new string[] {};
             return Task.FromResult(new ViewModelMapResult());
         }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            // Check for overlapping phases
+            return from phase in Phases where Phases.Any(p =>
+                (phase.StartDate > p.StartDate && phase.StartDate < p.EndDate && phase != p) ||
+                (phase.EndDate > p.StartDate && phase.EndDate < p.EndDate && phase != p))
+                select new ValidationResult($"Phase ( id ={phase.Id} ) overlaps with another phase", new [] {"StartDate", "EndDate"});
+        }
     }
 
-    public sealed class PhaseConfigViewModel : ViewModel
+    public sealed class PhaseConfigViewModel : ViewModel, IValidatableObject
     {
         public PhaseConfigViewModel(PhaseConfig model)
         {
@@ -140,10 +149,29 @@ namespace MPWebAPI.ViewModels
         }
 
         public int Id { get; set; }
+
+        [Required]
         public DateTime StartDate { get; set; }
+
+        [Required]
         public DateTime EndDate { get; set; }
 
+        [Required]
         public int ProjectPhaseId { get; set; }
+
+        [Required]
         public int ProjectConfigId { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            // Enddate must be later than start date
+            if (EndDate < StartDate)
+            {
+                yield return new ValidationResult(
+                    "EndDate should not be before StartDate",
+                    new [] {"Endate"}
+                );
+            }
+        }
     }
 }
