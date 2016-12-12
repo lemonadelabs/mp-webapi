@@ -100,7 +100,7 @@ namespace MPWebAPI.Controllers
             var newRs = new ResourceScenario();
             
             // Do basic mapping
-            await scenario.MapToModel(newRs);
+            await scenario.MapToModel(newRs, _repository);
 
             // Add creator object
             // check creator is valid user            

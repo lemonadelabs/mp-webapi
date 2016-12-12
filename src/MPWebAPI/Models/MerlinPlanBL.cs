@@ -1490,14 +1490,10 @@ namespace MPWebAPI.Models
                 // The difference between the estimated start date if it exists
                 var phaseOffset = request.EstimatedStartDate - firstPhaseStartDate;
 
-                // If startdate is null then use date of first phase
-                var projectConfigStart = request.EstimatedStartDate ?? firstPhaseStartDate;
-
                 // Copy properties
                 var newProjectConfig = new ProjectConfig
                 {
                     PortfolioId = portfolio.Id,
-                    StartDate = projectConfigStart,
                     OwnerId = request.Owner,
                     ProjectOptionId = request.OptionId
                 };
@@ -1565,15 +1561,11 @@ namespace MPWebAPI.Models
             return result;
         }
 
-        public Task<MerlinPlanBLResult> UpdatePortfolioProjectAsync(ProjectConfig updatedProjectConfig, ProjectConfig currentProjectConfig)
+        public async Task<MerlinPlanBLResult> UpdatePortfolioProjectAsync(ProjectConfig projectConfig)
         {
-            throw new NotImplementedException();
+            await _respository.SaveChangesAsync();
+            return new MerlinPlanBLResult();
         }
-
-//        public Task<MerlinPlanBLResult> UpdatePortfolioProjectAsync(ProjectConfig updatedProjectConfig, ProjectConfig currentProjectConfig)
-//        {
-//
-//        }
 
         #endregion
     }

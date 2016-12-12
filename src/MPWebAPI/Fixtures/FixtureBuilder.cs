@@ -578,7 +578,6 @@ namespace MPWebAPI.Fixtures
                 foreach (var pc in p.Projects)
                 {
                     var newProjectConfig = new ProjectConfig() {
-                        StartDate = pc.StartDate,
                         ProjectOption = await _dbcontext.ProjectOption.FirstAsync(po => po.Description == pc.Option && po.Project.Name == pc.Project),
                         Portfolio = newPortfolio,
                         Owner = await _dbcontext.StaffResource.FirstOrDefaultAsync(sr => sr.Name == pc.Owner),

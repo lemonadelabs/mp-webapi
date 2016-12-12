@@ -276,12 +276,19 @@ namespace MPWebAPI.Controllers
             return BadRequest(result.Errors);
         }
 
-//        [HttpPut("{id}/project")]
-//        [ValidatePortfolioExists]
-//        public async Task<IActionResult> UpdateProject(int id, [FromBody] ProjectConfigViewModel viewModel)
-//        {
-//
-//        }
+        [HttpPut("project")]
+        [ValidateModel]
+        public async Task<IActionResult> UpdateProject([FromBody] ProjectConfigViewModel viewModel)
+        {
+            var projectConfig = _repository.ProjectConfigs.SingleOrDefault(pc => pc.Id == viewModel.Id);
+            if (projectConfig == null) return NotFound(viewModel.Id);
+
+            var mapResult = await viewModel.MapToModel(projectConfig, _repository);
+            if (!mapResult.Succeeded) return BadRequest(mapResult.Errors);
+            var result = await _businessLogic.UpdatePortfolioProjectAsync(projectConfig);
+            if (!result.Succeeded) return BadRequest(result.Errors);
+            return Ok(new ProjectConfigViewModel(projectConfig));
+        }
 
     }
 }

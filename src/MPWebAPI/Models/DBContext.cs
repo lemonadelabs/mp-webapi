@@ -404,11 +404,7 @@ namespace MPWebAPI.Models
                 .HasOne(pc => pc.Portfolio)
                 .WithMany(p => p.Projects)
                 .HasForeignKey(pc => pc.PortfolioId);
-            
-            builder.Entity<ProjectConfig>()
-                .Property(pc => pc.StartDate)
-                .IsRequired();
-            
+
             builder.Entity<ProjectConfig>()
                 .HasOne(p => p.Owner)
                 .WithMany(o => o.ProjectsOwned)

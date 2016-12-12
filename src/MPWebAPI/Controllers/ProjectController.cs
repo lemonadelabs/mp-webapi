@@ -58,7 +58,7 @@ namespace MPWebAPI.Controllers
 
         [HttpGet("useraccess/{id}")]
         [ValidateUserExists]
-        public async Task<IActionResult> GetAllForUser(string id)
+        public IActionResult GetAllForUser(string id)
         {
             var user = _repository.Users.Single(u => u.Id == id);
             var documents = new List<Project>();
