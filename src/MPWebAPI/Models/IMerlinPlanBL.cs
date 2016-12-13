@@ -80,6 +80,7 @@ namespace MPWebAPI.Models
         Task<MerlinPlanBLResult> AddProjectToPortfolioAsync(Portfolio portfolio, IEnumerable<IAddProjectToPortfolioRequest> requests);
         Task<MerlinPlanBLResult> RemoveProjectFromPortfolioAsync(ProjectConfig projectConfig);
         Task<MerlinPlanBLResult> UpdatePortfolioProjectAsync(ProjectConfig projectConfig);
+        Task<MerlinPlanBLResult> ValidatePortfolioAsync(Portfolio portfolio);
 
         #endregion
 

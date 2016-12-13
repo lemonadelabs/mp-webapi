@@ -1517,10 +1517,6 @@ namespace MPWebAPI.Models
 
                 await _respository.AddTagsToProjectConfigAsync(newProjectConfig, request.Tags);
 
-                // Create phase configs
-                // Create a default set of phase configs based on the project phases
-                // Work out phase offset
-
                 newProjectConfig.Phases = new List<PhaseConfig>();
                 foreach (var phase in projectOption.Phases)
                 {
@@ -1565,6 +1561,41 @@ namespace MPWebAPI.Models
         {
             await _respository.SaveChangesAsync();
             return new MerlinPlanBLResult();
+        }
+
+        public Task<MerlinPlanBLResult> ValidatePortfolioAsync(Portfolio portfolio)
+        {
+            var result = new MerlinPlanBLResult();
+            // Check dependencies
+            foreach (var project in portfolio.Projects)
+            {
+                var projectOption = _respository.ProjectOptions.Single(po => po.Id == project.ProjectOptionId);
+                if (projectOption.RequiredBy == null || projectOption.RequiredBy.Count <= 0) continue;
+                // Project has deps, check that they are in the portfolio and that they finish
+                // before this project starts.
+                foreach (var dependency in projectOption.RequiredBy)
+                {
+                    // Check for dep existance
+                    if (portfolio.Projects.All(pp => pp.ProjectOptionId != dependency.DependsOnId))
+                    {
+                        result.AddError("Dependency", $"The project (id = {project.Id}) in this portfolio has a dependency on project option (id = {dependency.DependsOnId}) which is not in the portfolio.");
+                    }
+                    else
+                    {
+                        // option exists but check start and end dates
+                        var depProject = portfolio.Projects.Single(pp => pp.ProjectOptionId == dependency.DependsOnId);
+
+                        var projectStart = project.Phases.OrderBy(p => p.StartDate).First().StartDate;
+                        var depEnd = depProject.Phases.OrderByDescending(p => p.StartDate).First().EndDate;
+
+                        if (depEnd > projectStart)
+                        {
+                            result.AddError("Dependency", $"The project (id = {project.Id}) depends on a project (id = {depProject.Id}) which ends after the project starts.");
+                        }
+                    }
+                }
+            }
+            return Task.FromResult(result);
         }
 
         #endregion

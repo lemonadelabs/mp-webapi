@@ -209,8 +209,9 @@ namespace MPWebAPI.Models
         Task AddProjectBenefitAsync(ProjectBenefit benefit);
         Task RemoveProjectBenefitAsync(ProjectBenefit benefit);
         Task RemoveProjectOptionAsync(ProjectOption option);
+        IEnumerable<ProjectDependency> ProjectDependencies { get; }
 
-        #endregion
+            #endregion
 
         #region Risk Profile
 

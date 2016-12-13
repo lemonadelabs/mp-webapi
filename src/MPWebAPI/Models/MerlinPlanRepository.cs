@@ -799,6 +799,17 @@ namespace MPWebAPI.Models
             await _dbcontext.SaveChangesAsync();
         }
 
+        public IEnumerable<ProjectDependency> ProjectDependencies
+        {
+            get
+            {
+                return _dbcontext.ProjectDependency
+                    .Include(pd => pd.DependsOn)
+                    .Include(pd => pd.RequiredBy)
+                    .ToList();
+            }
+        }
+
         public async Task RemoveProjectDependencyAsync(ProjectOption option, ProjectOption target)
         {
             var dep =

@@ -289,5 +289,15 @@ namespace MPWebAPI.Controllers
             if (!result.Succeeded) return BadRequest(result.Errors);
             return Ok(new ProjectConfigViewModel(projectConfig));
         }
+
+        [HttpGet("{id}/validate")]
+        [ValidatePortfolioExists]
+        public async Task<IActionResult> ValidatePortfolio(int id)
+        {
+            var portfolio = _repository.Portfolios.Single(p => p.Id == id);
+            var result = await _businessLogic.ValidatePortfolioAsync(portfolio);
+            if (result.Succeeded) return Ok();
+            return BadRequest(result.Errors);
+        }
     }
 }
