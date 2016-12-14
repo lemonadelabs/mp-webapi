@@ -198,7 +198,7 @@ namespace MPWebAPI.Controllers
         {
             var rs = _repository.ResourceScenarios.Single(r => r.Id == id);
             await _repository.ShareResourceScenarioWithOrgAsync(rs, false);
-            return Ok();
+            return Ok(new ResourceScenarioViewModel(rs));
         }
 
         [HttpPut("{id}/user/share")]
