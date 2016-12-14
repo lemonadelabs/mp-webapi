@@ -1,6 +1,8 @@
 using System;
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,6 +11,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using MPWebAPI.Models;
 using MPWebAPI.Fixtures;
 using MPWebAPI.Services;
+using Newtonsoft.Json;
 
 namespace MPWebAPI
 {
@@ -107,6 +110,15 @@ namespace MPWebAPI
                 }
             );
             app.UseMvc();
+            app.Use(async (context, next) =>
+            {
+                await next();
+                if (context.Response.StatusCode == 404)
+                {
+                    context.Response.ContentType = "application/json";
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject("The resource cannot be found yo! (404)"), Encoding.UTF8);
+                }
+            });
             
            
             var fixtureConfig = Configuration.GetSection("Fixtures");
