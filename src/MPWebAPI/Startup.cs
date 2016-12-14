@@ -1,7 +1,9 @@
 using System;
+using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -100,7 +102,7 @@ namespace MPWebAPI
             app.UseOAuthValidation();
             app.UseOpenIddict();
             app.UseJwtBearerAuthentication(
-                new JwtBearerOptions()
+                new JwtBearerOptions
                 {
                     AutomaticAuthenticate = true,
                     AutomaticChallenge = true,
@@ -109,18 +111,24 @@ namespace MPWebAPI
                     Authority = "http://localhost:5000/"
                 }
             );
-            app.UseMvc();
-            app.Use(async (context, next) =>
+
+            app.UseExceptionHandler("/api/error");
+            app.UseStatusCodePages(async context =>
             {
-                await next();
-                if (context.Response.StatusCode == 404)
+                context.HttpContext.Response.ContentType = "application/json";
+                if (context.HttpContext.Response.StatusCode == 404)
                 {
-                    context.Response.ContentType = "application/json";
-                    await context.Response.WriteAsync(JsonConvert.SerializeObject("The resource cannot be found yo! (404)"), Encoding.UTF8);
+                    await context.HttpContext.Response.WriteAsync(JsonConvert.SerializeObject("The resource cannot be found yo! (404)"), Encoding.UTF8);
+                }
+                if (context.HttpContext.Response.StatusCode == 500)
+                {
+                    await context.HttpContext.Response.WriteAsync(
+                        JsonConvert.SerializeObject(
+                            "Oh Noes! Your request could not be served because things went explody! (500 Talk to Sam)"), Encoding.UTF8);
                 }
             });
-            
-           
+            app.UseMvc();
+
             var fixtureConfig = Configuration.GetSection("Fixtures");
             if (!fixtureConfig.GetValue<bool>("Enabled")) return;
             var fixtureBuilder =  app.ApplicationServices.GetService<IFixtureBuilder>();
