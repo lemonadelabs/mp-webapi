@@ -171,7 +171,7 @@ namespace MPWebAPI.Controllers
         {
             var rs = _repository.ResourceScenarios.Single(r => r.Id == id);
             await _repository.ShareResourceScenarioWithGroupAsync(rs, true);
-            return Ok();
+            return Ok(new ResourceScenarioViewModel(rs));
         }
 
         [HttpPut("{id}/group/unshare")]
@@ -180,7 +180,7 @@ namespace MPWebAPI.Controllers
         {
             var rs = _repository.ResourceScenarios.Single(r => r.Id == id);
             await _repository.ShareResourceScenarioWithGroupAsync(rs, false);
-            return Ok();
+            return Ok(new ResourceScenarioViewModel(rs));
         }
 
         [HttpPut("{id}/share")]
@@ -189,7 +189,7 @@ namespace MPWebAPI.Controllers
         {
             var rs = _repository.ResourceScenarios.Single(r => r.Id == id);
             await _repository.ShareResourceScenarioWithOrgAsync(rs, true);
-            return Ok();
+            return Ok(new ResourceScenarioViewModel(rs));
         }
 
         [HttpPut("{id}/unshare")]
