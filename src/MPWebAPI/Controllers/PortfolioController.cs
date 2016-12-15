@@ -149,16 +149,16 @@ namespace MPWebAPI.Controllers
         {
             var ps = _repository.Portfolios.Single(r => r.Id == id);
             var users = new List<MerlinPlanUser>();
-            foreach (var userName in userNameList.Users)
+            foreach (var userId in userNameList.Users)
             {
-                var u = await _repository.FindUserByUserNameAsync(userName);
+                var u = _repository.Users.SingleOrDefault(user => user.Id == userId);
                 if (u != null)
                 {
                     users.Add(u);
                 }
                 else
                 {
-                    return BadRequest(new {Users = $"User {userName} does not exist."});
+                    return BadRequest(new {Users = $"User {userId} does not exist."});
                 }
             }
 
@@ -166,7 +166,12 @@ namespace MPWebAPI.Controllers
             {
                 await _repository.SharePortfolioWithUserAsync(ps, user);
             }
-            return Ok();
+            return Ok(users.Select(async u =>
+            {
+                var vm = new UserViewModel();
+                await vm.MapToViewModelAsync(u, _repository);
+                return vm;
+            }));
         }
 
         [HttpPut("{id}/user/unshare")]
@@ -175,16 +180,16 @@ namespace MPWebAPI.Controllers
         {
             var ps = _repository.Portfolios.Single(r => r.Id == id);
             var users = new List<MerlinPlanUser>();
-            foreach (var userName in userNameList.Users)
+            foreach (var userId in userNameList.Users)
             {
-                var u = await _repository.FindUserByUserNameAsync(userName);
+                var u = _repository.Users.SingleOrDefault(user => user.Id == userId);
                 if (u != null)
                 {
                     users.Add(u);
                 }
                 else
                 {
-                    return BadRequest(new {Users = $"User {userName} does not exist."});
+                    return BadRequest(new {Users = $"User {userId} does not exist."});
                 }
             }
 
@@ -192,7 +197,12 @@ namespace MPWebAPI.Controllers
             {
                 await _repository.UnsharePortfolioWithUserAsync(ps, user);
             }
-            return Ok();
+            return Ok(users.Select(async u =>
+            {
+                var vm = new UserViewModel();
+                await vm.MapToViewModelAsync(u, _repository);
+                return vm;
+            }));
         }
 
         [HttpPost]
