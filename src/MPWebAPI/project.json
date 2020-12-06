@@ -31,6 +31,8 @@
     "Npgsql.EntityFrameworkCore.PostgreSQL.Design": "1.1.0",
     "OpenIddict": "1.0.0-beta1-0493",
     "OpenIddict.Mvc": "1.0.0-beta1-0493",
+  "OpenIddict.EntityFrameworkCore": "1.0.0-*",
+
     "SendGrid.NetCore": "1.0.0-rtm-00002"
   },
   "tools": {

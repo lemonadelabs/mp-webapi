@@ -14,6 +14,10 @@ using MPWebAPI.Models;
 using MPWebAPI.Fixtures;
 using MPWebAPI.Services;
 using Newtonsoft.Json;
+using AspNet.Security.OpenIdConnect.Server;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 
 namespace MPWebAPI
 {
@@ -41,7 +45,8 @@ namespace MPWebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var sqlConnectionString = Configuration["DevDBConnectionString"];
+            //var sqlConnectionString = Configuration["DevDBConnectionString"];
+            var sqlConnectionString = Configuration.GetSection("DevDB").GetValue<string>("ConnectionString") ;
             
             services.AddOptions();
 
@@ -58,8 +63,71 @@ namespace MPWebAPI
                 } 
             );
 
-            services.AddDbContext<DBContext>(options => options.UseNpgsql(sqlConnectionString));
-            
+            services.AddDbContext<DBContext>(
+			options => {
+				options.UseNpgsql(sqlConnectionString);
+				options.UseOpenIddict();
+				
+			});
+
+			            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+                        JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
+			
+			// Register the OpenIddict services.
+			services.AddOpenIddict( )
+
+				// Register the OpenIddict core services.
+				.AddCore(options =>
+				{
+					options.UseEntityFrameworkCore()
+						   .UseDbContext<DbContext>();
+
+
+				})
+
+				.AddServer(options =>
+                        {
+                        /*
+                             .AddMvcBinders()
+                                        .EnableTokenEndpoint("/api/auth/token")
+                                        .UseJsonWebTokens()
+                                        .AllowPasswordFlow()
+                                        .AllowRefreshTokenFlow()
+                                        .DisableHttpsRequirement()
+                                        .SetAccessTokenLifetime(TimeSpan.FromSeconds(3600))
+                                        .AddEphemeralSigningKey();
+                                        */
+                            // Register the ASP.NET Core MVC binder used by OpenIddict.
+                            // Note: if you don't call this method, you won't be able to
+                            // bind OpenIdConnectRequest or OpenIdConnectResponse parameters.
+                           // options.UseMvc();
+
+                            // Enable the token endpoint (required to use the password flow).
+                            options.EnableTokenEndpoint("/api/auth/token");
+
+                            // Allow client applications to use the grant_type=password flow.
+                            options.AllowPasswordFlow();
+
+                            // During development, you can disable the HTTPS requirement.
+                            options.DisableHttpsRequirement();
+
+
+                         // AddMvcBinders() is now UseMvc().
+                               // options.UseMvc();
+                          options .UseJsonWebTokens();
+                          //  .AllowPasswordFlow()
+                         // options  .AllowRefreshTokenFlow()
+                         //  options.DisableHttpsRequirement()
+                          //  options.SetAccessTokenLifetime(TimeSpan.FromSeconds(3600))
+                            options.AddEphemeralSigningKey();
+                        });
+
+                        //.AddMvcBinders()
+
+                       // .AddValidation();
+
+				
+						
             services.AddIdentity<MerlinPlanUser, IdentityRole>(options => 
                 {
                     options.Password.RequireDigit = false;
@@ -73,18 +141,13 @@ namespace MPWebAPI
                 .AddEntityFrameworkStores<DBContext>()
                 .AddDefaultTokenProviders();
 
+
             
             services.AddMvc();
-
-            services.AddOpenIddict<DBContext>()
-                .AddMvcBinders()
-                .EnableTokenEndpoint("/api/auth/token")
-                .UseJsonWebTokens()
-                .AllowPasswordFlow()
-                .AllowRefreshTokenFlow()
-                .DisableHttpsRequirement()
-                .SetAccessTokenLifetime(TimeSpan.FromSeconds(3600))
-                .AddEphemeralSigningKey();
+			
+			
+		
+        
 
             services.AddScoped<IMerlinPlanRepository, MerlinPlanRepository>();
             services.AddTransient<IFixtureBuilder, FixtureBuilder>();
@@ -99,11 +162,17 @@ namespace MPWebAPI
             loggerFactory.AddDebug();
 
             app.UseIdentity();
+
             app.UseOAuthValidation();
-            app.UseOpenIddict();
+           // app.UseOpenIddict();
+
+
             app.UseJwtBearerAuthentication(
                 new JwtBearerOptions
                 {
+                   // AuthenticationScheme = OpenIdConnectServerDefaults.AuthenticationScheme,
+
+                     AuthenticationScheme =  JwtBearerDefaults.AuthenticationScheme,
                     AutomaticAuthenticate = true,
                     AutomaticChallenge = true,
                     RequireHttpsMetadata = false,
@@ -111,6 +180,9 @@ namespace MPWebAPI
                     Authority = "http://localhost:5000/"
                 }
             );
+
+
+
 
             app.UseExceptionHandler("/api/error");
             app.UseStatusCodePages(async context =>
@@ -127,6 +199,8 @@ namespace MPWebAPI
                             "Oh Noes! Your request could not be served because things went explody! (500 Talk to Sam)"), Encoding.UTF8);
                 }
             });
+
+           // app.UseOpenIddictServer();
             app.UseMvc();
 
             var fixtureConfig = Configuration.GetSection("Fixtures");

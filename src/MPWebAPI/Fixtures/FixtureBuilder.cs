@@ -282,6 +282,7 @@ namespace MPWebAPI.Fixtures
 
         public async Task AddFixture(string fixtureFile, bool flushDb = false)
         {
+			 _logger.LogInformation("AddFixture {0} .", fixtureFile);
 
             var basePath = new DirectoryInfo(AppContext.BaseDirectory).Parent.Parent.Parent;
 
@@ -305,7 +306,9 @@ namespace MPWebAPI.Fixtures
                     fixturePath));
                 return;
             }
-
+			
+			_logger.LogInformation(string.Format("The fixture file {0} is loaded.",
+                    fixturePath));
             try
             {
                 _fixtureData = JsonConvert.DeserializeObject<FixtureData>(fixtureJSON);
@@ -315,6 +318,7 @@ namespace MPWebAPI.Fixtures
                 _logger.LogError($"The fixture data file was invalid: {e.Message}");
                 return;
             }
+			_logger.LogInformation($"Joson to data ok ");
            
 
             if(flushDb)

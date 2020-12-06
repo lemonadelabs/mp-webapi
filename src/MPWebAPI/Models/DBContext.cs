@@ -1,15 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using OpenIddict;
+using  Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 
 namespace MPWebAPI.Models
 {
-    public class DBContext : OpenIddictDbContext<MerlinPlanUser>
+    public class DBContext : IdentityDbContext<MerlinPlanUser>
     {
         public DBContext(DbContextOptions options) :base(options)
         {
-        }
+        }    
+		
+		
 
         public DbSet<Alignment> Alignment { get; set; }
         public DbSet<BusinessUnit> BusinessUnit { get; set; }
